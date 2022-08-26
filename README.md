@@ -72,33 +72,33 @@ The other member of the config file should contain all strats to be run with the
 }
 ```
 
-#### wallet
+- wallet
     - Contains the public and private key of the wallet this strat will be run from
     - Every wallet running needs USDC ("0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E") and gas to opperate.
 
-#### opName
-The name of this particular strat - will be used to identify said strat in terminal when selecting
+- opName
+    - The name of this particular strat - is used to identify said strat in terminal when selecting
 
-#### token
-The name of the tokenpair which will be passed to the API to collect the current token information, for binance "BTCUSDT", "ETHUSDT", "AVAXUSDT" etc
+- token
+    - The name of the tokenpair which is passed to the API to collect the current token information, for binance "BTCUSDT", "ETHUSDT", "AVAXUSDT" etc
 
-#### timeFrame
-The time frame which will be passed to the API along with token pair to obtain current token information to be run with e.g. 1m 5m 15m 30m 1h 2h 4h 1d
+- timeFrame
+    - The time frame which is passed to the API along with token pair to obtain current token information to be run with e.g. 1m 5m 15m 30m 1h 2h 4h 1d
 
-#### options
-Contains the risk setting as well as the perp-future service provider specific settings
+- options
+    - Contains the risk setting as well as the perp-future service provider specific settings
 
-##### percentageRiskedPerTrade
-The near approximate % of the acc you will LOSE when any given position is wrong
+- percentageRiskedPerTrade
+    - The near approximate % of the acc you will LOSE when any given position is wrong
 
-##### profitFactor
-This factor determines how far reaching any position will be relative to the current identified swing highs and lows
+- profitFactor
+    - This factor determines in part how far reaching the SL and TP points are.
 
-##### useLimitOrders
-If checked the account will set and manage limit orders at position inception
+- useLimitOrders
+    - If checked the account will set and manage limit orders at position inception
 
-##### gmxLimitAdjustment
-If limit orders are set - this factor will tighten the calculated targets to account for delay in order filling. E.g.: 0.99
+- gmxLimitAdjustment
+    - If useLimitOrders is true this factor will tighten the calculated targets to account for delay in order filling. E.g.: 0.99
 
-#### swingHighLowLookbackLength
-This determines the number of candles back to be checked when calculating current highs and lows for TP/SL target calculation
+- swingHighLowLookbackLength
+    - This determines the number of candles back to be checked when calculating current highs and lows for TP/SL target calculation
