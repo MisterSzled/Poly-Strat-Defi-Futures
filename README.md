@@ -72,7 +72,9 @@ The other member of the config file should contain all strats to be run with the
 }
 ```
 
-#### wallet
+- wallet
+    - First line
+    - Second line
 >Contains the public and private key of the wallet this strat will be run from.
 >Note every wallet running needs USDC ("0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E") and gas to opperate.
 
