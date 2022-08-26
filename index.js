@@ -39,7 +39,7 @@ async function runLiveBot (strat) {
     let initDelay = (cycleDelay - (curTime % cycleDelay)) + (1000 * 10);
 
     console.log("Init delay: ", initDelay)
-    await sleep(initDelay);
+    // await sleep(initDelay);
 
     while (true) {
       cs.header(strat.opName)
