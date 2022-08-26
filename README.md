@@ -102,7 +102,8 @@ The objs which make up the contents of the indicators array each individually de
 The name of the indicator must match up with the file exported in './src/indicators/index.js'
 <br />
 To find the exact settings each indicator requires, inside each indicator file is a full description. In this case './src/indicators/mhull.js'
-
+<br />
+This is an example of an indictor called 'mhull' with six required inputs
 ```
 {
     name: "mhull",
@@ -119,12 +120,14 @@ To find the exact settings each indicator requires, inside each indicator file i
 
 #### Adding an indicator
 
-Each indicator must provide to './src/indicators/index' a file of the same name as the indicator which returns 1 for long, -1 for short, and 0 for neither.
+Before you can run any strat you must add at least one 'indictor' added to the './src/indicators/lib' folder 
+Each indicator must provide to './src/indicators/index' an import of the same name as the indicator file which returns 1 for long, -1 for short, and 0 for neither.
 <br />
 For example with the MHULL indicator: The name provided in the config of 'mhull' matches the file found in './src/indicators/mhull.js' 
 <br />
 Within the indicator function itself should be some documention showing exactly what fields must be provided in the config settings for the indicator to work from.
-
+<br />
+This is an example of the 'mhull' indicator with documentation imported into the './src/indicators/index' file
 ```
 /**
  * Calculates the hull moving average and returns long or short when the current candle is polar to the penultimate one and the current close
