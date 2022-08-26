@@ -130,4 +130,4 @@ dist
 .pnp.*
 
 # Specific folders
-.config.js
+config.js
