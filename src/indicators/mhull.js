@@ -72,6 +72,16 @@ function getHMA(strat, candleData) {
     return results;
 }
 
+/**
+ * Calculates the hull moving average and returns long or short when the current candle is polar to the penultimate one
+ * @param  {[string]}  source           "close"/"open" which price point from the candle to work from
+ * @param  {[string]}  hullVariation    "HMA"/"THMA"/"EHMA" which moving average variation to work from
+ * @param  {[int]}     length           lookback length for MA calculations 
+ * @param  {[float]}   lengthMultiplier multiple length by multiplier 
+ * @param  {[boolean]} useHtf           if this indicator should call for a specific timeframe to operate from - default is strat default
+ * @param  {[string]}  higherTimeframe  "1m"/"5m"/"2h" etc - timeframe to use if useHtf is true
+ * @return {[int]}                      1,0,-1 if indicator directs long, nill, short   
+ */
 function mhull(strat, candleData) {
     let MA;
     if (strat.settings.useHtf) {

@@ -96,10 +96,12 @@ The other member of the config file should contain all strats to be run with the
 
 ### Indicators
 
+#### Config
+
 The objs which make up the contents of the indicators array each individually describe the settings for each indivdual indicator to be employed by the strat. <br />
 The name of the indicator must match up with the file exported in './src/indicators/index.js'
 <br />
-To find the exact settings each indicator requires it is described in the indicators file. In this case './src/indicators/mhull.js'
+To find the exact settings each indicator requires, inside each indicator file is a full description. In this case './src/indicators/mhull.js'
 
 ```
 {
@@ -113,4 +115,30 @@ To find the exact settings each indicator requires it is described in the indica
         higherTimeframe: "4h",  
     }
 }
+```
+
+#### Adding an indicator
+
+Each indicator must provide to './src/indicators/index' a file of the same name as the indicator which returns 1 for long, -1 for short, and 0 for neither.
+<br />
+For example with the MHULL indicator: The name provided in the config of 'mhull' matches the file found in './src/indicators/mhull.js' 
+<br />
+Within the indicator function itself should be some documention showing exactly what fields must be provided in the config settings for the indicator to work from.
+
+```
+/**
+ * Calculates the hull moving average and returns long or short when the current candle is polar to the penultimate one
+ * @param  {[string]}  source           "close"/"open" which price point from the candle to work from
+ * @param  {[string]}  hullVariation    "HMA"/"THMA"/"EHMA" which moving average variation to work from
+ * @param  {[int]}     length           lookback length for MA calculations 
+ * @param  {[float]}   lengthMultiplier multiple length by multiplier 
+ * @param  {[boolean]} useHtf           if this indicator should call for a specific timeframe to operate from - default is strat default
+ * @param  {[string]}  higherTimeframe  "1m"/"5m"/"2h" etc - timeframe to use if useHtf is true
+ * @return {[int]}                      1,0,-1 if indicator directs long, nill, short   
+ */
+function mhull(strat, candleData) {
+    ...
+}
+
+module.exports = mhull;
 ```
