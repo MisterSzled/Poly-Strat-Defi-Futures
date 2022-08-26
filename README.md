@@ -127,7 +127,7 @@ Within the indicator function itself should be some documention showing exactly 
 
 ```
 /**
- * Calculates the hull moving average and returns long or short when the current candle is polar to the penultimate one
+ * Calculates the hull moving average and returns long or short when the current candle is polar to the penultimate one and the current close
  * @param  {[string]}  source           "close"/"open" which price point from the candle to work from
  * @param  {[string]}  hullVariation    "HMA"/"THMA"/"EHMA" which moving average variation to work from
  * @param  {[int]}     length           lookback length for MA calculations 
