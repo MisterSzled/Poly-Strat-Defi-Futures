@@ -96,8 +96,9 @@ The other member of the config file should contain all strats to be run with the
 
 ### Indicators
 
-The objs which make up the contents of the indicators array each individually describe the settings for each indivdual indicator to be employed by the strat.
+The objs which make up the contents of the indicators array each individually describe the settings for each indivdual indicator to be employed by the strat. <br />
 The name of the indicator must match up with the file exported in './src/indicators/index.js'
+<br />
 To find the exact settings each indicator requires it is described in the indicators file. In this case './src/indicators/mhull.js'
 
 ```
