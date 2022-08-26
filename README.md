@@ -5,11 +5,11 @@ Module and configurable runner and backtester within Defi
 ## Keeper
 
 Keeper scans all existing strats in your config file, extracts the wallets, and takes the following steps every 15mins on the 15m/2 to the hour basis. E.g. 15:07:30, then 15:22:30...
-    1. If any WETH is in the wallet. All WETH => USDC
-    2. If any WBTC is in the wallet. All WBTC => USDC
-    3. If current gas > 1.5. All gas - 1 => USDC
-    4. If current gas < 0.5. $10 => Gas
-    5. If limit orders are enabled, check for any unpaired orders and cancel them.
+    - 1. If any WETH is in the wallet. All WETH => USDC
+    - 2. If any WBTC is in the wallet. All WBTC => USDC
+    - 3. If current gas > 1.5. All gas - 1 => USDC
+    - 4. If current gas < 0.5. $10 => Gas
+    - 5. If limit orders are enabled, check for any unpaired orders and cancel them.
 
 ## Setting up config file
 
