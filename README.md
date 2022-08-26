@@ -56,19 +56,7 @@ The other member of the config file should contain all strats to be run with the
     },
 
     // Indicator to be checked for this strat
-    indicators: [
-        {
-            name: "mhull",
-            settings: {
-                source: "close",        // Only uses close atm
-                hullVariation: "HMA",   // Only uses HMA atm
-                length: 220,            // Max value is 2x < 1000 === 499
-                lengthMultiplier: 2.4,  // This can be used but is literally the same as simply increaseing length
-                useHtf: false,          // NOT IMPLEMENTED
-                higherTimeframe: "4h",  // PART OF useHtf NOT IMPLEMENTED
-            }
-        }
-    ],
+    indicators: [],
 }
 ```
 
@@ -102,3 +90,26 @@ The other member of the config file should contain all strats to be run with the
 
 - swingHighLowLookbackLength
     - This determines the number of candles back to be checked when calculating current highs and lows for TP/SL target calculation
+
+- indicators
+    - This houses the indicators which will be used in the strat, it is an array of obj which represent the settings to be passed to the indicators
+
+### Indicators
+
+The objs which make up the contents of the indicators array each individually describe the settings for each indivdual indicator to be employed by the strat.
+The name of the indicator must match up with the file exported in './src/indicators/index.js'
+To find the exact settings each indicator requires it is described in the indicators file. In this case './src/indicators/mhull.js'
+
+```
+{
+    name: "mhull",
+    settings: {
+        source: "close",        
+        hullVariation: "HMA",   
+        length: 220,            
+        lengthMultiplier: 2.4,  
+        useHtf: false,          
+        higherTimeframe: "4h",  
+    }
+}
+```
