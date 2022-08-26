@@ -31,7 +31,7 @@ The other member of the config file should contain all strats to be run with the
 >      priv: ""
 >    },
 >    // Program settings
->    opName: "BoomHullVolOsc BTC 15m", 
+>    opName: "MHULL BTC 15m", 
 >
 >    // Core strat information
 >    token: "BTCUSDT", // "BTCUSDT", "ETHUSDT", "AVAXUSDT"
