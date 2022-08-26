@@ -8,17 +8,21 @@ Module and configurable runner and backtester within Defi
 
 Config should contain the universal obj which stores information universally accessed with regard to the data which can be vended to the indicators. For binance the largest query available is 1000, for others it may be more. Most indicators will require a minimum length of data to operate at all let alone effectively so check if this is the case.
 
->const universal = {
->  maxLookBack: 1000
->}
+```
+const universal = {
+  maxLookBack: 1000
+}
+```
 
 ### Strats Obj
 
 The other member of the config file should contain all strats to be run with their respective wallets included per strat. The base config is of the following form.
 
->let strats = [
->  {} // A strat
->]
+```
+let strats = [
+  {} // A strat
+]
+```
 
 ### Individual Strats
 
