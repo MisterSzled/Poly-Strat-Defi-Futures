@@ -1,6 +1,6 @@
-const boomHunter = require("./boomHunter");
-const mhull = require("./mhull");
-const volatilityOscillator = require("./volatilityOscillator");
+const boomHunter = require("./library/boomHunter");
+const mhull = require("./library/mhull");
+const volatilityOscillator = require("./library/volatilityOscillator");
 
 let indicators = {
     boomHunter: boomHunter,

@@ -131,3 +131,4 @@ dist
 
 # Specific folders
 config.js
+src/indicators/library/*
