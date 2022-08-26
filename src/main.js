@@ -45,8 +45,8 @@ async function main(strat) {
 
     if (Math.abs(finalResult) === 1) {
         let currentPrice = pairData[pairData.length - 1][4];
-        let swingHighLow = taFuncs.swingHiLo(strat.core, [...pairData]);
-        let averageTrueRange = taFuncs.atr(strat.core, [...pairData]);
+        let swingHighLow = taFuncs.swingHiLo(strat.options, [...pairData]);
+        let averageTrueRange = taFuncs.atr(strat.options, [...pairData]);
         let curClose = parseFloat(pairData[pairData.length - 2][4]);
 
         let wallet = await getWalletTokens(strat.wallet.public);
