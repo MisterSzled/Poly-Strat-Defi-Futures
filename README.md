@@ -154,3 +154,52 @@ function mhull(strat, candleData) {
 
 module.exports = mhull;
 ```
+
+### Example of a full config.js file
+
+The following is an example of a full working config file utilising only the 'mhull' indicator operating on the 15min btc data.
+
+```
+const universal = {
+    maxLookBack: 996
+};
+  
+let strats = [
+    {
+        wallet : {
+            public: "XXXXX",
+            priv:   "XXXXX"
+        },
+
+        opName: "MHULL BTC 15m", 
+        token: "BTCUSDT",
+        timeframe: "15m",
+
+        options: {
+            swingHighLowLookbackLength: 30,
+            percentageRiskedPerTrade: 25,
+            profitFactor: 3,
+            atrLength: 14,
+
+            useLimitOrders: false,     
+            gmxLimitAdjustment: 0.999, 
+        },
+
+        indicators: [
+            {
+                name: "mhull",
+                    settings: {
+                    source: "close",       
+                    hullVariation: "HMA", 
+                    length: 650,           
+                    lengthMultiplier: 1,   
+                    useHtf: false,         
+                    higherTimeframe: "4h", 
+                }
+            },
+        ],
+    }
+];
+  
+module.exports = {strats, universal}
+```
