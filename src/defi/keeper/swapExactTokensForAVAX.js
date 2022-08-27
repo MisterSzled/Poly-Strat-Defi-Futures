@@ -9,12 +9,17 @@ let tokenInfo = {
     "wbtc":  {addy: "0x50b7545627a5162F82A992c33b87aDc75187B218", scale: 10**8},
 };
 
+let callLookup = {
+    "AVAX": "swapExactTokensForAVAX",
+    "ARBITRUM": "swapExactTokensForETH",
+};
+
 async function swapExactTokensForAVAX (wallet, tokenIn, amtIn, amtOut) {
     let joeExchange = await getExchangeContract(wallet.priv);
 
     cs.process(tokenIn + " ==> avax");
 
-    let swapRequestRequest = await joeExchange["swapExactTokensForAVAX"](
+    let swapRequestRequest = await joeExchange[callLookup[global.chain]](
         amtIn,                                                                //-amtIn
         amtOut,                                                               //-amtOut
         [

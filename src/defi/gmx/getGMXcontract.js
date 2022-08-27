@@ -1,11 +1,19 @@
 const ethers = require('ethers');
 const gmx = require("../abis/gmx");
 
+let rpcLookup = {
+    "AVAX": "https://api.avax.network/ext/bc/C/rpc",
+    "ARBITRUM": "https://arb1.arbitrum.io/rpc",
+}
+let contractLookup = {
+    "AVAX": "0x195256074192170d1530527abC9943759c7167d8",
+    "ARBITRUM": "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+}
 async function getGMXcontract(privKey) {
     try {
-        let provider = ethers.getDefaultProvider("https://api.avax.network/ext/bc/C/rpc");
+        let provider = ethers.getDefaultProvider(rpcLookup[global.chain]);
 
-        let contractAddress = "0x195256074192170d1530527abC9943759c7167d8"; //Exchange router
+        let contractAddress = contractLookup[global.chain];
 
         let contract = new ethers.Contract(contractAddress, gmx.abi, provider);
 

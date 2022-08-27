@@ -2,11 +2,16 @@ const getExchangeContract = require("../getExchangeContract");
 const estimateGas = require("../estimateGas");
 const cs = require("../../general/chalkSpec");
 
+let callLookup = {
+    "AVAX": "swapExactAVAXForTokens",
+    "ARBITRUM": "swapExactETHForTokens",
+}
+
 async function swapExactAVAXForTokens(wallet, amtIn, amtOut) {
     let joeExchange = await getExchangeContract(wallet.priv);
 
     cs.process("avax ==> $$$$")
-    let swapRequestRequest = await joeExchange["swapExactAVAXForTokens"](
+    let swapRequestRequest = await joeExchange[callLookup[global.chain]](
         amtOut,                                                               //-amtOut
         [
             "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7", //WAVAX

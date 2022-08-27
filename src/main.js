@@ -11,9 +11,12 @@ const cs = require("./general/chalkSpec");
 
 const calculateRiskQuantities = require("./indicators/risk/calculateRiskQuantities")
 
-const universal = require("../config").universal
+const universal = require("../config").universal;
 
 async function main(strat) {
+
+    global.chain = strat.wallet.chain;
+
     let pairData = await getPairData(strat.token, strat.timeframe, universal.maxLookBack);
 
     let resultSum = 0;

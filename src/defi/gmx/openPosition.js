@@ -9,9 +9,12 @@ const sleep = require("../../general/sleep");
 const getGMXPositions = require("./getGMXPositions");
 
 let tokens = {
+    // Avax
     "AVAXUSDT": "0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7", //avax
     "ETHUSDT":  "0x49D5c2BdFfac6CE2BFdB6640F4F80f226bc10bAB", //weth
     "BTCUSDT":  "0x50b7545627a5162F82A992c33b87aDc75187B218", //wbtc
+
+    //Arbitrum
 }
 
 const positionOpenCloseCost = 0.966;

@@ -9,6 +9,8 @@ async function keeper() {
     walletsToHandle = walletsToHandle.filter((value, index, self) => index === self.findIndex((t) => (t.public === value.public)));
     
     for (let i = 0; i < walletsToHandle.length; i++) {
+        global.chain = walletsToHandle[i].chain;
+
         cs.process("Cleaning wallet: " + walletsToHandle[i].public);
         await cleanWallet(walletsToHandle[i]);
         cs.win("Cleaned wallet: " + walletsToHandle[i].public + "\n")
