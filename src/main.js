@@ -4,7 +4,7 @@ const indicators = require("./indicators/index");
 const taFuncs    = require("./indicators/taFuncs/index");
 
 const getWalletTokens = require("./defi/getWalletTokens");
-const openPosition = require("./defi/openPosition.js");
+const openPosition = require("./defi/gmx/openPosition.js");
 
 const truncateNum = require("./general/truncateNum.js");
 const cs = require("./general/chalkSpec");

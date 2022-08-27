@@ -5,9 +5,9 @@ const getJoePrice = require("./getJoePrice");
 const swapExactTokensForTokens = require("./swapExactTokensForTokens");
 const swapExactAVAXForTokens = require("./swapExactAVAXForTokens");
 const swapExactTokensForAVAX = require("./swapExactTokensForAVAX");
-const getGMXOrderbook = require("../getGMXOrderbook");
-const getGMXOrderbookReader = require("../getGMXOrderbookReader");
-const cancelDecreaseOrder = require("../cancelDecreaseOrder");
+const getGMXOrderbook = require("../gmx/getGMXOrderbook");
+const getGMXOrderbookReader = require("../gmx/getGMXOrderbookReader");
+const cancelDecreaseOrder = require("../gmx/cancelDecreaseOrder");
 
 const avaxUpperLimit = 1.5;
 const avaxLowerLimit = 0.5;

@@ -1,5 +1,5 @@
 const getGMXOrderbook = require("./getGMXOrderbook");
-const estimateGas = require("./estimateGas");
+const estimateGas = require("../estimateGas");
 
 async function cancelDecreaseOrder(wallet, orderIndex) {
     let gmxOrderbook = await getGMXOrderbook(wallet.priv);

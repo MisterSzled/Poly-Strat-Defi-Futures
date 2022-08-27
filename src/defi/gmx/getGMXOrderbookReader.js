@@ -1,5 +1,5 @@
 const ethers = require('ethers');
-const gmxOrderbookReader = require("./abis/gmxOrderbookReader");
+const gmxOrderbookReader = require("../abis/gmxOrderbookReader");
 
 async function getGMXOrderbookReader(privKey) {
     try {

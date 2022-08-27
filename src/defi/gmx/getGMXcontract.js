@@ -1,11 +1,11 @@
 const ethers = require('ethers');
-const gmx = require("./abis/gmxOrderbook");
+const gmx = require("../abis/gmx");
 
-async function getGMXOrderbook(privKey) {
+async function getGMXcontract(privKey) {
     try {
         let provider = ethers.getDefaultProvider("https://api.avax.network/ext/bc/C/rpc");
 
-        let contractAddress = "0x4296e307f108B2f583FF2F7B7270ee7831574Ae5";
+        let contractAddress = "0x195256074192170d1530527abC9943759c7167d8"; //Exchange router
 
         let contract = new ethers.Contract(contractAddress, gmx.abi, provider);
 
@@ -24,4 +24,4 @@ async function getGMXOrderbook(privKey) {
     }
 }
 
-module.exports = getGMXOrderbook;
+module.exports = getGMXcontract;

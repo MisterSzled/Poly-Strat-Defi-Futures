@@ -1,11 +1,11 @@
 const getGMXcontract = require("./getGMXcontract");
 const getGMXOrderbook = require("./getGMXOrderbook");
 const getGMXReader = require("./getGMXReader");
-const truncateNum = require("../general/truncateNum");
-const estimateGas = require("./estimateGas");
-const cs = require("../general/chalkSpec")
+const truncateNum = require("../../general/truncateNum");
+const estimateGas = require("../estimateGas");
+const cs = require("../../general/chalkSpec")
 const ethers = require('ethers');
-const sleep = require("../general/sleep");
+const sleep = require("../../general/sleep");
 const getGMXPositions = require("./getGMXPositions");
 
 let tokens = {
