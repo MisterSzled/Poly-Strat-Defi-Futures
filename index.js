@@ -16,21 +16,21 @@ let timemap = {
   "1d": 144000 * 60,
 }
 
-function buildQuestions () {
-  let message = "\nWhich strat?\n";
+// function buildQuestions () {
+//   let message = "\nWhich strat?\n";
 
-  strats.forEach((strat, index) => {
-      message += ((index + 1)  + " - - - " + strat.opName + "\n")
-  });
+//   strats.forEach((strat, index) => {
+//       message += ((index + 1)  + " - - - " + strat.opName + "\n")
+//   });
 
-  return {type: 'input', name: 'acc', message: message};
-}
+//   return {type: 'input', name: 'acc', message: message};
+// }
 
-inquirer.prompt(buildQuestions()).then(answers => {
-  if ((answers.acc >= 1) && (answers.acc <= strats.length)) {
-      runLiveBot(strats[answers.acc - 1]);
-  }
-});
+// inquirer.prompt(buildQuestions()).then(answers => {
+//   if ((answers.acc >= 1) && (answers.acc <= strats.length)) {
+//       runLiveBot(strats[answers.acc - 1]);
+//   }
+// });
 
 async function runLiveBot (strat) {
     let curTime = new Date().getTime();
@@ -62,4 +62,18 @@ async function runLiveBot (strat) {
     };
 }
 // runLiveBot(strats[0])
+
+// const http = require('http'); // or 'https' for https:// URLs
+// const fs = require('fs');
+
+// const file = fs.createWriteStream("./src/backtest/btc/file.jpg");
+// const request = http.get("http://i3.ytimg.com/vi/J---aiyznGQ/mqdefault.jpg", function(response) {
+//    response.pipe(file);
+
+//    // after download completed close filestream
+//    file.on("finish", () => {
+//        file.close();
+//        console.log("Download Completed");
+//    });
+// });
 
