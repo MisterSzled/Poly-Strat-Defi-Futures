@@ -4,6 +4,7 @@ const strats = require("./config.js").strats;
 const livebot = require("./src/runtimes/livebot");
 const keeper = require("./src/runtimes/keeper");
 const updateHistoryData = require("./src/runtimes/updateHistoryData");
+const backtrace = require("./src/runtimes/backtrace");
 
 function buildQuestions () {
   let message = "\nWhich strat?\n";
@@ -20,6 +21,8 @@ function buildQuestions () {
   message += ((strats.length + 1)  + " - - - " + "Keeper" + "\n");
   message += "\n";
   message += ((strats.length + 2)  + " - - - " + "Update History" + "\n");
+  message += "\n";
+  message += ((strats.length + 3)  + " - - - " + "Backtrace" + "\n");
 
   return {type: 'input', name: 'acc', message: message};
 }
@@ -30,6 +33,10 @@ inquirer.prompt(buildQuestions()).then(answers => {
   } else if (answers.acc - 1 === strats.length) {
       keeper();
   } else if (answers.acc - 1 === strats.length + 1) {
-      updateHistoryData("BTCUSDT", "15m", 1);
+      updateHistoryData("BTCUSDT", "15m", 6);
+  } else if (answers.acc - 1 === strats.length + 2) {
+      backtrace("BTCUSDT", "15m");
   }
 });
+
+// backtrace("BTCUSDT", "15m");
