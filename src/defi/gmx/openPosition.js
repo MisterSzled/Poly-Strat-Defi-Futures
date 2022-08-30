@@ -20,6 +20,14 @@ let tokens = {
 const positionOpenCloseCost = 0.966;
 
 async function openPosition(type, strat, amountIn, SL, TP, curPrice, leverage) {
+
+    console.log("type: ", type);
+    console.log("amountIn: ", amountIn);
+    console.log("SL: ", SL);
+    console.log("TP: ", TP);
+    console.log("curPrice: ", curPrice);
+    console.log("leverage: ", leverage);
+
     let tokenAddy = tokens[strat.token];
 
     // Check existing positions

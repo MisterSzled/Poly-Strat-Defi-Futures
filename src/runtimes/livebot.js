@@ -1,4 +1,4 @@
-const main = require("../main.js");
+const main = require("../main.js").main;
 const formatDate = require("../general/formatDate");
 const cs = require("../general/chalkSpec");
 const sleep = require("../general/sleep");

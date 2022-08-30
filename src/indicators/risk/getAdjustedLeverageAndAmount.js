@@ -31,7 +31,7 @@ function findLevWhereSLAtLiqidation(entry, SL, isLong) {
 }
 
 
-function calculateRiskQuantities(wallet, risk, entry, SL, isLong) {
+function getAdjustedLeverageAndAmount(wallet, risk, entry, SL, isLong) {
     const lossRatioAtLiq = 0.7;
     let finalAmt, finalLev;
 
@@ -112,4 +112,4 @@ function calculateRiskQuantities(wallet, risk, entry, SL, isLong) {
     }
 }
 
-module.exports = calculateRiskQuantities
+module.exports = getAdjustedLeverageAndAmount

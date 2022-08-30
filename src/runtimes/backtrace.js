@@ -1,5 +1,7 @@
 const fs = require('fs');
 const cs = require("../general/chalkSpec");
+const strats = require("../../config").strats
+const processIndicators = require("../main").processIndicators
 
 let timemap = {
     "1m": 1000 * 60,
@@ -10,6 +12,12 @@ let timemap = {
     "2h": 120000 * 60,
     "4h": 240000 * 60,
     "1d": 144000 * 60,
+}
+
+let wallet = {
+    usd: 250,
+    longs: 0,
+    shorts: 0,
 }
 
 function backtrace(token, timeframe) {
@@ -31,6 +39,19 @@ function backtrace(token, timeframe) {
         }
     }
     cs.win("Data merged and checked");
+
+    let count = 0;
+    //Run through strat
+    for (let i = 1000; i < historyArray.length; i++) {
+        console.log(i)
+        let mockSlice = historyArray.slice(i - 1000, i);
+        let finalResult = processIndicators(strats[0], mockSlice);
+
+        if (finalResult !== 0) {
+            count++;
+        }
+    }
+    console.log(count);
 }
 
 module.exports = backtrace

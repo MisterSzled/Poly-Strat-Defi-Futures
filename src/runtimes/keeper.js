@@ -21,7 +21,7 @@ async function keeper() {
     let curTime = new Date().getTime();
     let cycleDelay = (15000 * 60) + (7500 * 60);
 
-    let initDelay = ((cycleDelay - (curTime % cycleDelay)) + (1000 * 10)) - (7500 * 60);
+    let initDelay = ((cycleDelay - (curTime % cycleDelay)) + (1000 * 10)) + (7500 * 60);
 
     console.log("Init delay: ", initDelay)
     await sleep(initDelay);
