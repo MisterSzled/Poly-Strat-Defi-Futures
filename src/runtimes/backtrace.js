@@ -101,6 +101,8 @@ function backtrace(token, timeframe) {
                         curPositionSL:     0,
                         curPositionTP:     0,
                         curPositionIsLong: 0,
+
+                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
                     }
                     console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
                 } else if (lastHigh >= wallet.curPositionTP) {
@@ -117,7 +119,9 @@ function backtrace(token, timeframe) {
                         curPositionSL:     0,
                         curPositionTP:     0,
                         curPositionIsLong: 0,
-                        longWins: wallet.longWins + 1
+                        longWins: wallet.longWins + 1,
+
+                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
                     }
                     console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
                 }
@@ -137,6 +141,8 @@ function backtrace(token, timeframe) {
                         curPositionSL:     0,
                         curPositionTP:     0,
                         curPositionIsLong: 0,
+
+                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
                     }
                     console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
                 } else if (lastLow <= wallet.curPositionTP) {
@@ -153,7 +159,9 @@ function backtrace(token, timeframe) {
                         curPositionSL:     0,
                         curPositionTP:     0,
                         curPositionIsLong: 0,
-                        shortWins: wallet.shortWins + 1
+                        shortWins: wallet.shortWins + 1,
+
+                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
                     }
                     console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
                 }
@@ -184,6 +192,8 @@ function backtrace(token, timeframe) {
                         curPositionSL:     0,
                         curPositionTP:     0,
                         curPositionIsLong: 0,
+
+                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
                     };
                     if (positionResult - wallet.curPositionAmtIn > 0) {
                         wallet = {
@@ -207,7 +217,7 @@ function backtrace(token, timeframe) {
                     curPositionTP:     newPosProfile.longTp,
                     curPositionIsLong: "true",
 
-                    positionOpens: [...wallet.positionOpens, curDate]
+                    positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.longSL, TP: newPosProfile.longTp, type: "long"}]
                 };
                 console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
             }
@@ -234,6 +244,8 @@ function backtrace(token, timeframe) {
                         curPositionSL:     0,
                         curPositionTP:     0,
                         curPositionIsLong: 0,
+
+                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
                     }
                     if (positionResult - wallet.curPositionAmtIn > 0) {
                         wallet = {
@@ -257,7 +269,7 @@ function backtrace(token, timeframe) {
                     curPositionTP:     newPosProfile.shortTp,
                     curPositionIsLong: "false",
 
-                    positionOpens: [...wallet.positionOpens, curDate]
+                    positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.shortSL, TP: newPosProfile.shortTp, type: "short"}]
                 };
                 console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
             }
