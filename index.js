@@ -33,7 +33,7 @@ inquirer.prompt(buildQuestions()).then(answers => {
   } else if (answers.acc - 1 === strats.length) {
       keeper();
   } else if (answers.acc - 1 === strats.length + 1) {
-      updateHistoryData("BTCUSDT", "15m", 6);
+      updateHistoryData("BTCUSDT", "15m", 1);
   } else if (answers.acc - 1 === strats.length + 2) {
       backtrace("BTCUSDT", "15m");
   }

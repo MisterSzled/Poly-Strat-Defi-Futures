@@ -33,6 +33,7 @@ function processIndicators (strat, pairData) {
 async function main(strat) {
     global.chain = strat.wallet.chain;
     let pairData = await getPairData(strat.token, strat.timeframe, universal.maxLookBack);
+
     finalResult = processIndicators(strat, pairData);
 
     //THIS IS FOR THE NEW TA BRACKET
@@ -54,7 +55,7 @@ async function main(strat) {
 
         if (finalResult === 1) {
             cs.longH("LONG! LONG! LONG!");
-            profile = getNewPositionProfile(strat, usdEquity, pairData, true);
+            profile = getNewPositionProfile(strat, usdEquity, pairData, true, pairData[pairData.length - 2][4]);
 
             await openPosition(
                 "long", 
@@ -68,7 +69,7 @@ async function main(strat) {
         }
         if (finalResult === -1) {
             cs.shortH("SHORT! SHORT! SHORT!");
-            profile = getNewPositionProfile(strat, usdEquity, pairData, false);
+            profile = getNewPositionProfile(strat, usdEquity, pairData, false, pairData[pairData.length - 2][4]);
 
             await openPosition(
                 "short", 
