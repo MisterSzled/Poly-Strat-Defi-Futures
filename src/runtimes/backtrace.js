@@ -3,6 +3,7 @@ const cs = require("../general/chalkSpec");
 const strats = require("../../config").strats
 const processIndicators = require("../main").processIndicators
 const getNewPositionProfile = require("../indicators/risk/getNewPositionProfile");
+const chalk = require('chalk');
 
 let timemap = {
     "1m": 1000 * 60,
@@ -72,12 +73,11 @@ function backtrace(token, timeframe) {
 
     console.log("INITIAL DATE OF START: ", new Date(parseInt(historyArray[1240][0])));
 
-    //Run through strat
     for (let i = 1000; i < historyArray.length - 2; i++) {
 
-        if (i % 1000 === 0) {
-            console.log("Index: ", i, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
-        }
+        // if (i % 1000 === 0) {
+        //     console.log("Index: ", i, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
+        // }
         let mockSlice = historyArray.slice(i - 1000, i + 1);
         let finalResult = processIndicators(strats[stratIndex], mockSlice);
 
@@ -86,8 +86,10 @@ function backtrace(token, timeframe) {
         let lastLow  = mockSlice[mockSlice.length - 2][3];
         let curDate  = new Date(parseInt(mockSlice[mockSlice.length - 1][0]));
 
+        let isInPosition = wallet.curPositionAmtIn > 0;
+
         // Check open positions
-        if (wallet.curPositionAmtIn > 0) {
+        if (isInPosition) {
             if (wallet.curPositionIsLong === "true") {
                 // is in a long
                 let loss = lastLow <= wallet.curPositionSL;
@@ -98,7 +100,7 @@ function backtrace(token, timeframe) {
                     wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}];
                     if (win) wallet["longWins"] = wallet.longWins + 1;
 
-                    console.log("Long ", (loss ? "LOSS " : "WIN "), curDate.toLocaleString().replaceAll(",", ""), " - ", wallet.curUSD, "+ (", positionResult - wallet.curPositionAmtIn, ")");
+                    resString("Long ", loss, curDate, wallet.curUSD, positionResult - wallet.curPositionAmtIn);
                     resetWalletPosition();
                 }
             } else if (wallet.curPositionIsLong  === "false") {
@@ -111,7 +113,7 @@ function backtrace(token, timeframe) {
                     wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}];
                     if (win) wallet["shortWins"] = wallet.shortWins + 1;
 
-                    console.log("Short ", (loss ? "LOSS " : "WIN "), curDate.toLocaleString().replaceAll(",", ""), " - ", wallet.curUSD, "+ (", positionResult - wallet.curPositionAmtIn, ")");
+                    resString("Short", loss, curDate, wallet.curUSD, positionResult - wallet.curPositionAmtIn);
                     resetWalletPosition();
                 }
             }
@@ -120,31 +122,20 @@ function backtrace(token, timeframe) {
         if (Math.abs(finalResult) === 1) {
             if (finalResult === 1) {
                 //Long indicated
-                console.log("Indicating Long");
-
-                wallet.totalLongsIndicated++;
-                if ((wallet.curPositionOpen > 0) && (wallet.curPositionIsLong === "true")) {
-                    console.log("Already in a long");
-                    continue;
-                }
-                if (((wallet.curPositionOpen > 0) && (wallet.curPositionIsLong === "false"))) {
-                    console.log("Already in a short but time to go long");
+                wallet["totalLongsIndicated"] = wallet["totalLongsIndicated"] + 1;
+                if (isInPosition && (wallet.curPositionIsLong === "true")) continue;
+                if (isInPosition && (wallet.curPositionIsLong === "false")) {
                     let positionResult = calculateClosePosition(wallet.curPositionOpen, curPrice, wallet.curPositionAmtIn, wallet.curPositionLev, false);
-                    console.log("Delta: ", positionResult - wallet.curPositionAmtIn);
+                    let delta = positionResult - wallet.curPositionAmtIn;
 
                     wallet["curUSD"] = wallet.curUSD + positionResult;
-                    wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}];
+                    wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: delta}];
                     resetWalletPosition();
-                    if (positionResult - wallet.curPositionAmtIn > 0) {
-                        wallet = {
-                            ...wallet,
-                            shortWins: wallet.shortWins + 1
-                        }
-                    }
-                    console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
+                    if (delta > 0) wallet["shortWins"] = wallet["shortWins"] + 1;
+                    resString("Short", loss, curDate, wallet.curUSD, positionResult - wallet.curPositionAmtIn);
                 }
+
                 let newPosProfile = getNewPositionProfile(strats[stratIndex], wallet.curUSD, mockSlice, true, curPrice);
-                console.log("Opening long amtin: ", newPosProfile.longQty, " lev: ", newPosProfile.lev, " SL: ", newPosProfile.longSL, " TP: ", newPosProfile.longTp);
                 wallet = {
                     ...wallet,
                     curUSD: wallet.curUSD - newPosProfile.longQty,
@@ -159,35 +150,23 @@ function backtrace(token, timeframe) {
 
                     positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.longSL, TP: newPosProfile.longTp, type: "long"}]
                 };
-                console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
+                openString("Long ", curDate, newPosProfile.longQty, newPosProfile.lev, newPosProfile.longSL, newPosProfile.longTp)
             }
             if (finalResult === -1) {
                 //Short indicated
-                console.log("Indicating Short");
-
-                wallet.totalShortsIndicated++;
-                if ((wallet.curPositionOpen > 0) && (wallet.curPositionIsLong === "false")) {
-                    console.log("Already in a short");
-                    continue;
-                } 
-                if (((wallet.curPositionOpen > 0) && (wallet.curPositionIsLong === "true"))) {
-                    console.log("Already in a long but time to go short");
+                wallet["totalShortsIndicated"] = wallet["totalShortsIndicated"] + 1;
+                if (isInPosition && (wallet.curPositionIsLong === "false")) continue;
+                if (isInPosition && (wallet.curPositionIsLong === "true")) {
                     let positionResult = calculateClosePosition(wallet.curPositionOpen, curPrice, wallet.curPositionAmtIn, wallet.curPositionLev, true);
-                    console.log("Delta: ", positionResult - wallet.curPositionAmtIn);
+                    let delta = positionResult - wallet.curPositionAmtIn;
 
                     wallet["curUSD"] = wallet.curUSD + positionResult;
-                    wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}];
+                    wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: delta}];
                     resetWalletPosition();
-                    if (positionResult - wallet.curPositionAmtIn > 0) {
-                        wallet = {
-                            ...wallet,
-                            longWins: wallet.longWins + 1
-                        }
-                    }
-                    console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
+                    if (delta > 0) wallet["longWins"] = wallet["longWins"] + 1;
+                    resString("Long ", loss, curDate, wallet.curUSD, delta);
                 }
                 let newPosProfile = getNewPositionProfile(strats[stratIndex], wallet.curUSD, mockSlice, false, curPrice);
-                console.log("Opening short amtin: ", newPosProfile.shortQty, " lev: ", newPosProfile.lev, " SL: ", newPosProfile.shortSL, " TP: ", newPosProfile.shortTp);
                 wallet = {
                     ...wallet,
                     curUSD: wallet.curUSD - newPosProfile.shortQty,
@@ -202,12 +181,17 @@ function backtrace(token, timeframe) {
 
                     positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.shortSL, TP: newPosProfile.shortTp, type: "short"}]
                 };
-                console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
+                openString("Short", curDate, newPosProfile.shortQty, newPosProfile.lev, newPosProfile.shortSL, newPosProfile.shortTp);
             }
         }
     }
-    console.log("FINAL WALLET");
     console.log(wallet);
+}
+function resString(type, isLoss, date, usd, delta) {
+    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), (isLoss ? chalk.redBright("LOSS") : chalk.greenBright("WIN ")), date.toLocaleString().replaceAll(",", ""), " - ", usd, "+ (", delta, ")");
+}
+function openString(type, date, amt, lev, sl, tp) {
+    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), chalk.cyanBright("OPEN"), date.toLocaleString().replaceAll(",", ""), " - ", amt, " Lev: ", lev, " SL: ", sl, " TP: ", tp);
 }
 
 function calculateClosePosition(openPrice, closePrice, amtIn, lev, isLong) {
