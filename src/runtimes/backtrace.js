@@ -4,6 +4,7 @@ const strats = require("../../config").strats
 const processIndicators = require("../main").processIndicators
 const getNewPositionProfile = require("../indicators/risk/getNewPositionProfile");
 const chalk = require('chalk');
+const truncateNum = require("../general/truncateNum")
 
 let timemap = {
     "1m": 1000 * 60,
@@ -132,7 +133,7 @@ function backtrace(token, timeframe) {
                     wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: delta}];
                     resetWalletPosition();
                     if (delta > 0) wallet["shortWins"] = wallet["shortWins"] + 1;
-                    resString("Short", loss, curDate, wallet.curUSD, positionResult - wallet.curPositionAmtIn);
+                    resString("Short", delta < 0, curDate, wallet.curUSD, delta);
                 }
 
                 let newPosProfile = getNewPositionProfile(strats[stratIndex], wallet.curUSD, mockSlice, true, curPrice);
@@ -164,7 +165,7 @@ function backtrace(token, timeframe) {
                     wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: delta}];
                     resetWalletPosition();
                     if (delta > 0) wallet["longWins"] = wallet["longWins"] + 1;
-                    resString("Long ", loss, curDate, wallet.curUSD, delta);
+                    resString("Long ", delta < 0, curDate, wallet.curUSD, delta);
                 }
                 let newPosProfile = getNewPositionProfile(strats[stratIndex], wallet.curUSD, mockSlice, false, curPrice);
                 wallet = {
@@ -185,13 +186,21 @@ function backtrace(token, timeframe) {
             }
         }
     }
+
+    wallet["winratio"] = (wallet.longWins + wallet.shortWins) / (wallet.longs + wallet.shorts);
+
+    let worstStreak = wallet.positionClosed.reduce((res, n) => (n.delta < 0 ? res[res.length-1]++ : res.push(0), res), [0]);
+    worstStreak = Math.max(...worstStreak);
+    wallet["drawdown"] = 1 - ((1 - (strats[stratIndex].options.percentageRiskedPerTrade/100))**worstStreak);
+
     console.log(wallet);
+
 }
 function resString(type, isLoss, date, usd, delta) {
-    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), (isLoss ? chalk.redBright("LOSS") : chalk.greenBright("WIN ")), date.toLocaleString().replaceAll(",", ""), " - ", usd, "+ (", delta, ")");
+    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), (isLoss ? chalk.redBright("LOSS") : chalk.greenBright("WIN ")), date.toLocaleString().replaceAll(",", ""), " - ", truncateNum(usd,5), "(", truncateNum(delta, 5), ")");
 }
 function openString(type, date, amt, lev, sl, tp) {
-    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), chalk.cyanBright("OPEN"), date.toLocaleString().replaceAll(",", ""), " - ", amt, " Lev: ", lev, " SL: ", sl, " TP: ", tp);
+    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), chalk.cyanBright("OPEN"), date.toLocaleString().replaceAll(",", ""), " - ", truncateNum(amt, 5), " Lev: ", truncateNum(lev, 2), " SL: ", truncateNum(sl, 5), " TP: ", truncateNum(tp, 5));
 }
 
 function calculateClosePosition(openPrice, closePrice, amtIn, lev, isLong) {
