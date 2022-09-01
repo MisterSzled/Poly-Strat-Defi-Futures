@@ -28,6 +28,14 @@ function buildQuestions () {
   return {type: 'input', name: 'acc', message: message};
 }
 
+function askStrat() {
+  let message = "\nWhich strat?\n";
+  strats.forEach((strat, index) => {
+    message += ((index + 1)  + " - - - " + strat.opName + "\n")
+  });
+  message += "\n";
+  return {type: 'input', name: 'acc', message: message};
+}
 function askToken () {
   let message = "\nWhich token?\n";
   tokenArray.forEach((tkn, index) => {
@@ -63,12 +71,13 @@ inquirer.prompt(buildQuestions()).then(answers => {
           inquirer.prompt(askMonths()).then(monthsAns => {
             let monthsback = monthsAns.acc;
             updateHistoryData(token, time, monthsback);
-          })
-        })
-      })
+          });
+        });
+      });
   } else if (answers.acc - 1 === strats.length + 2) {
-      backtrace("ETHUSDT", "15m");
+      inquirer.prompt(askStrat()).then(stratAns => {
+        let stratPick = strats[stratAns.acc - 1];
+        backtrace(stratPick.token, stratPick.timeframe);
+      });
   }
 });
-
-// backtrace("BTCUSDT", "15m");
