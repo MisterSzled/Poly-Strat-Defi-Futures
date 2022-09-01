@@ -81,3 +81,5 @@ inquirer.prompt(buildQuestions()).then(answers => {
       });
   }
 });
+
+// backtrace("ETHUSDT", "15m");

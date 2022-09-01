@@ -37,8 +37,19 @@ let wallet = {
     shorts: 0,
 }
 
-const stratIndex = 1;
+function resetWalletPosition () {
+    wallet = {
+        ...wallet,
+        curPositionOpen:   0,
+        curPositionAmtIn:  0,
+        curPositionLev:    0,
+        curPositionSL:     0,
+        curPositionTP:     0,
+        curPositionIsLong: 0,
+    }
+}
 
+const stratIndex = 1;
 function backtrace(token, timeframe) {
     let path = "./src/backtest/history/" + token + "/" + timeframe + "/";
     let files = fs.readdirSync(path);
@@ -75,95 +86,33 @@ function backtrace(token, timeframe) {
         let lastLow  = mockSlice[mockSlice.length - 2][3];
         let curDate  = new Date(parseInt(mockSlice[mockSlice.length - 1][0]));
 
-        if (finalResult !== 0) {
-            console.log("i: ", i, " date: ", curDate);
-        }
-
-        // if (parseInt(mockSlice[mockSlice.length - 1][0]) === 1661388300000) {
-        //     x++
-        // }
-
         // Check open positions
         if (wallet.curPositionAmtIn > 0) {
             if (wallet.curPositionIsLong === "true") {
                 // is in a long
-                if (lastLow <= wallet.curPositionSL) {
-                    // loss
-                    let positionResult = calculateClosePosition(wallet.curPositionOpen, wallet.curPositionSL, wallet.curPositionAmtIn, wallet.curPositionLev, true);
-                    console.log("Long LOSS Delta: ", positionResult - wallet.curPositionAmtIn);
+                let loss = lastLow <= wallet.curPositionSL;
+                let win  = lastHigh >= wallet.curPositionTP;
+                if (loss || win) {
+                    let positionResult = calculateClosePosition(wallet.curPositionOpen, (loss ? wallet.curPositionSL : wallet.curPositionTP), wallet.curPositionAmtIn, wallet.curPositionLev, true);
+                    wallet["curUSD"] = wallet.curUSD + positionResult;
+                    wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}];
+                    if (win) wallet["longWins"] = wallet.longWins + 1;
 
-                    wallet = {
-                        ...wallet,
-                        curUSD: wallet.curUSD + positionResult,
-                        curPositionOpen:   0,
-                        curPositionAmtIn:  0,
-                        curPositionLev:    0,
-                        curPositionSL:     0,
-                        curPositionTP:     0,
-                        curPositionIsLong: 0,
-
-                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
-                    }
-                    console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
-                } else if (lastHigh >= wallet.curPositionTP) {
-                    // win
-                    let positionResult = calculateClosePosition(wallet.curPositionOpen, wallet.curPositionTP, wallet.curPositionAmtIn, wallet.curPositionLev, true);
-                    console.log("Long WIN Delta: ", positionResult - wallet.curPositionAmtIn);
-
-                    wallet = {
-                        ...wallet,
-                        curUSD: wallet.curUSD + positionResult,
-                        curPositionOpen:   0,
-                        curPositionAmtIn:  0,
-                        curPositionLev:    0,
-                        curPositionSL:     0,
-                        curPositionTP:     0,
-                        curPositionIsLong: 0,
-                        longWins: wallet.longWins + 1,
-
-                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
-                    }
-                    console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
+                    console.log("Long ", (loss ? "LOSS " : "WIN "), curDate.toLocaleString().replaceAll(",", ""), " - ", wallet.curUSD, "+ (", positionResult - wallet.curPositionAmtIn, ")");
+                    resetWalletPosition();
                 }
-            }else if (wallet.curPositionIsLong  === "false") {
+            } else if (wallet.curPositionIsLong  === "false") {
                 // is in a short
-                if (lastHigh >= wallet.curPositionSL) {
-                    // loss
-                    let positionResult = calculateClosePosition(wallet.curPositionOpen, wallet.curPositionSL, wallet.curPositionAmtIn, wallet.curPositionLev, false);
-                    console.log("Short LOSS Delta: ", positionResult - wallet.curPositionAmtIn);
+                let loss = lastHigh >= wallet.curPositionSL;
+                let win  = lastLow <= wallet.curPositionTP;
+                if (loss || win) {
+                    let positionResult = calculateClosePosition(wallet.curPositionOpen, (loss ? wallet.curPositionSL : wallet.curPositionTP), wallet.curPositionAmtIn, wallet.curPositionLev, false);
+                    wallet["curUSD"] = wallet.curUSD + positionResult;
+                    wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}];
+                    if (win) wallet["shortWins"] = wallet.shortWins + 1;
 
-                    wallet = {
-                        ...wallet,
-                        curUSD: wallet.curUSD + positionResult,
-                        curPositionOpen:   0,
-                        curPositionAmtIn:  0,
-                        curPositionLev:    0,
-                        curPositionSL:     0,
-                        curPositionTP:     0,
-                        curPositionIsLong: 0,
-
-                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
-                    }
-                    console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
-                } else if (lastLow <= wallet.curPositionTP) {
-                    // win
-                    let positionResult = calculateClosePosition(wallet.curPositionOpen, wallet.curPositionTP, wallet.curPositionAmtIn, wallet.curPositionLev, false);
-                    console.log("Short WIN Delta: ", positionResult - wallet.curPositionAmtIn);
-
-                    wallet = {
-                        ...wallet,
-                        curUSD: wallet.curUSD + positionResult,
-                        curPositionOpen:   0,
-                        curPositionAmtIn:  0,
-                        curPositionLev:    0,
-                        curPositionSL:     0,
-                        curPositionTP:     0,
-                        curPositionIsLong: 0,
-                        shortWins: wallet.shortWins + 1,
-
-                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
-                    }
-                    console.log("Index: ", curDate, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
+                    console.log("Short ", (loss ? "LOSS " : "WIN "), curDate.toLocaleString().replaceAll(",", ""), " - ", wallet.curUSD, "+ (", positionResult - wallet.curPositionAmtIn, ")");
+                    resetWalletPosition();
                 }
             }
         }
@@ -183,18 +132,9 @@ function backtrace(token, timeframe) {
                     let positionResult = calculateClosePosition(wallet.curPositionOpen, curPrice, wallet.curPositionAmtIn, wallet.curPositionLev, false);
                     console.log("Delta: ", positionResult - wallet.curPositionAmtIn);
 
-                    wallet = {
-                        ...wallet,
-                        curUSD: wallet.curUSD + positionResult,
-                        curPositionOpen:   0,
-                        curPositionAmtIn:  0,
-                        curPositionLev:    0,
-                        curPositionSL:     0,
-                        curPositionTP:     0,
-                        curPositionIsLong: 0,
-
-                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
-                    };
+                    wallet["curUSD"] = wallet.curUSD + positionResult;
+                    wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}];
+                    resetWalletPosition();
                     if (positionResult - wallet.curPositionAmtIn > 0) {
                         wallet = {
                             ...wallet,
@@ -235,18 +175,9 @@ function backtrace(token, timeframe) {
                     let positionResult = calculateClosePosition(wallet.curPositionOpen, curPrice, wallet.curPositionAmtIn, wallet.curPositionLev, true);
                     console.log("Delta: ", positionResult - wallet.curPositionAmtIn);
 
-                    wallet = {
-                        ...wallet,
-                        curUSD: wallet.curUSD + positionResult,
-                        curPositionOpen:   0,
-                        curPositionAmtIn:  0,
-                        curPositionLev:    0,
-                        curPositionSL:     0,
-                        curPositionTP:     0,
-                        curPositionIsLong: 0,
-
-                        positionClosed: [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}]
-                    }
+                    wallet["curUSD"] = wallet.curUSD + positionResult;
+                    wallet["positionClosed"] = [...wallet.positionClosed, {date: curDate, delta: positionResult - wallet.curPositionAmtIn}];
+                    resetWalletPosition();
                     if (positionResult - wallet.curPositionAmtIn > 0) {
                         wallet = {
                             ...wallet,
