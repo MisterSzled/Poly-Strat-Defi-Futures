@@ -37,7 +37,7 @@ let wallet = {
     shorts: 0,
 }
 
-const stratIndex = 0;
+const stratIndex = 1;
 
 function backtrace(token, timeframe) {
     let path = "./src/backtest/history/" + token + "/" + timeframe + "/";

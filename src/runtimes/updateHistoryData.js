@@ -4,6 +4,7 @@
  const fs = require('fs');
  const { dirname } = require('path');
 const appDir = dirname(require.main.filename);
+const path = require('path');
  
  async function downloadFromBinanceAndWrite (url, token, timeframe, day, month, year) {
      request.get({url: url + ".zip", encoding: null}, (err, res, body) => {
@@ -31,6 +32,11 @@ const appDir = dirname(require.main.filename);
          }
      });
  };
+
+async function deleteAll(token, timeframe) {
+    let path = appDir + "\\src\\backtest\\history\\" + token + "\\" + timeframe + "\\";
+    fs.readdirSync(path).forEach(f => fs.rmSync(`${path}/${f}`));
+}
  
  /**
  * Updates token folders with historic data on the passed time basis 
@@ -42,7 +48,9 @@ const appDir = dirname(require.main.filename);
  async function updateHistoryData (token, dataTimeFrame, monthsback) {
     const root = "https://data.binance.vision/data/spot/daily/klines/"; 
     let year = new Date().getFullYear() + "";
-     
+
+    await deleteAll(token, dataTimeFrame);
+
      for (let i = 0; i < monthsback; i++) {
          let month = new Date().getMonth() + 1 - i + "";
          if (month.length < 2) month = "0" + month;
