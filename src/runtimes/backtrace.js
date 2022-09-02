@@ -1,10 +1,11 @@
 const fs = require('fs');
 const cs = require("../general/chalkSpec");
-const strats = require("../../config").strats
+// const strats = require("../../config").strats
 const processIndicators = require("../main").processIndicators
 const getNewPositionProfile = require("../indicators/risk/getNewPositionProfile");
 const chalk = require('chalk');
-const truncateNum = require("../general/truncateNum")
+const truncateNum = require("../general/truncateNum");
+const updateHistoryData = require("./updateHistoryData");
 
 let timemap = {
     "1m": 1000 * 60,
@@ -51,9 +52,11 @@ function resetWalletPosition () {
     }
 }
 
-const stratIndex = 1;
-function backtrace(token, timeframe) {
-    let path = "./src/backtest/history/" + token + "/" + timeframe + "/";
+async function backtrace(strat, timeback) {
+    // Update the history folder to be used
+    await updateHistoryData(strat.token, strat.timeframe, timeback);
+    
+    let path = "./src/backtest/history/" + strat.token + "/" + strat.timeframe + "/";
     let files = fs.readdirSync(path);
     let historyArray = [];
 
@@ -65,7 +68,7 @@ function backtrace(token, timeframe) {
 
     // Check it flows in time correctly without gaps
     for (let i = 0; i < historyArray.length - 2; i++) {
-        if (parseInt(historyArray[i][0]) !== parseInt(historyArray[i+1][0]) - (timemap[timeframe])) {
+        if (parseInt(historyArray[i][0]) !== parseInt(historyArray[i+1][0]) - (timemap[strat.timeframe])) {
             cs.fail("Data corrupt at: " + i);
             throw new Error("Data corrupt");
         }
@@ -80,7 +83,7 @@ function backtrace(token, timeframe) {
         //     console.log("Index: ", i, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
         // }
         let mockSlice = historyArray.slice(i - 1000, i + 1);
-        let finalResult = processIndicators(strats[stratIndex], mockSlice);
+        let finalResult = processIndicators(strat, mockSlice);
 
         let curPrice = mockSlice[mockSlice.length - 2][4];
         let lastHigh = mockSlice[mockSlice.length - 2][2];
@@ -136,7 +139,7 @@ function backtrace(token, timeframe) {
                     resString("Short", delta < 0, curDate, wallet.curUSD, delta);
                 }
 
-                let newPosProfile = getNewPositionProfile(strats[stratIndex], wallet.curUSD, mockSlice, true, curPrice);
+                let newPosProfile = getNewPositionProfile(strat, wallet.curUSD, mockSlice, true, curPrice);
                 wallet = {
                     ...wallet,
                     curUSD: wallet.curUSD - newPosProfile.longQty,
@@ -167,7 +170,7 @@ function backtrace(token, timeframe) {
                     if (delta > 0) wallet["longWins"] = wallet["longWins"] + 1;
                     resString("Long ", delta < 0, curDate, wallet.curUSD, delta);
                 }
-                let newPosProfile = getNewPositionProfile(strats[stratIndex], wallet.curUSD, mockSlice, false, curPrice);
+                let newPosProfile = getNewPositionProfile(strat, wallet.curUSD, mockSlice, false, curPrice);
                 wallet = {
                     ...wallet,
                     curUSD: wallet.curUSD - newPosProfile.shortQty,
@@ -191,10 +194,10 @@ function backtrace(token, timeframe) {
 
     let worstStreak = wallet.positionClosed.reduce((res, n) => (n.delta < 0 ? res[res.length-1]++ : res.push(0), res), [0]);
     worstStreak = Math.max(...worstStreak);
-    wallet["drawdown"] = 1 - ((1 - (strats[stratIndex].options.percentageRiskedPerTrade/100))**worstStreak);
+    wallet["drawdown"] = 1 - ((1 - (strat.options.percentageRiskedPerTrade/100))**worstStreak);
 
     console.log(wallet);
-
+    return wallet;
 }
 function resString(type, isLoss, date, usd, delta) {
     console.log(type === "Short" ? chalk.red(type) : chalk.green(type), (isLoss ? chalk.redBright("LOSS") : chalk.greenBright("WIN ")), date.toLocaleString().replaceAll(",", ""), " - ", truncateNum(usd,5), "(", truncateNum(delta, 5), ")");
