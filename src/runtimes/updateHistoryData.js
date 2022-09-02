@@ -49,29 +49,31 @@ async function updateHistoryData (token, dataTimeFrame, monthsback) {
 
     await deleteAll(token, dataTimeFrame);
 
-     for (let i = 0; i < monthsback; i++) {
-         let month = new Date().getMonth() + 1 - i + "";
-         if (month.length < 2) month = "0" + month;
- 
-         for (let j = 31; j >= 1; j--) {
-             let tempDay = j + "";
-             if (tempDay.length === 1) {
-                 tempDay = "0" + j
-             };
-             
-             let response = await downloadFromBinanceAndWrite(
-                 root + token + "/" + dataTimeFrame + "/" + token + "-" + dataTimeFrame + "-" + year + "-" + month + "-" + tempDay,
-                 token,
-                 dataTimeFrame,
-                 tempDay,
-                 month,
-                 year,
-                 (s) => console.log(s)
-             );
-         }
-     }
+    let promiseArray = [];
 
-     console.log("C")
- };
+    for (let i = 0; i < monthsback; i++) {
+        let month = new Date().getMonth() + 1 - i + "";
+        if (month.length < 2) month = "0" + month;
+
+        for (let j = 31; j >= 1; j--) {
+            let tempDay = j + "";
+            if (tempDay.length === 1) {
+                tempDay = "0" + j
+            };
+
+            promiseArray.push(downloadFromBinanceAndWrite(
+                    root + token + "/" + dataTimeFrame + "/" + token + "-" + dataTimeFrame + "-" + year + "-" + month + "-" + tempDay,
+                    token,
+                    dataTimeFrame,
+                    tempDay,
+                    month,
+                    year,
+                    (s) => console.log(s)
+                ))
+            }
+    }
+
+    await Promise.all(promiseArray);
+};
  
 module.exports = updateHistoryData;
