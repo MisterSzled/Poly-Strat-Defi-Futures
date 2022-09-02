@@ -54,7 +54,7 @@ function resetWalletPosition () {
 
 async function backtrace(strat, monthsback) {
     // Update the history folder to be used
-    // await updateHistoryData(strat.token, strat.timeframe, monthsback);
+    await updateHistoryData(strat.token, strat.timeframe, monthsback);
     
     let path = "./src/backtest/history/" + strat.token + "/" + strat.timeframe + "/";
     let files = fs.readdirSync(path);

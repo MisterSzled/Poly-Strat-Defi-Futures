@@ -4,9 +4,13 @@ var request = require('request');
 const fs = require('fs');
 const { dirname } = require('path');
 const appDir = dirname(require.main.filename);
-const path = require('path');
 
 function downloadFromBinanceAndWrite (url, token, timeframe, day, month, year) {
+    if (fs.existsSync(appDir + "\\src\\backtest\\history\\" + token + "\\" + timeframe + "\\" + year + "-" + month + "-" + day + ".json")) {
+        return new Promise ((resolve, reject) => {
+            resolve()
+        }); 
+    }
     return new Promise ((resolve, reject) => {
         let req = request.get({url: url + ".zip", encoding: null}, (err, res, body) => {
             if (res.statusCode === 200) {
@@ -46,7 +50,7 @@ async function deleteAll(token, timeframe) {
 async function updateHistoryData (token, dataTimeFrame, monthsback) {
     const root = "https://data.binance.vision/data/spot/daily/klines/"; 
 
-    await deleteAll(token, dataTimeFrame);
+    // await deleteAll(token, dataTimeFrame);
 
     let promiseArray = [];
 
