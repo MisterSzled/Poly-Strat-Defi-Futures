@@ -52,9 +52,9 @@ function resetWalletPosition () {
     }
 }
 
-async function backtrace(strat, timeback) {
+async function backtrace(strat, monthsback) {
     // Update the history folder to be used
-    await updateHistoryData(strat.token, strat.timeframe, timeback);
+    // await updateHistoryData(strat.token, strat.timeframe, monthsback);
     
     let path = "./src/backtest/history/" + strat.token + "/" + strat.timeframe + "/";
     let files = fs.readdirSync(path);
@@ -69,19 +69,28 @@ async function backtrace(strat, timeback) {
     // Check it flows in time correctly without gaps
     for (let i = 0; i < historyArray.length - 2; i++) {
         if (parseInt(historyArray[i][0]) !== parseInt(historyArray[i+1][0]) - (timemap[strat.timeframe])) {
-            cs.fail("Data corrupt at: " + i);
-            throw new Error("Data corrupt");
+            console.log("Gap at: ", i);
+            console.log(parseInt(historyArray[i][0]));
+            console.log(parseInt(historyArray[i+1][0]));
+            x++
         }
     }
     cs.win("Data merged and checked");
 
-    console.log("INITIAL DATE OF START: ", new Date(parseInt(historyArray[1240][0])));
+    let millisAtTimeback = monthsback * 2592000000;
+    let latestTimeStamp  = historyArray[historyArray.length - 1][0];
+    let latestMinusTimeback = latestTimeStamp - millisAtTimeback;
+    let startIndex = 0;
+    for (let i = 0; i < historyArray.length; i++) {
+        if (parseInt(historyArray[i][0]) === latestMinusTimeback) {
+            startIndex = i;
+            break;
+        }
+    }
 
-    for (let i = 1000; i < historyArray.length - 2; i++) {
+    console.log("INITIAL DATE OF START: ", new Date(parseInt(historyArray[startIndex][0])));
+    for (let i = startIndex; i < historyArray.length - 2; i++) {
 
-        // if (i % 1000 === 0) {
-        //     console.log("Index: ", i, " wallet: ", wallet.curUSD, " + (" + wallet.curPositionAmtIn + ")");
-        // }
         let mockSlice = historyArray.slice(i - 1000, i + 1);
         let finalResult = processIndicators(strat, mockSlice);
 
@@ -91,6 +100,10 @@ async function backtrace(strat, timeback) {
         let curDate  = new Date(parseInt(mockSlice[mockSlice.length - 1][0]));
 
         let isInPosition = wallet.curPositionAmtIn > 0;
+
+        // if (parseInt(mockSlice[mockSlice.length - 1][0]) === (1660908600000 + (4*900000))) {
+        //     xxxx++
+        // }
 
         // Check open positions
         if (isInPosition) {

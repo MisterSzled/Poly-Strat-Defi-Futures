@@ -29,7 +29,7 @@ function downloadFromBinanceAndWrite (url, token, timeframe, day, month, year) {
                     fs.writeFileSync(path, data);
                 });
             } else {
-                console.log("There is no " + day + " of month", month);
+                console.log("Status: " + res.statusCode + " There is no " + day + " of month", month);
             }
         });        
     
@@ -45,14 +45,20 @@ async function deleteAll(token, timeframe) {
  
 async function updateHistoryData (token, dataTimeFrame, monthsback) {
     const root = "https://data.binance.vision/data/spot/daily/klines/"; 
-    let year = new Date().getFullYear() + "";
 
     await deleteAll(token, dataTimeFrame);
 
     let promiseArray = [];
 
     for (let i = 0; i < monthsback; i++) {
-        let month = new Date().getMonth() + 1 - i + "";
+        let dateAtMonthsBack = new Date(
+            new Date().getFullYear(),
+            new Date().getMonth() - i, 
+            new Date().getDate()
+        );
+
+        let year  = dateAtMonthsBack.getFullYear() + "";
+        let month = dateAtMonthsBack.getMonth() + 1 + "";
         if (month.length < 2) month = "0" + month;
 
         for (let j = 31; j >= 1; j--) {
@@ -69,7 +75,7 @@ async function updateHistoryData (token, dataTimeFrame, monthsback) {
                     month,
                     year,
                     (s) => console.log(s)
-                ))
+                ));
             }
     }
 

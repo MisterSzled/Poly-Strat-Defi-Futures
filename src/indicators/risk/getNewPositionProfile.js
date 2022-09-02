@@ -4,9 +4,8 @@ const cs = require("../../general/chalkSpec");
 const truncateNum = require("../../general/truncateNum.js");
 
 function getNewPositionProfile(strat, wallet, pairData, isLong, currentPrice) {
-    // let currentPrice = pairData[pairData.length - 1][4];
-    let swingHighLow = taFuncs.swingHiLo(strat.options, [...pairData].slice(0, pairData.length - 1));
-    let averageTrueRange = taFuncs.atr(strat.options, [...pairData].slice(0, pairData.length - 1));
+    let swingHighLow = taFuncs.swingHiLo(strat.options, [...pairData]);
+    let averageTrueRange = taFuncs.atr(strat.options, [...pairData]);
     let curClose = parseFloat(pairData[pairData.length - 2][4]);
 
     let gmxAdjustmentUpper = strat.options.gmxLimitAdjustment;

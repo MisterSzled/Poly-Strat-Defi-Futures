@@ -2,15 +2,14 @@
 
 function getTrueRange(candleData) {
     let trueRange = [];
-    candleData.reverse();
 
-    for (let i = candleData.length - 2; i > 0; i--) {
-        let high0  = candleData[i][2];
-        let low0   = candleData[i][3];
-        let close1 = candleData[i + 1][4];
+    for (let i = candleData.length - 1; i > 1; i--) {
+        let high0  = candleData[i - 1][2];
+        let low0   = candleData[i - 1][3];
+        let close1 = candleData[i][4];
 
         let a = Math.abs(low0 - close1);
-        let b = Math.max(high0 - low0, Math.abs(high0 - close1))
+        let b = Math.max(high0 - low0, Math.abs(high0 - close1));
         
         let trueRangeAtI = 
                 Math.max(
