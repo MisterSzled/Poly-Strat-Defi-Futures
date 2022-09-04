@@ -126,23 +126,23 @@ function generateStratCombos (variationScheme) {
             }
         });
     }
-
+    
     let result = [];
-    for (let i = 0; i < options_map.length; i++) {
+    for (let i = 0; i < mhull_map.length; i++) {
         for (let j = 0; j < boomHunter_map.length; j++) {
-            for (let k = 0; k < mhull_map.length; k++) {
+            for (let k = 0; k < options_map.length; k++) {
                 for (let m = 0; m < volatilityOscillator_map.length; m++) {
                     result.push({               
-                        opName: "Generated_" + (i+j+k+m), 
+                        opName: "Generated_" + i+"_"+j+"_"+k+"_"+m, 
                 
                         token: variationScheme.token, 
                         timeframe: variationScheme.timeframe,
                 
-                        options: options_map[i],
+                        options: options_map[k],
                 
                         indicators: [
                             boomHunter_map[j],
-                            mhull_map[k],
+                            mhull_map[i],
                             volatilityOscillator_map[m],
                         ],
                     });

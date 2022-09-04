@@ -20,7 +20,6 @@ let timemap = {
 
 let wallet = {
     curUSD: 250,
-    prevUSD: 0,
     
     curPositionOpen:   0,
     curPositionAmtIn:  0,
@@ -54,7 +53,6 @@ function resetWalletPosition () {
 function resetWalletWhole () {
     wallet = {
         curUSD: 250,
-        prevUSD: 0,
         
         curPositionOpen:   0,
         curPositionAmtIn:  0,
@@ -74,8 +72,6 @@ function resetWalletWhole () {
         shorts: 0,
     }
 }
-
-let preprocess = [];
 
 async function backtrace(strat, monthsback) {
     // Update the history folder to be used
@@ -240,9 +236,20 @@ async function backtrace(strat, monthsback) {
 
     console.log(wallet.curUSD);
     console.log(new Date().getTime() - wholeStart);
-    let temp = wallet;
+
+    let finalWallet = {};
+    finalWallet["curUSD"] = wallet["curUSD"] + wallet["curPositionAmtIn"];
+    finalWallet["totalLongsIndicated"] = wallet["totalLongsIndicated"];
+    finalWallet["totalShortsIndicated"] = wallet["totalShortsIndicated"];
+    finalWallet["longWins"]  = wallet["longWins"];
+    finalWallet["shortWins"] = wallet["shortWins"];
+    finalWallet["longs"]     = wallet["longs"];
+    finalWallet["shorts"]    = wallet["shorts"];
+    finalWallet["winratio"]  = wallet["winratio"];
+    finalWallet["drawdown"]  = wallet["drawdown"];
+
     resetWalletWhole();
-    return temp;
+    return finalWallet;
 }
 function resString(type, isLoss, date, usd, delta) {
     console.log(type === "Short" ? chalk.red(type) : chalk.green(type), (isLoss ? chalk.redBright("LOSS") : chalk.greenBright("WIN ")), date.toLocaleString().replaceAll(",", ""), " - ", truncateNum(usd,5), "(", truncateNum(delta, 5), ")");

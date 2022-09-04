@@ -137,3 +137,4 @@ src/backtest/history/ETHUSDT/*
 src/backtest/history/BTCUSDT/*
 src/backtest/history/LINKUSDT/*
 src/backtest/history/UNIUSDT/*
+src/backtest/processed/*
