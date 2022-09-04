@@ -4,6 +4,7 @@ const strats = require("./config.js").strats;
 const livebot = require("./src/runtimes/livebot");
 const keeper = require("./src/runtimes/keeper");
 const backtrace = require("./src/runtimes/backtrace");
+const findBestStrat = require("./src/runtimes/findBestStrat");
 
 function buildQuestions () {
   let message = "\nWhich strat?\n";
@@ -53,3 +54,4 @@ inquirer.prompt(buildQuestions()).then(answers => {
 });
 
 // backtrace("ETHUSDT", "15m");
+// findBestStrat(strats[1])

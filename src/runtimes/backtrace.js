@@ -51,10 +51,35 @@ function resetWalletPosition () {
         curPositionIsLong: 0,
     }
 }
+function resetWalletWhole () {
+    wallet = {
+        curUSD: 250,
+        prevUSD: 0,
+        
+        curPositionOpen:   0,
+        curPositionAmtIn:  0,
+        curPositionLev:    0,
+        curPositionSL:     0,
+        curPositionTP:     0,
+        curPositionIsLong: 0,
+    
+        positionOpens: [],
+        positionClosed: [],
+    
+        totalLongsIndicated:  0,
+        totalShortsIndicated: 0,
+        longWins: 0,
+        shortWins: 0,
+        longs: 0,
+        shorts: 0,
+    }
+}
+
+let preprocess = [];
 
 async function backtrace(strat, monthsback) {
     // Update the history folder to be used
-    await updateHistoryData(strat.token, strat.timeframe, monthsback);
+    // await updateHistoryData(strat.token, strat.timeframe, monthsback);
     
     let path = "./src/backtest/history/" + strat.token + "/" + strat.timeframe + "/";
     let files = fs.readdirSync(path);
@@ -87,12 +112,16 @@ async function backtrace(strat, monthsback) {
             break;
         }
     }
-
+    
+    let wholeStart = new Date().getTime();
     console.log("INITIAL DATE OF START: ", new Date(parseInt(historyArray[startIndex][0])));
     for (let i = startIndex; i < historyArray.length - 2; i++) {
 
         let mockSlice = historyArray.slice(i - 1000, i + 1);
+        
+        // let start = new Date().getTime();
         let finalResult = processIndicators(strat, mockSlice);
+        // console.log(new Date().getTime() - start);
 
         let curPrice = mockSlice[mockSlice.length - 2][4];
         let lastHigh = mockSlice[mockSlice.length - 2][2];
@@ -209,8 +238,11 @@ async function backtrace(strat, monthsback) {
     worstStreak = Math.max(...worstStreak);
     wallet["drawdown"] = 1 - ((1 - (strat.options.percentageRiskedPerTrade/100))**worstStreak);
 
-    console.log(wallet);
-    return wallet;
+    console.log(wallet.curUSD);
+    console.log(new Date().getTime() - wholeStart);
+    let temp = wallet;
+    resetWalletWhole();
+    return temp;
 }
 function resString(type, isLoss, date, usd, delta) {
     console.log(type === "Short" ? chalk.red(type) : chalk.green(type), (isLoss ? chalk.redBright("LOSS") : chalk.greenBright("WIN ")), date.toLocaleString().replaceAll(",", ""), " - ", truncateNum(usd,5), "(", truncateNum(delta, 5), ")");

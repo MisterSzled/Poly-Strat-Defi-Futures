@@ -15,8 +15,10 @@ function processIndicators (strat, pairData) {
     let resultSum = 0;
     let configIndicators = strat.indicators
     for (let i = 0; i < configIndicators.length; i++) {
+        // let start = new Date().getTime();
         let name = configIndicators[i].name;
         let temp = indicators[name](configIndicators[i], [...pairData]);
+        // console.log(new Date().getTime() - start);
 
         cs[temp === 1 ? "long" : temp === -1 ? "short" : "process"](name +": "+ temp + "\n");
 
