@@ -53,5 +53,5 @@ const findBestStrat = require("./src/runtimes/findBestStrat");
 //   }
 // });
 
-// backtrace("ETHUSDT", "15m");
-findBestStrat(strats[1])
+// backtrace(strats[2], 6);
+findBestStrat(strats[1]);
