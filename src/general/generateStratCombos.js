@@ -53,7 +53,7 @@ function generateKeySeries(scheme) {
     return result
 }
 
-function generateStratCombos (variationScheme) {
+function generateStratCombos (variationScheme, targetToken) {
     let options_map = [];
     let swingHighLowLookbackLength_map = generateKeySeries(variationScheme["options"]["swingHighLowLookbackLength"]);
     let percentageRiskedPerTrade_map   = generateKeySeries(variationScheme["options"]["percentageRiskedPerTrade"]);
@@ -135,7 +135,7 @@ function generateStratCombos (variationScheme) {
                     result.push({               
                         opName: "Generated_" + i+"_"+j+"_"+k+"_"+m, 
                 
-                        token: variationScheme.token, 
+                        token: targetToken, 
                         timeframe: variationScheme.timeframe,
                 
                         options: options_map[k],

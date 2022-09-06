@@ -137,4 +137,8 @@ src/backtest/history/ETHUSDT/*
 src/backtest/history/BTCUSDT/*
 src/backtest/history/LINKUSDT/*
 src/backtest/history/UNIUSDT/*
-src/backtest/processed/*
+src/backtest/processed/AVAXUSDT/*
+src/backtest/processed/ETHUSDT/*
+src/backtest/processed/BTCUSDT/*
+src/backtest/processed/LINKUSDT/*
+src/backtest/processed/UNIUSDT/*
