@@ -6,36 +6,66 @@ const fs = require('fs');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 
 // Lower, upper, increment
-let variationScheme = {
-    timeframe: "15m",
+// let variationScheme = {
+//     timeframe: "15m",
+//     options: {
+//         // Risk settings
+//         swingHighLowLookbackLength: [10, 30, 10],
+//         percentageRiskedPerTrade: [25, 25, 5], 
+//         profitFactor: [2, 2, 1],
+//     },
+//     indicators: [
+//         {
+//             name: "boomHunter",
+//             settings: {
+//                 LPPeriod1: [8, 20, 1],    
 
+//                 LPPeriod2: [15, 25, 1],    
+//                 k12: [0.28, 0.39, 0.01], 
+//             }
+//         },
+//         {
+//             name: "mhull",
+//             settings: {
+//                 length: [300, 700, 100],
+//             }
+//         },
+//         {
+//             name: "volatilityOscillator",
+//             settings: {
+//                 volLength: [50, 150, 50]
+//             }
+//         },
+//     ],
+// }
+let variationScheme = { //This is the floating schema for 2nd pass checking
+    timeframe: "15m",
     options: {
         // Risk settings
-        swingHighLowLookbackLength: [10, 30, 10],
-        percentageRiskedPerTrade: [25, 25, 5], 
-        profitFactor: [2, 2, 1],
+        swingHighLowLookbackLength: [10, 10, 10],
+        percentageRiskedPerTrade: [15, 30, 1], 
+        profitFactor: [0.8, 8, 0.1],
     },
-
     indicators: [
         {
             name: "boomHunter",
             settings: {
-                LPPeriod1: [8, 20, 1],    
+                LPPeriod1: [15, 15, 1],    
 
-                LPPeriod2: [15, 25, 1],    
-                k12: [0.28, 0.39, 0.01], 
+                LPPeriod2: [25, 25, 1],    
+                k12: [0.31, 0.31, 0.01], 
             }
         },
         {
             name: "mhull",
             settings: {
-                length: [300, 700, 100],
+                length: [600, 600, 100],
             }
         },
         {
             name: "volatilityOscillator",
             settings: {
-                volLength: [50, 150, 50]
+                volLength: [100, 100, 50]
             }
         },
     ],
@@ -57,6 +87,7 @@ async function writeToFile(newEntries, startingIndex) {
 async function findBestStrat (stratcombos, shunt) {
     let results = [];
     let rolloverLimit = 1000;
+    // for (let i = 0; i < stratcombos.length; i++) {
     for (let i = 0; i < stratcombos.length; i++) {
         let newEntry = await backtrace(stratcombos[i], 1);
         results.push({...stratcombos[i], walletResult: newEntry});
@@ -72,9 +103,14 @@ async function findBestStrat (stratcombos, shunt) {
 }
 
 async function filterMonthListForBest(token, timeframe) {
-    let path = './src/backtest/processed/' + token + "/" + timeframe + "/";
-    let fileNames = fs.readdirSync(path);
+    // let path = './src/backtest/processed/' + token + "/" + timeframe + "/";
+    // let fileNames = fs.readdirSync(path);
     let wallets = [];
+
+    //TEST
+    let path = './src/backtest/processed/';
+    let fileNames = ["1.json", "1001.json", "1168.json"];
+    //TEST
 
     for (let i = 0; i < fileNames.length; i++) {
         let res = fs.readFileSync(path + fileNames[i]);
@@ -154,57 +190,78 @@ async function findBestOver3And6(strats) {
     console.log(over6M[0].curUSD);
     console.log(over6M[over6M.length - 1].curUSD);
 
-    let lowestDD3 = over3M.filter(val => val.drawdown <= 0.35)[0];
-    let lowestDD6 = over6M.filter(val => val.drawdown <= 0.35)[0];
+    let lowestDD3 = over3M.filter(val => val.drawdown <= 0.60)[0];
+    let lowestDD6 = over6M.filter(val => val.drawdown <= 0.69)[0];
+    let lowestDD3LOW = over3M.filter(val => val.drawdown <= 0.35)[0];
+    let lowestDD6LOW = over6M.filter(val => val.drawdown <= 0.35)[0];
 
-    console.log(lowestDD3)
-    console.log(lowestDD6)
+    console.log(lowestDD3);
+    console.log(lowestDD3.options);
+    console.log(lowestDD3.indicators);
+    console.log(lowestDD6);
+    console.log(lowestDD6.options);
+    console.log(lowestDD6.indicators);
+
+    if(!!lowestDD3LOW){
+        console.log(lowestDD3LOW);
+        console.log(lowestDD3LOW.options);
+        console.log(lowestDD3LOW.indicators);
+    }
+    if(!!lowestDD6LOW) {
+        console.log(lowestDD6LOW);
+        console.log(lowestDD6LOW.options);
+        console.log(lowestDD6LOW.indicators);
+    }
+    
 }
 
 //This is for after this function has run
 // await filterMonthListForBest("ETHUSDT", "15m");
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, "AVAXUSDT");
+    let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
     // console.log(stratCombos[0]);
-    // findBestStrat(stratCombos);
+    // console.log(stratCombos.length);
+    // await findBestStrat(stratCombos, 0);
 
-    if (isMainThread) {
-        let threadCount = 8;
-        let stratCombos = generateStratCombos(variationScheme, "AVAXUSDT");
-        console.log("Running with ", threadCount, " threads")
+    await filterMonthListForBest("ETHUSDT", "15m");
 
-        const threads = new Set();
+    // if (isMainThread) {
+    //     let threadCount = 8;
+    //     let stratCombos = generateStratCombos(variationScheme, "BTCUSDT");
+    //     console.log("Running with ", threadCount, " threads")
 
-        let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
+    //     const threads = new Set();
 
-        for (let i = 0; i < threadCount; i++) {
-            let lower = i*bracketBreadth;
-            let upper = (i+1)*bracketBreadth;
-            console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
+    //     let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
 
-            threads.add(new Worker(__filename, { workerData: 
-                { 
-                    id: i,
-                    lower: lower,
-                    upper: upper,
-                    combos: stratCombos.slice(lower, upper),
-                }
-            }));
-        }
+    //     for (let i = 0; i < threadCount; i++) {
+    //         let lower = i*bracketBreadth;
+    //         let upper = (i+1)*bracketBreadth;
+    //         console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
 
-        threads.forEach(thread => {
-            thread.on('message', (msg) => {
-                console.log(msg)
-            });
-        })
-    } else {
-            parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
-            let start = new Date().getTime();
-            await findBestStrat(workerData.combos, workerData.lower);
-            parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
-        // }
-    }
+    //         threads.add(new Worker(__filename, { workerData: 
+    //             { 
+    //                 id: i,
+    //                 lower: lower,
+    //                 upper: upper,
+    //                 combos: stratCombos.slice(lower, upper),
+    //             }
+    //         }));
+    //     }
+
+    //     threads.forEach(thread => {
+    //         thread.on('message', (msg) => {
+    //             console.log(msg)
+    //         });
+    //     })
+    // } else {
+    //         parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
+    //         let start = new Date().getTime();
+    //         await findBestStrat(workerData.combos, workerData.lower);
+    //         parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
+    //     // }
+    // }
 
 }
 

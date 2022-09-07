@@ -248,8 +248,8 @@ async function backtrace(strat, monthsback) {
     finalWallet["winratio"]  = wallet["winratio"];
     finalWallet["drawdown"]  = wallet["drawdown"];
     //TEMP
-    // finalWallet["indicators"]  = strat["indicators"];
-    // finalWallet["options"]  = strat["options"];
+    finalWallet["indicators"]  = strat["indicators"];
+    finalWallet["options"]  = strat["options"];
 
     resetWalletWhole();
     return finalWallet;
