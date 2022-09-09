@@ -126,7 +126,8 @@ async function backtrace(strat, monthsback) {
 
         let isInPosition = wallet.curPositionAmtIn > 0;
 
-        // if (parseInt(mockSlice[mockSlice.length - 1][0]) === (1660908600000 + (4*900000))) {
+        // console.log(parseInt(mockSlice[mockSlice.length - 1][0]))
+        // if (parseInt(mockSlice[mockSlice.length - 1][0]) === (1659968100000)) {
         //     xxxx++
         // }
 
@@ -234,7 +235,7 @@ async function backtrace(strat, monthsback) {
     worstStreak = Math.max(...worstStreak);
     wallet["drawdown"] = 1 - ((1 - (strat.options.percentageRiskedPerTrade/100))**worstStreak);
 
-    console.log(wallet.curUSD);
+    console.log(wallet["curUSD"] + wallet["curPositionAmtIn"]);
     console.log(new Date().getTime() - wholeStart);
 
     let finalWallet = {};

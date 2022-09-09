@@ -17,8 +17,6 @@ let tokens = {
     //Arbitrum
 }
 
-const positionOpenCloseCost = 0.966;
-
 async function openPosition(type, strat, amountIn, SL, TP, curPrice, leverage) {
 
     console.log("type: ", type);
@@ -153,7 +151,8 @@ async function openNewPosition(type, strat, amountIn, SL, TP, curPrice, leverage
 
     let tokenAddy = tokens[strat.token];
 
-    let delta = truncateNum(amountIn * leverage * positionOpenCloseCost, 4);
+    let deltaCost = amountIn * leverage * 0.001;
+    let delta = truncateNum((amountIn - deltaCost) * leverage, 4);
     let acceptable = curPrice * (
         type === "long" ? 1.005 : 
         type === "short" ? 0.995 : 

@@ -70,9 +70,12 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt) {
 }
 
 async function filterMonthListForBest(token, timeframe) {
-    let path = './src/backtest/processed/' + token + "/" + timeframe + "/";
+    // let path = './src/backtest/processed/' + token + "/" + timeframe + "/";
+    let path = './src/backtest/processed/';
     let fileNames = fs.readdirSync(path);
     let wallets = [];
+
+    fileNames = fileNames.filter(val => val.includes(".json"));
 
     for (let i = 0; i < fileNames.length; i++) {
         let res = fs.readFileSync(path + fileNames[i]);
@@ -89,13 +92,34 @@ async function filterMonthListForBest(token, timeframe) {
         }
         return 0;
     });
+    bestUSD = bestUSD.filter(val => val.walletResult.curUSD !== 250);
 
-    let tolerance = 0.25;
-    bestUSD.filter(val => val.walletResult.drawdown <= tolerance);
+    console.log(bestUSD.length);
 
-    // POST
-    bestUSD = bestUSD.slice(0, 100);
-    findBestOver3And6(bestUSD);
+    bestUSD = bestUSD.sort((a,b) => {
+        if (a.walletResult.drawdown > b.walletResult.drawdown) {
+            return 1;
+        }
+        if (b.walletResult.drawdown > a.walletResult.drawdown) {
+            return -1;
+        }
+        return 0;
+    });
+    let tempDD = bestUSD[0].walletResult.drawdown;
+    bestUSD = bestUSD.filter(val => val.walletResult.drawdown === tempDD);
+    console.log(bestUSD.length);
+    bestUSD = wallets.sort((a,b) => {
+        if (a.walletResult.curUSD > b.walletResult.curUSD) {
+            return -1;
+        }
+        if (b.walletResult.curUSD > a.walletResult.curUSD) {
+            return 1;
+        }
+        return 0;
+    });
+    console.log(bestUSD[0])
+
+    // findBestOver3And6(bestUSD);
 }
 
 function sortCURUSD(list) {
@@ -108,8 +132,8 @@ function sortCURUSD(list) {
 }
 function sortDD(list) {
     list = list.sort((a,b) => {
-        if (a.drawdown > b.drawdown) {return -1}
-        if (b.drawdown > a.drawdown) {return 1}
+        if (a.drawdown > b.drawdown) {return 1}
+        if (b.drawdown > a.drawdown) {return -1}
         return 0;
     });
     return list
@@ -174,16 +198,18 @@ async function findBestOver3And6(strats) {
 // await filterMonthListForBest("ETHUSDT", "15m");
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, "AVAXUSDT");
+    // let stratCombos = generateStratCombos(variationScheme, "BTCUSDT");
     // console.log(stratCombos[0]);
     // console.log(stratCombos.length);
     // await findBestStratOver1MAndWrite(stratCombos, 0);
 
-    await filterMonthListForBest("ETHUSDT", "15m");
+    // await filterMonthListForBest("AVAXUSDT", "15m");
 
     if (isMainThread) {
-        let threadCount = 8;
+        let threadCount = 10;
+        // THIS IS THE DREAMA
         let stratCombos = generateStratCombos(variationScheme, "BTCUSDT");
+        // THIS IS THE DREAMA
         console.log("Running with ", threadCount, " threads")
 
         const threads = new Set();
