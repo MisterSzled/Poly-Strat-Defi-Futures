@@ -5,6 +5,7 @@ const bolingerbands = require("./bolingerbands");
 const stdev = require("./stdev");
 const sma = require("./sma");
 const bbw = require("./bbw");
+const cci = require("./cci");
 
 let taFuncs = {
     swingHiLo: swingHiLo,
@@ -15,6 +16,7 @@ let taFuncs = {
     bbw: bbw,
     stdev: stdev,
     sma: sma,
+    cci: cci,
 }
 
 module.exports = taFuncs

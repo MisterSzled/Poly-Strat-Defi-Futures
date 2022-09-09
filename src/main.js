@@ -10,6 +10,7 @@ const cs = require("./general/chalkSpec");
 const getNewPositionProfile = require("./indicators/risk/getNewPositionProfile");
 
 const universal = require("../config").universal;
+const taFuncs = require("./indicators/taFuncs/index")
 
 function processIndicators (strat, pairData) {
     let resultSum = 0;
@@ -35,15 +36,14 @@ function processIndicators (strat, pairData) {
 async function main(strat) {
     global.chain = strat.wallet.chain;
     let pairData = await getPairData(strat.token, strat.timeframe, universal.maxLookBack);
-
     finalResult = processIndicators(strat, pairData);
 
     //THIS IS FOR THE NEW TA BRACKET
     // Data 0 -> length === oldest -> newest COMPLETE candle
     // closeData[closeData.length - 1] is the latest complete candle THIS IS THE STANDARD
-    // let closeData = pairData.slice(0, pairData.length - 1);
+    // let closeData = pairData;
 
-    // taFuncs.bolingerbands(closeData.map(val => val[4]), 15, 2)
+    // taFuncs.cci([...pairData], 15)
     //THIS IS FOR THE NEW TA BRACKET
 
     // TEST

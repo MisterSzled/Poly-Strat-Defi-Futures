@@ -53,5 +53,6 @@ inquirer.prompt(buildQuestions()).then(answers => {
   }
 });
 
+// livebot(strats[1]);
 // backtrace(strats[2], 6);
 // findBestStrat(strats[1]);
