@@ -6,6 +6,8 @@ const stdev = require("./stdev");
 const sma = require("./sma");
 const bbw = require("./bbw");
 const cci = require("./cci");
+const cmo = require("./cmo");
+const change = require("./change");
 
 let taFuncs = {
     swingHiLo: swingHiLo,
@@ -17,6 +19,8 @@ let taFuncs = {
     stdev: stdev,
     sma: sma,
     cci: cci,
+    cmo: cmo,
+    change: change,
 }
 
 module.exports = taFuncs

@@ -43,7 +43,7 @@ async function main(strat) {
     // closeData[closeData.length - 1] is the latest complete candle THIS IS THE STANDARD
     // let closeData = pairData;
 
-    // taFuncs.cci([...pairData], 15)
+    // taFuncs.cmo([...pairData], 15)
     //THIS IS FOR THE NEW TA BRACKET
 
     // TEST
