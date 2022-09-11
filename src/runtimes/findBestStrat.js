@@ -10,7 +10,7 @@ let variationScheme = {
     timeframe: "15m",
     options: {
         // Risk settings
-        swingHighLowLookbackLength: [10, 10, 10],
+        swingHighLowLookbackLength: [10, 30, 5],
         percentageRiskedPerTrade: [25, 25, 5], 
         profitFactor: [2.1, 2.1, 0.1],
     },
@@ -18,30 +18,30 @@ let variationScheme = {
         {
             name: "boomHunter",
             settings: {
-                LPPeriod1: [11, 26, 1],    
+                LPPeriod1: [1, 40, 1],    
 
-                LPPeriod2: [18, 31, 1],    
-                k12: [0.28, 0.46, 0.01], 
+                LPPeriod2: [1, 40, 1],    
+                k12: [0.2, 0.8, 0.01], 
             }
         },
         {
             name: "mhull",
             settings: {
-                length: [600, 700, 100],
+                length: [400, 700, 100],
             }
         },
         {
             name: "volatilityOscillator",
             settings: {
-                volLength: [50, 150, 50]
+                volLength: [50, 200, 25]
             }
         },
     ],
 }
 
 async function writeToFile(newEntries, startingIndex) {
-    // let filename = "./src/backtest/processed/"+startingIndex+".json"
-    let filename = "./src/backtest/processed/"+"WINNERS_10M"+".json"
+    let filename = "./src/backtest/processed/"+startingIndex+".json"
+    // let filename = "./src/backtest/processed/"+"WINNERS_10M"+".json"
 
     fs.writeFileSync(filename, JSON.stringify(newEntries, null, 1), function(err) {
         if (err) {
@@ -57,7 +57,7 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt) {
     let results = [];
     let rolloverLimit = 1000;
     for (let i = 0; i < stratcombos.length; i++) {
-        let newEntry = await backtrace(stratcombos[i], 10);
+        let newEntry = await backtrace(stratcombos[i], 1);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
@@ -261,12 +261,12 @@ async function findBestOver3And6(strats) {
 // await filterMonthListForBest("ETHUSDT", "15m");
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+    let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
     // console.log(stratCombos[0]);
     // console.log(stratCombos.length);
-    // await findBestStratOver1MAndWrite(stratCombos, 0);
+    await findBestStratOver1MAndWrite(stratCombos, 0);
 
-    await filterMonthListForBest("ETHUSDT", "15m");
+    // await filterMonthListForBest("ETHUSDT", "15m");
 
     // let res = fs.readFileSync('./src/backtest/processed/WINNERS_6M.json');
     // res = JSON.parse(res);
