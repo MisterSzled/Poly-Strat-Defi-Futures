@@ -12,35 +12,36 @@ let variationScheme = {
         // Risk settings
         swingHighLowLookbackLength: [10, 10, 10],
         percentageRiskedPerTrade: [25, 25, 5], 
-        profitFactor: [1.8, 2.6, 0.1],
+        profitFactor: [2.1, 2.1, 0.1],
     },
     indicators: [
         {
             name: "boomHunter",
             settings: {
-                LPPeriod1: [13, 17, 1],    
+                LPPeriod1: [11, 26, 1],    
 
-                LPPeriod2: [18, 25, 1],    
-                k12: [0.28, 0.31, 0.01], 
+                LPPeriod2: [18, 31, 1],    
+                k12: [0.28, 0.46, 0.01], 
             }
         },
         {
             name: "mhull",
             settings: {
-                length: [550, 700, 25],
+                length: [600, 700, 100],
             }
         },
         {
             name: "volatilityOscillator",
             settings: {
-                volLength: [75, 200, 25]
+                volLength: [50, 150, 50]
             }
         },
     ],
 }
 
 async function writeToFile(newEntries, startingIndex) {
-    let filename = "./src/backtest/processed/"+startingIndex+".json"
+    // let filename = "./src/backtest/processed/"+startingIndex+".json"
+    let filename = "./src/backtest/processed/"+"WINNERS_10M"+".json"
 
     fs.writeFileSync(filename, JSON.stringify(newEntries, null, 1), function(err) {
         if (err) {
@@ -56,7 +57,7 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt) {
     let results = [];
     let rolloverLimit = 1000;
     for (let i = 0; i < stratcombos.length; i++) {
-        let newEntry = await backtrace(stratcombos[i], 1);
+        let newEntry = await backtrace(stratcombos[i], 10);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
@@ -76,6 +77,10 @@ async function filterMonthListForBest(token, timeframe) {
     let wallets = [];
 
     fileNames = fileNames.filter(val => val.includes(".json"));
+    fileNames = fileNames.filter(val => val !== "WINNERS_10M.json");
+    fileNames = fileNames.filter(val => val !== "WINNERS_6M.json");
+    fileNames = fileNames.filter(val => val !== "WINNERS_3M.json");
+    fileNames = fileNames.filter(val => val !== "WINNERS_1M.json");
 
     for (let i = 0; i < fileNames.length; i++) {
         let res = fs.readFileSync(path + fileNames[i]);
@@ -83,41 +88,52 @@ async function filterMonthListForBest(token, timeframe) {
         wallets = wallets.concat(res);
     }
 
-    let bestUSD = wallets.sort((a,b) => {
-        if (a.walletResult.curUSD > b.walletResult.curUSD) {
-            return -1;
-        }
-        if (b.walletResult.curUSD > a.walletResult.curUSD) {
-            return 1;
-        }
-        return 0;
-    });
-    bestUSD = bestUSD.filter(val => val.walletResult.curUSD !== 250);
+    let winners = wallets.filter(val => val.walletResult.curUSD > 4000);
+    winners = winners.filter(val => val.walletResult.drawdown < 0.6);
+    console.log(winners.length)
+    console.log(winners.map(val => val.walletResult.curUSD))
+    console.log(winners[0])
 
-    console.log(bestUSD.length);
+    // wallets = filterForConsistent(winners);
+    // console.log("consistent length", wallets.length);
+    // writeToFile(winners, 0)
 
-    bestUSD = bestUSD.sort((a,b) => {
-        if (a.walletResult.drawdown > b.walletResult.drawdown) {
-            return 1;
-        }
-        if (b.walletResult.drawdown > a.walletResult.drawdown) {
-            return -1;
-        }
-        return 0;
-    });
-    let tempDD = bestUSD[0].walletResult.drawdown;
-    bestUSD = bestUSD.filter(val => val.walletResult.drawdown === tempDD);
-    console.log(bestUSD.length);
-    bestUSD = wallets.sort((a,b) => {
-        if (a.walletResult.curUSD > b.walletResult.curUSD) {
-            return -1;
-        }
-        if (b.walletResult.curUSD > a.walletResult.curUSD) {
-            return 1;
-        }
-        return 0;
-    });
-    console.log(bestUSD[0])
+    // let bestUSD = wallets.sort((a,b) => {
+    //     if (a.walletResult.curUSD > b.walletResult.curUSD) {
+    //         return -1;
+    //     }
+    //     if (b.walletResult.curUSD > a.walletResult.curUSD) {
+    //         return 1;
+    //     }
+    //     return 0;
+    // });
+    // bestUSD = bestUSD.filter(val => val.walletResult.curUSD !== 250);
+
+    // console.log(bestUSD.length);
+
+    // bestUSD = bestUSD.sort((a,b) => {
+    //     if (a.walletResult.drawdown > b.walletResult.drawdown) {
+    //         return 1;
+    //     }
+    //     if (b.walletResult.drawdown > a.walletResult.drawdown) {
+    //         return -1;
+    //     }
+    //     return 0;
+    // });
+    // let tempDD = bestUSD[0].walletResult.drawdown;
+    // bestUSD = bestUSD.filter(val => val.walletResult.drawdown === tempDD);
+    // console.log(bestUSD.length);
+    // bestUSD = wallets.sort((a,b) => {
+    //     if (a.walletResult.curUSD > b.walletResult.curUSD) {
+    //         return -1;
+    //     }
+    //     if (b.walletResult.curUSD > a.walletResult.curUSD) {
+    //         return 1;
+    //     }
+    //     return 0;
+    // });
+    // console.log(bestUSD[0])
+    // console.log(bestUSD[0].indicators)
 
     // findBestOver3And6(bestUSD);
 }
@@ -137,6 +153,53 @@ function sortDD(list) {
         return 0;
     });
     return list
+}
+
+function filterForConsistent(list) {
+    let result = [];
+    for (let i = 0; i < list.length; i++) {
+        let curWallet = list[i];
+        let monthMap = {}
+        for (let i = 0; i < curWallet.walletResult.positionClosed.length; i++) {
+            let curDate = new Date(curWallet.walletResult.positionClosed[i].date);
+            let id = curDate.getFullYear() + ":" + curDate.getMonth();
+            if (!!monthMap[id]) {
+                monthMap[id].sum = monthMap[id].sum + curWallet.walletResult.positionClosed[i].delta
+                if (curWallet.walletResult.positionClosed[i].delta >= 0) {
+                    monthMap[id].win = monthMap[id].win + 1;
+                } else {
+                    monthMap[id].loss = monthMap[id].loss + 1;
+                }
+            } else {
+                monthMap[id] = {win: 0, loss: 0, sum: 0}
+                monthMap[id].sum = curWallet.walletResult.positionClosed[i].delta
+                if (curWallet.walletResult.positionClosed[i].delta >= 0) {
+                    monthMap[id].win = 1;
+                } else {
+                    monthMap[id].loss = 1;
+                }
+            }
+        }
+
+        let significantTrades = 100 / curWallet.options.percentageRiskedPerTrade;
+        let monthMapKeys = Object.keys(monthMap);
+        let curResult = true;
+        for (let i = 0; i < monthMapKeys.length; i++) {
+            let monthMapAtKey = monthMap[monthMapKeys[i]];
+            if ((monthMapAtKey["win"] + monthMapAtKey["loss"]) >= significantTrades - 1) {
+                if (monthMapAtKey["sum"] < 0) {
+                    // console.log("i: ", i, " sum: ", monthMapAtKey["sum"]);
+                    curResult = false;
+                }
+            }
+        }
+
+        if (curResult) {
+            result.push(curWallet);
+        }
+    }
+    
+    return result;
 }
 
 async function findBestOver3And6(strats) {
@@ -198,51 +261,107 @@ async function findBestOver3And6(strats) {
 // await filterMonthListForBest("ETHUSDT", "15m");
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, "BTCUSDT");
+    // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
     // console.log(stratCombos[0]);
     // console.log(stratCombos.length);
     // await findBestStratOver1MAndWrite(stratCombos, 0);
 
-    // await filterMonthListForBest("AVAXUSDT", "15m");
+    await filterMonthListForBest("ETHUSDT", "15m");
 
-    if (isMainThread) {
-        let threadCount = 10;
-        // THIS IS THE DREAMA
-        let stratCombos = generateStratCombos(variationScheme, "BTCUSDT");
-        // THIS IS THE DREAMA
-        console.log("Running with ", threadCount, " threads")
+    // let res = fs.readFileSync('./src/backtest/processed/WINNERS_6M.json');
+    // res = JSON.parse(res);
+    // res = res.map(val => {
+    //     return {
+    //         opName: val.opName,
+    //         token: val.token,
+    //         timeframe: val.timeframe,
+    //         options: val.options,
+    //         indicators: val.indicators,
+    //     }
+    // });
+    // let stratCombos = res;
 
-        const threads = new Set();
+    // if (isMainThread) {
+    //     let threadCount = 12;
+    //     // THIS IS THE DREAMA
+    //     // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+    //     // THIS IS THE DREAMA
+    //     console.log("Running with ", threadCount, " threads")
 
-        let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
+    //     const threads = new Set();
 
-        for (let i = 0; i < threadCount; i++) {
-            let lower = i*bracketBreadth;
-            let upper = (i+1)*bracketBreadth;
-            console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
+    //     let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
 
-            threads.add(new Worker(__filename, { workerData: 
-                { 
-                    id: i,
-                    lower: lower,
-                    upper: upper,
-                    combos: stratCombos.slice(lower, upper),
-                }
-            }));
-        }
+    //     for (let i = 0; i < threadCount; i++) {
+    //         let lower = i*bracketBreadth;
+    //         let upper = (i+1)*bracketBreadth;
+    //         console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
 
-        threads.forEach(thread => {
-            thread.on('message', (msg) => {
-                console.log(msg)
-            });
-        })
-    } else {
-            parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
-            let start = new Date().getTime();
-            await findBestStratOver1MAndWrite(workerData.combos, workerData.lower);
-            parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
-        // }
-    }
+    //         threads.add(new Worker(__filename, { workerData: 
+    //             { 
+    //                 id: i,
+    //                 lower: lower,
+    //                 upper: upper,
+    //                 combos: stratCombos.slice(lower, upper),
+    //             }
+    //         }));
+    //     }
+
+    //     threads.forEach(thread => {
+    //         thread.on('message', (msg) => {
+    //             console.log(msg)
+    //         });
+    //     })
+    // } else {
+    //         parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
+    //         let start = new Date().getTime();
+    //         await findBestStratOver1MAndWrite(workerData.combos, workerData.lower);
+    //         parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
+    //     // }
+    // }
+
+    // await backtrace({
+    //     "opName": "Generated_0_1005_0_1",
+    //     "token": "ETHUSDT",
+    //     "timeframe": "15m",
+    //     "options": {
+    //      "swingHighLowLookbackLength": 10,
+    //      "percentageRiskedPerTrade": 25,
+    //      "profitFactor": 2.1,
+    //      "atrLength": 14,
+    //      "useLimitOrders": false,
+    //      "gmxLimitAdjustment": 1
+    //     },
+    //     "indicators": [
+    //      {
+    //       "name": "boomHunter",
+    //       "settings": {
+    //        "triggerLength": 1,
+    //        "LPPeriod1": 15,
+    //        "k1": 0,
+    //        "LPPeriod2": 21,
+    //        "k12": 0.43
+    //       }
+    //      },
+    //      {
+    //       "name": "mhull",
+    //       "settings": {
+    //        "source": "close",
+    //        "hullVariation": "HMA",
+    //        "length": 600,
+    //        "lengthMultiplier": 1,
+    //        "useHtf": false,
+    //        "higherTimeframe": "4h"
+    //       }
+    //      },
+    //      {
+    //       "name": "volatilityOscillator",
+    //       "settings": {
+    //        "volLength": 100
+    //       }
+    //      }
+    //     ]
+    //    }, 6)
 }
 
 if (!isMainThread) {

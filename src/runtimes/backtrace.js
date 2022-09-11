@@ -126,6 +126,13 @@ async function backtrace(strat, monthsback) {
 
         let isInPosition = wallet.curPositionAmtIn > 0;
 
+        if (wallet.curPositionAmtIn + wallet.curUSD < 100) {
+            console.log("Borked")
+            break;
+        }
+
+        // console.log("CurUSD: ", wallet.curUSD, " amtIn: ", wallet.curPositionAmtIn)
+
         // console.log(parseInt(mockSlice[mockSlice.length - 1][0]))
         // if (parseInt(mockSlice[mockSlice.length - 1][0]) === (1659968100000)) {
         //     xxxx++
@@ -249,8 +256,10 @@ async function backtrace(strat, monthsback) {
     finalWallet["winratio"]  = wallet["winratio"];
     finalWallet["drawdown"]  = wallet["drawdown"];
     //TEMP
-    finalWallet["indicators"]  = strat["indicators"];
-    finalWallet["options"]  = strat["options"];
+    // finalWallet["indicators"]  = strat["indicators"];
+    // finalWallet["options"]  = strat["options"];
+    finalWallet["positionOpens"]  = wallet["positionOpens"];
+    finalWallet["positionClosed"]  = wallet["positionClosed"];
 
     resetWalletWhole();
     return finalWallet;
