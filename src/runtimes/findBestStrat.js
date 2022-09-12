@@ -57,7 +57,7 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt) {
     let results = [];
     let rolloverLimit = 1000;
     for (let i = 0; i < stratcombos.length; i++) {
-        let newEntry = await backtrace(stratcombos[i], 1);
+        let newEntry = await backtrace(stratcombos[i], 12);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
@@ -261,10 +261,10 @@ async function findBestOver3And6(strats) {
 // await filterMonthListForBest("ETHUSDT", "15m");
 
 async function multiThreadStrats() {
-    let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+    // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
     // console.log(stratCombos[0]);
     // console.log(stratCombos.length);
-    await findBestStratOver1MAndWrite(stratCombos, 0);
+    // await findBestStratOver1MAndWrite(stratCombos, 0);
 
     // await filterMonthListForBest("ETHUSDT", "15m");
 
@@ -281,44 +281,44 @@ async function multiThreadStrats() {
     // });
     // let stratCombos = res;
 
-    // if (isMainThread) {
-    //     let threadCount = 12;
-    //     // THIS IS THE DREAMA
-    //     // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
-    //     // THIS IS THE DREAMA
-    //     console.log("Running with ", threadCount, " threads")
+    if (isMainThread) {
+        let threadCount = 4;
+        // THIS IS THE DREAMA
+        let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+        // THIS IS THE DREAMA
+        console.log("Running with ", threadCount, " threads")
 
-    //     const threads = new Set();
+        const threads = new Set();
 
-    //     let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
+        let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
 
-    //     for (let i = 0; i < threadCount; i++) {
-    //         let lower = i*bracketBreadth;
-    //         let upper = (i+1)*bracketBreadth;
-    //         console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
+        for (let i = 0; i < threadCount; i++) {
+            let lower = i*bracketBreadth;
+            let upper = (i+1)*bracketBreadth;
+            console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
 
-    //         threads.add(new Worker(__filename, { workerData: 
-    //             { 
-    //                 id: i,
-    //                 lower: lower,
-    //                 upper: upper,
-    //                 combos: stratCombos.slice(lower, upper),
-    //             }
-    //         }));
-    //     }
+            threads.add(new Worker(__filename, { workerData: 
+                { 
+                    id: i,
+                    lower: lower,
+                    upper: upper,
+                    combos: stratCombos.slice(lower, upper),
+                }
+            }));
+        }
 
-    //     threads.forEach(thread => {
-    //         thread.on('message', (msg) => {
-    //             console.log(msg)
-    //         });
-    //     })
-    // } else {
-    //         parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
-    //         let start = new Date().getTime();
-    //         await findBestStratOver1MAndWrite(workerData.combos, workerData.lower);
-    //         parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
-    //     // }
-    // }
+        threads.forEach(thread => {
+            thread.on('message', (msg) => {
+                console.log(msg)
+            });
+        })
+    } else {
+            parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
+            let start = new Date().getTime();
+            await findBestStratOver1MAndWrite(workerData.combos, workerData.lower);
+            parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
+        // }
+    }
 
     // await backtrace({
     //     "opName": "Generated_0_1005_0_1",

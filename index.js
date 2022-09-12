@@ -53,6 +53,6 @@ inquirer.prompt(buildQuestions()).then(answers => {
   }
 });
 
-// livebot(strats[1]);
+// livebot(strats[3]);
 // backtrace(strats[2], 6);
 // multiThreadStrats();
