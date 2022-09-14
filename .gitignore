@@ -131,7 +131,6 @@ dist
 
 # Specific folders
 config.js
-src/indicators/library/*
 src/backtest/history/AVAXUSDT/*
 src/backtest/history/ETHUSDT/*
 src/backtest/history/BTCUSDT/*
