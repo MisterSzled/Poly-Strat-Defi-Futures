@@ -207,6 +207,139 @@ function fractal(strat, candleData) {
         finalPriceArray = convertToZigZag(strat, [...candleData], fractalArray);
     }
 
+    // x4-a3-b2-c1-d0
+    let shapeRecognitionRes = 0;
+    if (strat.settings.useShapeRecognition) {
+        let x = finalPriceArray[4].price;
+        let a = finalPriceArray[3].price;
+        let b = finalPriceArray[2].price;
+        let c = finalPriceArray[1].price;
+        let d = finalPriceArray[0].price;
+
+        let xab = Math.abs(b - a) / Math.abs(x - a);
+        let xad = Math.abs(a - d) / Math.abs(x - a);
+        let abc = Math.abs(b - c) / Math.abs(a - b);
+        let bcd = Math.abs(c - d) / Math.abs(b - c);
+
+        console.log("xab ", xab);
+        console.log("xad ", xad);
+        console.log("abc ", abc);
+        console.log("bcd ", bcd);
+
+        let isBat = (_mode) => {
+            let _xab = (xab >= 0.382) && (xab <= 0.5);
+            let _abc = (abc >= 0.382) && (abc <= 0.886);
+            let _bcd = (bcd >= 1.618) && (bcd <= 2.618);
+            let _xad = (xad <= 0.886);
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c));
+        }
+        let isAltBat = (_mode) => {
+            let _xab = xab <= 0.382
+            let _abc = (abc >= 0.382) && (abc <= 0.886)
+            let _bcd = (bcd >= 2.0) && (bcd <= 3.618)
+            let _xad = (xad <= 1.13)
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c));
+        }
+        let isButterfly = (_mode) => {
+            let _xab = xab <= 0.786
+            let _abc = (abc >= 0.382) && (abc <= 0.886)
+            let _bcd = (bcd >= 1.618) && (bcd <= 2.618)
+            let _xad = (xad >= 1.27) && (xad <= 1.618)
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        }
+        let isABCD = (_mode) => {
+            let _abc = (abc >= 0.382) && (abc <= 0.886)
+            let _bcd = (bcd >= 1.13) && (bcd <= 2.618)
+            return _abc && _bcd && (_mode == 1 ? (d < c) : (d > c))
+        }
+        let isGartley = (_mode) => {
+            let _xab = (xab >= 0.5) && (xab <= 0.618) // 0.618
+            let _abc = (abc >= 0.382) && (abc <= 0.886)
+            let _bcd = (bcd >= 1.13) && (bcd <= 2.618)
+            let _xad = (xad >= 0.75) && (xad <= 0.875) // 0.786
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        }
+        let isCrab = (_mode) => {
+            let _xab = (xab >= 0.75) && (xab <= 0.875) // 0.886
+            let _abc = (abc >= 0.382) && (abc <= 0.886)
+            let _bcd = (bcd >= 2.0) && (bcd <= 3.618)
+            let _xad = (xad >= 1.5) && (xad <= 1.625) // 1.618
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        }
+        let isShark = (_mode) => {
+            let _xab = (xab >= 0.5) && (xab <= 0.875) // 0.886
+            let _abc = (abc >= 1.13) && (abc <= 1.618)
+            let _bcd = (bcd >= 1.27) && (bcd <= 2.24)
+            let _xad = (xad >= 0.88) && (xad <= 1.13)
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        }
+        let is5o = (_mode) => {
+            let _xab = (xab >= 1.13) && (xab <= 1.618)
+            let _abc = (abc >= 1.618) && (abc <= 2.24)
+            let _bcd = (bcd >= 0.5) && (bcd <= 0.625) // 0.5
+            let _xad = (xad >= 0.0) && (xad <= 0.236) // negative?
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        }
+        let isWolf = (_mode) => {
+            let _xab = (xab >= 1.27) && (xab <= 1.618)
+            let _abc = (abc >= 0) && (abc <= 5)
+            let _bcd = (bcd >= 1.27) && (bcd <= 1.618)
+            let _xad = (xad >= 0.0) && (xad <= 5)
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        }
+        let isHnS = (_mode) => {
+            let _xab = (xab >= 2.0) && (xab <= 10)
+            let _abc = (abc >= 0.90) && (abc <= 1.1)
+            let _bcd = (bcd >= 0.236) && (bcd <= 0.88)
+            let _xad = (xad >= 0.90) && (xad <= 1.1)
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        }
+        let isConTria = (_mode) => {
+            let _xab = (xab >= 0.382) && (xab <= 0.618)
+            let _abc = (abc >= 0.382) && (abc <= 0.618)
+            let _bcd = (bcd >= 0.382) && (bcd <= 0.618)
+            let _xad = (xad >= 0.236) && (xad <= 0.764)
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        }
+        let isExpTria = (_mode) => {
+            let _xab = (xab >= 1.236) && (xab <= 1.618)
+            let _abc = (abc >= 1.000) && (abc <= 1.618)
+            let _bcd = (bcd >= 1.236) && (bcd <= 2.000)
+            let _xad = (xad >= 2.000) && (xad <= 2.236)
+            return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        }
+
+        if (isBat(1) || 
+            isAltBat(1) || 
+            isButterfly(1) || 
+            isABCD(1) || 
+            isGartley(1) || 
+            isCrab(1) || 
+            isShark(1) || 
+            is5o(1) || 
+            isWolf(1) || 
+            isHnS(1) || 
+            isConTria(1) || 
+            isExpTria(1)) {
+            shapeRecognitionRes = 1;
+        }
+        if (isBat(-1) || 
+            isAltBat(-1) || 
+            isButterfly(-1) || 
+            isABCD(-1) || 
+            isGartley(-1) || 
+            isCrab(-1) || 
+            isShark(-1) || 
+            is5o(-1) || 
+            isWolf(-1) || 
+            isHnS(-1) || 
+            isConTria(-1) || 
+            isExpTria(-1)) {
+            shapeRecognitionRes = 1;
+        }
+
+    }
+
     console.log(finalPriceArray)
 }
 
