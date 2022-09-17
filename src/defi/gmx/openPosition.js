@@ -158,6 +158,8 @@ async function openNewPosition(type, strat, amountIn, SL, TP, curPrice, leverage
         type === "short" ? 0.995 : 
         0);
 
+    amountIn = truncateNum(amountIn, 4);
+
     amountIn = ethers.utils.parseUnits(`${amountIn}`, 6);
     delta = ethers.utils.parseUnits(`${delta}`, 30);
     acceptable = ethers.utils.parseUnits(`${acceptable}`, 30);
