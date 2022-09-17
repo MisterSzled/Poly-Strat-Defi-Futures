@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 // const log = console.log;
 
-const showLogging = false;
+const showLogging = true;
 const log = showLogging ? console.log : () => {};
 
 let long = (text)    => log(chalk.greenBright(text));
@@ -14,6 +14,9 @@ let process = (text) => log(chalk.cyanBright(text));
 let win = (text)     => log(chalk.greenBright(text));
 let fail = (text)    => log(chalk.redBright(text));
 
+let red = (text) => chalk.redBright(text);
+let green = (text) => chalk.greenBright(text);
+
 let indexer = () => log(chalk.yellowBright.bold(
     "<¥£$>«»<¥£$><¥£$¥£$¥£$¥£$¥£><¥£$>«»<¥£$>\n" +
     "<¥£$>«»<¥£$>░░░░░░░░░░░░░░░░<¥£$>«»<¥£$>\n" +
@@ -22,4 +25,4 @@ let indexer = () => log(chalk.yellowBright.bold(
     "<¥£$>«»<¥£$><¥£$¥£$¥£$¥£$¥£><¥£$>«»<¥£$>\n"
     ));
 
-module.exports = {header, process, win, fail, indexer, long, short, longH, shortH};
+module.exports = {header, process, win, fail, indexer, long, short, longH, shortH, red, green};

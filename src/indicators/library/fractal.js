@@ -193,110 +193,106 @@ function convertToZigZag(strat, candleData, fractalArray) {
     return result;
 }
 
-function getShapes(priceSlice) {
+function getShapes(priceSlice, strat, curPrice) {
     let x = priceSlice[4].price;
     let a = priceSlice[3].price;
     let b = priceSlice[2].price;
     let c = priceSlice[1].price;
     let d = priceSlice[0].price;
 
-    // console.log("x ", x)
-    // console.log("a ", a)
-    // console.log("b ", b)
-    // console.log("c ", c)
-    // console.log("d ", d + "\n")
-
     let xab = Math.abs(b - a) / Math.abs(x - a);
     let xad = Math.abs(a - d) / Math.abs(x - a);
     let abc = Math.abs(b - c) / Math.abs(a - b);
     let bcd = Math.abs(c - d) / Math.abs(b - c);
-
-    // console.log("xab ", xab);
-    // console.log("xad ", xad);
-    // console.log("abc ", abc);
-    // console.log("bcd ", bcd + "\n");
 
     let isBat = (_mode) => {
         let _xab = (xab >= 0.382) && (xab <= 0.5);
         let _abc = (abc >= 0.382) && (abc <= 0.886);
         let _bcd = (bcd >= 1.618) && (bcd <= 2.618);
         let _xad = (xad <= 0.886);
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c));
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c));
     }
     let isAltBat = (_mode) => {
         let _xab = xab <= 0.382
         let _abc = (abc >= 0.382) && (abc <= 0.886)
         let _bcd = (bcd >= 2.0) && (bcd <= 3.618)
         let _xad = (xad <= 1.13)
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c));
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c));
     }
     let isButterfly = (_mode) => {
         let _xab = xab <= 0.786
         let _abc = (abc >= 0.382) && (abc <= 0.886)
         let _bcd = (bcd >= 1.618) && (bcd <= 2.618)
         let _xad = (xad >= 1.27) && (xad <= 1.618)
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c))
     }
     let isABCD = (_mode) => {
         let _abc = (abc >= 0.382) && (abc <= 0.886)
         let _bcd = (bcd >= 1.13) && (bcd <= 2.618)
-        return _abc && _bcd && (_mode == 1 ? (d < c) : (d > c))
+        return _abc && _bcd && (_mode === 1 ? (d < c) : (d > c))
     }
     let isGartley = (_mode) => {
         let _xab = (xab >= 0.5) && (xab <= 0.618) // 0.618
         let _abc = (abc >= 0.382) && (abc <= 0.886)
         let _bcd = (bcd >= 1.13) && (bcd <= 2.618)
         let _xad = (xad >= 0.75) && (xad <= 0.875) // 0.786
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c))
     }
     let isCrab = (_mode) => {
         let _xab = (xab >= 0.75) && (xab <= 0.875) // 0.886
         let _abc = (abc >= 0.382) && (abc <= 0.886)
         let _bcd = (bcd >= 2.0) && (bcd <= 3.618)
         let _xad = (xad >= 1.5) && (xad <= 1.625) // 1.618
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c))
     }
     let isShark = (_mode) => {
         let _xab = (xab >= 0.5) && (xab <= 0.875) // 0.886
         let _abc = (abc >= 1.13) && (abc <= 1.618)
         let _bcd = (bcd >= 1.27) && (bcd <= 2.24)
         let _xad = (xad >= 0.88) && (xad <= 1.13)
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        return _xab && _abc && _bcd && _xad && (_mode ==+ 1 ? (d < c) : (d > c))
     }
     let is5o = (_mode) => {
         let _xab = (xab >= 1.13) && (xab <= 1.618)
         let _abc = (abc >= 1.618) && (abc <= 2.24)
         let _bcd = (bcd >= 0.5) && (bcd <= 0.625) // 0.5
         let _xad = (xad >= 0.0) && (xad <= 0.236) // negative?
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c))
     }
     let isWolf = (_mode) => {
         let _xab = (xab >= 1.27) && (xab <= 1.618)
         let _abc = (abc >= 0) && (abc <= 5)
         let _bcd = (bcd >= 1.27) && (bcd <= 1.618)
         let _xad = (xad >= 0.0) && (xad <= 5)
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c))
     }
     let isHnS = (_mode) => {
         let _xab = (xab >= 2.0) && (xab <= 10)
         let _abc = (abc >= 0.90) && (abc <= 1.1)
         let _bcd = (bcd >= 0.236) && (bcd <= 0.88)
         let _xad = (xad >= 0.90) && (xad <= 1.1)
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c))
     }
     let isConTria = (_mode) => {
         let _xab = (xab >= 0.382) && (xab <= 0.618)
         let _abc = (abc >= 0.382) && (abc <= 0.618)
         let _bcd = (bcd >= 0.382) && (bcd <= 0.618)
         let _xad = (xad >= 0.236) && (xad <= 0.764)
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c))
     }
     let isExpTria = (_mode) => {
         let _xab = (xab >= 1.236) && (xab <= 1.618)
         let _abc = (abc >= 1.000) && (abc <= 1.618)
         let _bcd = (bcd >= 1.236) && (bcd <= 2.000)
         let _xad = (xad >= 2.000) && (xad <= 2.236)
-        return _xab && _abc && _bcd && _xad && (_mode == 1 ? (d < c) : (d > c))
+        return _xab && _abc && _bcd && _xad && (_mode === 1 ? (d < c) : (d > c))
+    }
+    let isABCReversal = (_mode) => {
+        let _ab  = _mode === 1 ? a > b : b > a;
+        let _bc  = _mode == 1 ? b < c : b > c 
+        let _abc = (abc > strat.settings.ABCReversale_AB_minmax[0]) && (abc < strat.settings.ABCReversale_AB_minmax[1]);
+        let _bcd = bcd > strat.settings.ABCReversale_BC_min;
+        return _ab && _bc && _abc && _bcd && (_mode === 1 ? (curPrice > c) : (curPrice < c))
     }
 
     return {
@@ -312,10 +308,22 @@ function getShapes(priceSlice) {
         isHnS:      {bull: isHnS(1), bear: isHnS(-1)}, 
         isConTria:  {bull: isConTria(1), bear: isConTria(-1)}, 
         isExpTria:  {bull: isExpTria(1), bear: isExpTria(-1)}, 
+        isABCReversal:  {bull: isABCReversal(1), bear: isABCReversal(-1)}, 
     }
 }
 
+function logShape(type, zeros, ones) {
+    let title = type.slice(2, type.length)
+    let gap = " ".repeat(11 - title.length)
+    cs.process(title + ": " + gap +
+        (zeros[type]["bull"] ? cs.green("X") : zeros[type]["bear"] ? cs.red("X") : "-") + " :: " +
+        (ones[type]["bull"]  ? cs.green("X") : ones[type]["bear"]  ? cs.red("X") : "-")
+    )
+}
+
 function fractal(strat, candleData) {
+    cs.header("Fractals");
+
     candleData = candleData.slice(0, candleData.length - 1)
     candleData.reverse();
 
@@ -330,51 +338,59 @@ function fractal(strat, candleData) {
     }
 
     // x4-a3-b2-c1-d0
-    let shapeRecognitionRes = 0;
-    if (strat.settings.useShapeRecognition) {
-        let shapes0 = getShapes([...finalPriceArray].slice(0, 5))
-        let shapes1 = getShapes([...finalPriceArray].slice(1, 6))
+    let result = 0;
+    let shapes0 = getShapes([...finalPriceArray].slice(0, 5), strat, candleData[0][4]);
+    let shapes1 = getShapes([...finalPriceArray].slice(1, 6), strat, candleData[0][4]);
 
-        if (
-            (shapes0.isBat["bull"]       && !shapes1.isBat["bull"])       ||
-            (shapes0.isAltBat["bull"]    && !shapes1.isAltBat["bull"])    ||
-            (shapes0.isButterfly["bull"] && !shapes1.isButterfly["bull"]) ||
-            (shapes0.isABCD["bull"]      && !shapes1.isABCD["bull"])      ||
-            (shapes0.isGartley["bull"]   && !shapes1.isGartley["bull"])   ||
-            (shapes0.isCrab["bull"]      && !shapes1.isCrab["bull"])      ||
-            (shapes0.isShark["bull"]     && !shapes1.isShark["bull"])     ||
-            (shapes0.is5o["bull"]        && !shapes1.is5o["bull"])        ||
-            (shapes0.isWolf["bull"]      && !shapes1.isWolf["bull"])      ||
-            (shapes0.isHnS["bull"]       && !shapes1.isHnS["bull"])       ||
-            (shapes0.isConTria["bull"]   && !shapes1.isConTria["bull"])   ||
-            (shapes0.isExpTria["bull"]   && !shapes1.isExpTria["bull"])
-        ) {
-            shapeRecognitionRes = 1;
-        }
-        if (
-            (shapes0.isBat["bear"]       && !shapes1.isBat["bear"])       ||
-            (shapes0.isAltBat["bear"]    && !shapes1.isAltBat["bear"])    ||
-            (shapes0.isButterfly["bear"] && !shapes1.isButterfly["bear"]) ||
-            (shapes0.isABCD["bear"]      && !shapes1.isABCD["bear"])      ||
-            (shapes0.isGartley["bear"]   && !shapes1.isGartley["bear"])   ||
-            (shapes0.isCrab["bear"]      && !shapes1.isCrab["bear"])      ||
-            (shapes0.isShark["bear"]     && !shapes1.isShark["bear"])     ||
-            (shapes0.is5o["bear"]        && !shapes1.is5o["bear"])        ||
-            (shapes0.isWolf["bear"]      && !shapes1.isWolf["bear"])      ||
-            (shapes0.isHnS["bear"]       && !shapes1.isHnS["bear"])       ||
-            (shapes0.isConTria["bear"]   && !shapes1.isConTria["bear"])   ||
-            (shapes0.isExpTria["bear"]   && !shapes1.isExpTria["bear"])
-        ) {
-            shapeRecognitionRes = 1;
-        }
+    if (strat.settings.use_ABCReversal) logShape("isABCReversal", shapes0, shapes1);
+    if (strat.settings.use_Bat)         logShape("isBat", shapes0, shapes1);
+    if (strat.settings.use_AltBat)      logShape("isAltBat", shapes0, shapes1);
+    if (strat.settings.use_Butterfly)   logShape("isButterfly", shapes0, shapes1);
+    if (strat.settings.use_Gartley)     logShape("isGartley", shapes0, shapes1);
+    if (strat.settings.use_Crab)        logShape("isCrab", shapes0, shapes1);
+    if (strat.settings.use_Shark)       logShape("isShark", shapes0, shapes1);
+    if (strat.settings.use_is5o)        logShape("is5o", shapes0, shapes1);
+    if (strat.settings.use_Wolf)        logShape("isWolf", shapes0, shapes1);
+    if (strat.settings.use_HnS)         logShape("isHnS", shapes0, shapes1);
+    if (strat.settings.use_ConTria)     logShape("isConTria", shapes0, shapes1);
+    if (strat.settings.use_ExpTria)     logShape("isExpTria", shapes0, shapes1);
+
+    if (
+        (strat.settings.use_ABCReversal && (shapes0.isABCReversal["bull"] && !shapes1.isABCReversal["bull"])) ||
+        (strat.settings.use_Bat       && (shapes0.isBat["bull"]       && !shapes1.isBat["bull"]))       ||
+        (strat.settings.use_AltBat    && (shapes0.isAltBat["bull"]    && !shapes1.isAltBat["bull"]))    ||
+        (strat.settings.use_Butterfly && (shapes0.isButterfly["bull"] && !shapes1.isButterfly["bull"])) ||
+        (strat.settings.use_ABCD      && (shapes0.isABCD["bull"]      && !shapes1.isABCD["bull"]))      ||
+        (strat.settings.use_Gartley   && (shapes0.isGartley["bull"]   && !shapes1.isGartley["bull"]))   ||
+        (strat.settings.use_Crab      && (shapes0.isCrab["bull"]      && !shapes1.isCrab["bull"]))      ||
+        (strat.settings.use_Shark     && (shapes0.isShark["bull"]     && !shapes1.isShark["bull"]))     ||
+        (strat.settings.use_is5o      && (shapes0.is5o["bull"]        && !shapes1.is5o["bull"]))        ||
+        (strat.settings.use_Wolf      && (shapes0.isWolf["bull"]      && !shapes1.isWolf["bull"]))      ||
+        (strat.settings.use_HnS       && (shapes0.isHnS["bull"]       && !shapes1.isHnS["bull"]))       ||
+        (strat.settings.use_ConTria   && (shapes0.isConTria["bull"]   && !shapes1.isConTria["bull"]))   ||
+        (strat.settings.use_ExpTria   && (shapes0.isExpTria["bull"]   && !shapes1.isExpTria["bull"]))
+    ) {
+        shapeRecognitionRes = 1;
+    }
+    if (
+        (strat.settings.use_ABCReversal && (shapes0.isABCReversal["bear"] && !shapes1.isABCReversal["bear"])) ||
+        (strat.settings.use_Bat       && (shapes0.isBat["bear"]       && !shapes1.isBat["bear"]))       ||
+        (strat.settings.use_AltBat    && (shapes0.isAltBat["bear"]    && !shapes1.isAltBat["bear"]))    ||
+        (strat.settings.use_Butterfly && (shapes0.isButterfly["bear"] && !shapes1.isButterfly["bear"])) ||
+        (strat.settings.use_ABCD      && (shapes0.isABCD["bear"]      && !shapes1.isABCD["bear"]))      ||
+        (strat.settings.use_Gartley   && (shapes0.isGartley["bear"]   && !shapes1.isGartley["bear"]))   ||
+        (strat.settings.use_Crab      && (shapes0.isCrab["bear"]      && !shapes1.isCrab["bear"]))      ||
+        (strat.settings.use_Shark     && (shapes0.isShark["bear"]     && !shapes1.isShark["bear"]))     ||
+        (strat.settings.use_is5o      && (shapes0.is5o["bear"]        && !shapes1.is5o["bear"]))        ||
+        (strat.settings.use_Wolf      && (shapes0.isWolf["bear"]      && !shapes1.isWolf["bear"]))      ||
+        (strat.settings.use_HnS       && (shapes0.isHnS["bear"]       && !shapes1.isHnS["bear"]))       ||
+        (strat.settings.use_ConTria   && (shapes0.isConTria["bear"]   && !shapes1.isConTria["bear"]))   ||
+        (strat.settings.use_ExpTria   && (shapes0.isExpTria["bear"]   && !shapes1.isExpTria["bear"]))
+    ) {
+        shapeRecognitionRes = -1;
     }
 
-    if (strat.settings.useLightningBolt) {
-        
-    }
-
-    return shapeRecognitionRes;
-    // console.log(finalPriceArray)
+    return result;
 }
 
 module.exports = fractal;
