@@ -290,7 +290,7 @@ function getShapes(priceSlice, strat, curPrice) {
     let isABCReversal = (_mode) => {
         let _ab  = _mode === 1 ? a > b : b > a;
         let _bc  = _mode == 1 ? b < c : b > c 
-        let _abc = (abc > strat.settings.ABCReversale_AB_minmax[0]) && (abc < strat.settings.ABCReversale_AB_minmax[1]);
+        let _abc = (abc > strat.settings.ABCReversale_AB_min) && (abc < strat.settings.ABCReversale_AB_max);
         let _bcd = bcd > strat.settings.ABCReversale_BC_min;
         return _ab && _bc && _abc && _bcd && (_mode === 1 ? (curPrice > c) : (curPrice < c))
     }
@@ -370,7 +370,7 @@ function fractal(strat, candleData) {
         (strat.settings.use_ConTria   && (shapes0.isConTria["bull"]   && !shapes1.isConTria["bull"]))   ||
         (strat.settings.use_ExpTria   && (shapes0.isExpTria["bull"]   && !shapes1.isExpTria["bull"]))
     ) {
-        shapeRecognitionRes = 1;
+        result = 1;
     }
     if (
         (strat.settings.use_ABCReversal && (shapes0.isABCReversal["bear"] && !shapes1.isABCReversal["bear"])) ||
@@ -387,7 +387,7 @@ function fractal(strat, candleData) {
         (strat.settings.use_ConTria   && (shapes0.isConTria["bear"]   && !shapes1.isConTria["bear"]))   ||
         (strat.settings.use_ExpTria   && (shapes0.isExpTria["bear"]   && !shapes1.isExpTria["bear"]))
     ) {
-        shapeRecognitionRes = -1;
+        result = -1;
     }
 
     return result;

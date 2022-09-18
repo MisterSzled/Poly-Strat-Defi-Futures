@@ -12,7 +12,7 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt) {
     let results = [];
     let rolloverLimit = 1000;
     for (let i = 0; i < stratcombos.length; i++) {
-        let newEntry = await backtrace(stratcombos[i], 12);
+        let newEntry = await backtrace(stratcombos[i], 6);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
@@ -57,8 +57,10 @@ async function filterMonthListForBest(token, timeframe) {
         return 0;
     });
 
-    console.log("USD Winner:", bestUSD[0]);
-    console.log("DD Winner:", bestDD[0]);
+    console.log("USD Winner:", bestUSD[1].walletResult);
+    console.log("USD Winner:", bestUSD[1].indicators);
+    console.log("DD Winner:", bestDD[1].walletResult);
+    console.log("DD Winner:", bestDD[1].indicators);
 }
 
 function filterForConsistent(list) {
@@ -106,51 +108,80 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
-    console.log(stratCombos[0]);
-    console.log(stratCombos.length);
+    // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+    // console.log(stratCombos[0].indicators);
+    // console.log(stratCombos.length);
+
     // await findBestStratOver1MAndWrite(stratCombos, 0);
 
     // await filterMonthListForBest("ETHUSDT", "15m");
 
-    // if (isMainThread) {
-    //     let threadCount = 4;
-    //     // THIS IS THE DREAMA
-    //     let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
-    //     // THIS IS THE DREAMA
-    //     console.log("Running with ", threadCount, " threads")
+    // YOU NEED TO RUN IT OVER 3M NOW
 
-    //     const threads = new Set();
+    // console.log(backtrace({
+    //     "opName": "Generated_0_0",
+    //     "token": "ETHUSDT",
+    //     "timeframe": "15m",
+    //     "options": {
+    //      "swingHighLowLookbackLength": 10,
+    //      "percentageRiskedPerTrade": 25,
+    //      "profitFactor": 2.1,
+    //      "atrLength": 14,
+    //      "useLimitOrders": false,
+    //      "gmxLimitAdjustment": 1
+    //     },
+    //     "indicators": [
+    //      {
+    //       "name": "fractal",
+    //       "settings": {
+    //        "filterBillWilliams": true,
+    //        "useTimeFractals": true,
+    //        "timeframe": 17,
+    //        "use_ABCReversal": true,
+    //        "ABCReversale_AB_min": 0.02,
+    //        "ABCReversale_AB_max": 0.99,
+    //        "ABCReversale_BC_min": 0.5
+    //       }
+    //      }
+    // ]}, 4))
 
-    //     let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
+    if (isMainThread) {
+        let threadCount = 8;
+        // THIS IS THE DREAMA
+        let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+        // THIS IS THE DREAMA
+        console.log("Running with ", threadCount, " threads")
 
-    //     for (let i = 0; i < threadCount; i++) {
-    //         let lower = i*bracketBreadth;
-    //         let upper = (i+1)*bracketBreadth;
-    //         console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
+        const threads = new Set();
 
-    //         threads.add(new Worker(__filename, { workerData: 
-    //             { 
-    //                 id: i,
-    //                 lower: lower,
-    //                 upper: upper,
-    //                 combos: stratCombos.slice(lower, upper),
-    //             }
-    //         }));
-    //     }
+        let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
 
-    //     threads.forEach(thread => {
-    //         thread.on('message', (msg) => {
-    //             console.log(msg)
-    //         });
-    //     })
-    // } else {
-    //         parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
-    //         let start = new Date().getTime();
-    //         await findBestStratOver1MAndWrite(workerData.combos, workerData.lower);
-    //         parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
-    //     // }
-    // }
+        for (let i = 0; i < threadCount; i++) {
+            let lower = i*bracketBreadth;
+            let upper = (i+1)*bracketBreadth;
+            console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
+
+            threads.add(new Worker(__filename, { workerData: 
+                { 
+                    id: i,
+                    lower: lower,
+                    upper: upper,
+                    combos: stratCombos.slice(lower, upper),
+                }
+            }));
+        }
+
+        threads.forEach(thread => {
+            thread.on('message', (msg) => {
+                console.log(msg)
+            });
+        })
+    } else {
+            parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
+            let start = new Date().getTime();
+            await findBestStratOver1MAndWrite(workerData.combos, workerData.lower);
+            parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
+    }
 }
 
 if (!isMainThread) {
