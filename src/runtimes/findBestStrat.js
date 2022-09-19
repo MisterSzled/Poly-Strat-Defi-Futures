@@ -57,10 +57,16 @@ async function filterMonthListForBest(token, timeframe) {
         return 0;
     });
 
-    console.log("USD Winner:", bestUSD[1].walletResult);
-    console.log("USD Winner:", bestUSD[1].indicators);
-    console.log("DD Winner:", bestDD[1].walletResult);
-    console.log("DD Winner:", bestDD[1].indicators);
+    bestUSD[0].walletResult.positionOpens = [];
+    bestUSD[0].walletResult.positionClosed = [];
+
+    bestDD[0].walletResult.positionOpens = [];
+    bestDD[0].walletResult.positionClosed = [];
+
+    console.log("USD Winner:", bestUSD[0].walletResult);
+    console.log("USD Winner:", bestUSD[0].indicators);
+    // console.log("DD Winner:", bestDD[0].walletResult);
+    // console.log("DD Winner:", bestDD[0].indicators);
 }
 
 function filterForConsistent(list) {
@@ -108,24 +114,24 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
-    // console.log(stratCombos[0].indicators);
-    // console.log(stratCombos.length);
+    let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+    // console.log(stratCombos[0]);
+    console.log(stratCombos.length);
 
     // await findBestStratOver1MAndWrite(stratCombos, 0);
 
-    // await filterMonthListForBest("ETHUSDT", "15m");
+    await filterMonthListForBest("ETHUSDT", "15m");
 
     // YOU NEED TO RUN IT OVER 3M NOW
 
-    // console.log(backtrace({
+    // console.log(await backtrace({
     //     "opName": "Generated_0_0",
     //     "token": "ETHUSDT",
     //     "timeframe": "15m",
     //     "options": {
     //      "swingHighLowLookbackLength": 10,
-    //      "percentageRiskedPerTrade": 25,
-    //      "profitFactor": 2.1,
+    //      "percentageRiskedPerTrade": 10,
+    //      "profitFactor": 2,
     //      "atrLength": 14,
     //      "useLimitOrders": false,
     //      "gmxLimitAdjustment": 1
@@ -134,54 +140,56 @@ async function multiThreadStrats() {
     //      {
     //       "name": "fractal",
     //       "settings": {
-    //        "filterBillWilliams": true,
+    //        "filterBillWilliams": false,
     //        "useTimeFractals": true,
-    //        "timeframe": 17,
+    //        "timeframe": 31,
     //        "use_ABCReversal": true,
     //        "ABCReversale_AB_min": 0.02,
-    //        "ABCReversale_AB_max": 0.99,
-    //        "ABCReversale_BC_min": 0.5
+    //        "ABCReversale_AB_max": 0.79,
+    //        "ABCReversale_BC_min": 1.25
     //       }
     //      }
-    // ]}, 4))
+    // ]}, 3))
 
-    if (isMainThread) {
-        let threadCount = 8;
-        // THIS IS THE DREAMA
-        let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
-        // THIS IS THE DREAMA
-        console.log("Running with ", threadCount, " threads")
+    // Something is wrong here with the backtracer - try running it with just 1 thread or no multi atall
 
-        const threads = new Set();
+    // if (isMainThread) {
+    //     let threadCount = 3;
+    //     // THIS IS THE DREAMA
+    //     let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+    //     // THIS IS THE DREAMA
+    //     console.log("Running with ", threadCount, " threads")
 
-        let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
+    //     const threads = new Set();
 
-        for (let i = 0; i < threadCount; i++) {
-            let lower = i*bracketBreadth;
-            let upper = (i+1)*bracketBreadth;
-            console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
+    //     let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
 
-            threads.add(new Worker(__filename, { workerData: 
-                { 
-                    id: i,
-                    lower: lower,
-                    upper: upper,
-                    combos: stratCombos.slice(lower, upper),
-                }
-            }));
-        }
+    //     for (let i = 0; i < threadCount; i++) {
+    //         let lower = i*bracketBreadth;
+    //         let upper = (i+1)*bracketBreadth;
+    //         console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
 
-        threads.forEach(thread => {
-            thread.on('message', (msg) => {
-                console.log(msg)
-            });
-        })
-    } else {
-            parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
-            let start = new Date().getTime();
-            await findBestStratOver1MAndWrite(workerData.combos, workerData.lower);
-            parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
-    }
+    //         threads.add(new Worker(__filename, { workerData: 
+    //             { 
+    //                 id: i,
+    //                 lower: lower,
+    //                 upper: upper,
+    //                 combos: stratCombos.slice(lower, upper),
+    //             }
+    //         }));
+    //     }
+
+    //     threads.forEach(thread => {
+    //         thread.on('message', (msg) => {
+    //             console.log(msg)
+    //         });
+    //     })
+    // } else {
+    //         parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
+    //         let start = new Date().getTime();
+    //         await findBestStratOver1MAndWrite(workerData.combos, workerData.lower);
+    //         parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
+    // }
 }
 
 if (!isMainThread) {

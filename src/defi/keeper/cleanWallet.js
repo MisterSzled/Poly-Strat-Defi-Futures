@@ -96,9 +96,9 @@ async function cleanWallet(wallet) {
     );
     orderIndex = parseInt(orderIndex);
 
-    if (orderIndex > 5) {
+    if (orderIndex >= 3) {
         let orderIndexes = [];
-        for (let i = orderIndex - 1; i > orderIndex - 11; i--) {
+        for (let i = orderIndex - 1; (i > orderIndex - 11) && (i > 0); i--) {
             orderIndexes.push(i);
         }
     
