@@ -195,9 +195,9 @@ async function multiThreadStrats() {
     //      }
     // ]}, 3)
     
-    console.log("usd: ", tempRes.curUSD)
-    console.log("win: ",tempRes.winratio)
-    console.log("dd: ",tempRes.drawdown)
+    // console.log("usd: ", tempRes.curUSD)
+    // console.log("win: ",tempRes.winratio)
+    // console.log("dd: ",tempRes.drawdown)
 
     // Something is wrong here with the backtracer - try running it with just 1 thread or no multi atall
 

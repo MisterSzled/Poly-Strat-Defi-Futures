@@ -32,34 +32,97 @@ function getOptionsSeries(scheme) {
 }
 
 function generateStratCombos (variationScheme, targetToken) {
+    // For ABC
+    // let fractal_map = [];
+    // let fractalSeries = getIndicatorSeries(variationScheme, "fractal");
+    // for (let a = 0; a < fractalSeries.filterBillWilliams.length; a++) {
+    //     for (let b = 0; b < fractalSeries.useTimeFractals.length; b++) {
+    //         for (let c = 0; c < fractalSeries.timeframe.length; c++) {
+    //             for (let e = 0; e < fractalSeries.ABCReversale_AB_min.length; e++) {
+    //                 for (let f = 0; f < fractalSeries.ABCReversale_AB_max.length; f++) {
+    //                     for (let g = 0; g < fractalSeries.ABCReversale_BC_min.length; g++) {
+    //                         fractal_map.push({
+    //                             name: "fractal",
+
+    //                             settings: {
+    //                                 filterBillWilliams:  fractalSeries.filterBillWilliams[a],
+    //                                 useTimeFractals:     fractalSeries.useTimeFractals[b],
+    //                                 timeframe:           fractalSeries.timeframe[c],
+
+    //                                 use_ABCReversal:     true,
+    //                                 ABCReversale_AB_min: fractalSeries.ABCReversale_AB_min[e], 
+    //                                 ABCReversale_AB_max: fractalSeries.ABCReversale_AB_max[f],
+    //                                 ABCReversale_BC_min: fractalSeries.ABCReversale_BC_min[g]
+    //                             }
+    //                         });
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+
+    // For IJKLMN
     let fractal_map = [];
     let fractalSeries = getIndicatorSeries(variationScheme, "fractal");
-    for (let a = 0; a < fractalSeries.filterBillWilliams.length; a++) {
-        for (let b = 0; b < fractalSeries.useTimeFractals.length; b++) {
-            for (let c = 0; c < fractalSeries.timeframe.length; c++) {
-                for (let e = 0; e < fractalSeries.ABCReversale_AB_min.length; e++) {
-                    for (let f = 0; f < fractalSeries.ABCReversale_AB_max.length; f++) {
-                        for (let g = 0; g < fractalSeries.ABCReversale_BC_min.length; g++) {
+    // for (let a = 0; a < fractalSeries.filterBillWilliams.length; a++) {
+    // for (let b = 0; b < fractalSeries.useTimeFractals.length; b++) {
+    for (let c = 0; c < fractalSeries.timeframe.length; c++) {
+    // for (let d = 0; d < fractalSeries.IJKLMN_use_J_as_pivot.length; d++) {
+        for (let e = 0; e < fractalSeries.IJKLMN_IJK_min.length; e++) {
+        for (let f = 0; f < fractalSeries.IJKLMN_IJK_max.length; f++) {
+            for (let g = 0; g < fractalSeries.IJKLMN_IJN_min.length; g++) {
+            for (let h = 0; h < fractalSeries.IJKLMN_IJN_max.length; h++) {
+                for (let i = 0; i < fractalSeries.IJKLMN_JKL_min.length; i++) {
+                for (let j = 0; j < fractalSeries.IJKLMN_JKL_max.length; j++) {
+                    for (let l = 0; l < fractalSeries.IJKLMN_KLM_min.length; l++) {
+                    for (let m = 0; m < fractalSeries.IJKLMN_KLM_max.length; m++) {
+                        for (let n = 0; n < fractalSeries.IJKLMN_LMN_min.length; n++) {
+                        for (let o = 0; o < fractalSeries.IJKLMN_LMN_max.length; o++) {
                             fractal_map.push({
                                 name: "fractal",
 
                                 settings: {
-                                    filterBillWilliams:  fractalSeries.filterBillWilliams[a],
-                                    useTimeFractals:     fractalSeries.useTimeFractals[b],
-                                    timeframe:           fractalSeries.timeframe[c],
+                                    // filterBillWilliams:   fractalSeries.filterBillWilliams[a],
+                                    // useTimeFractals:      fractalSeries.useTimeFractals[b],
+                                    filterBillWilliams:   false,
+                                    useTimeFractals:      true,
+                                    timeframe:            fractalSeries.timeframe[c],
 
-                                    use_ABCReversal:     true,
-                                    ABCReversale_AB_min: fractalSeries.ABCReversale_AB_min[e], 
-                                    ABCReversale_AB_max: fractalSeries.ABCReversale_AB_max[f],
-                                    ABCReversale_BC_min: fractalSeries.ABCReversale_BC_min[g]
+                                    use_IJKLMN:     true,
+                                    // IJKLMN_use_J_as_pivot: fractalSeries.timeframe[d],
+                                    IJKLMN_use_J_as_pivot: true,
+
+                                    IJKLMN_IJK_min: fractalSeries.IJKLMN_IJK_min[e], 
+                                    IJKLMN_IJK_max: fractalSeries.IJKLMN_IJK_max[f],
+
+                                    IJKLMN_IJN_min: fractalSeries.IJKLMN_IJN_min[g], 
+                                    IJKLMN_IJN_max: fractalSeries.IJKLMN_IJN_max[h],
+
+                                    IJKLMN_JKL_min: fractalSeries.IJKLMN_JKL_min[i], 
+                                    IJKLMN_JKL_max: fractalSeries.IJKLMN_JKL_max[j],
+
+                                    IJKLMN_KLM_min: fractalSeries.IJKLMN_KLM_min[l], 
+                                    IJKLMN_KLM_max: fractalSeries.IJKLMN_KLM_max[m],
+
+                                    IJKLMN_LMN_min: fractalSeries.IJKLMN_LMN_min[n], 
+                                    IJKLMN_LMN_max: fractalSeries.IJKLMN_LMN_max[o],
                                 }
                             });
                         }
+                        }
+                    }
                     }
                 }
+                }
+            }
             }
         }
+        }
+    // }
     }
+    // }
+    // }
 
     let options_map = [];
     let optionsSeries = getOptionsSeries(variationScheme)
