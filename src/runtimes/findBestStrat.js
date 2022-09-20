@@ -12,7 +12,7 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt) {
     let results = [];
     let rolloverLimit = 1000;
     for (let i = 0; i < stratcombos.length; i++) {
-        let newEntry = await backtrace(stratcombos[i], 6);
+        let newEntry = await backtrace(stratcombos[i], 3);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
@@ -120,18 +120,18 @@ async function multiThreadStrats() {
 
     // await findBestStratOver1MAndWrite(stratCombos, 0);
 
-    await filterMonthListForBest("ETHUSDT", "15m");
+    // await filterMonthListForBest("ETHUSDT", "15m");
 
     // YOU NEED TO RUN IT OVER 3M NOW
 
-    // console.log(await backtrace({
+    // let tempRes = await backtrace({
     //     "opName": "Generated_0_0",
     //     "token": "ETHUSDT",
     //     "timeframe": "15m",
     //     "options": {
     //      "swingHighLowLookbackLength": 10,
-    //      "percentageRiskedPerTrade": 10,
-    //      "profitFactor": 2,
+    //      "percentageRiskedPerTrade": 25,
+    //      "profitFactor": 2.1,
     //      "atrLength": 14,
     //      "useLimitOrders": false,
     //      "gmxLimitAdjustment": 1
@@ -140,16 +140,64 @@ async function multiThreadStrats() {
     //      {
     //       "name": "fractal",
     //       "settings": {
-    //        "filterBillWilliams": false,
-    //        "useTimeFractals": true,
-    //        "timeframe": 31,
-    //        "use_ABCReversal": true,
-    //        "ABCReversale_AB_min": 0.02,
-    //        "ABCReversale_AB_max": 0.79,
-    //        "ABCReversale_BC_min": 1.25
+    //        "filterBillWilliams": true,
+    //        "useTimeFractals":    true,
+           
+    //        "timeframe": 10,
+    //        use_ABCReversal: true,
+    //        "ABCReversale_AB_min": 0.02,   //For lightning >0
+    //        "ABCReversale_AB_max": 0.99,   //For lightning <1
+    //        "ABCReversale_BC_min": 1,    //For lightning > 1 
+    //        "ABCReversale_BC_max": 100,    //For lightning > 1 
     //       }
     //      }
-    // ]}, 3))
+    // ]}, 3)
+    // 6120:0.66:0.4375
+
+    // let tempRes = await backtrace({
+    //     "opName": "Generated_0_0",
+    //     "token": "ETHUSDT",
+    //     "timeframe": "15m",
+    //     "options": {
+    //      "swingHighLowLookbackLength": 10,
+    //      "percentageRiskedPerTrade": 25,
+    //      "profitFactor": 2.1,
+    //      "atrLength": 14,
+    //      "useLimitOrders": false,
+    //      "gmxLimitAdjustment": 1
+    //     },
+    //     "indicators": [
+    //      {
+    //       "name": "fractal",
+    //       "settings": {
+    //             "filterBillWilliams": true,
+    //             "useTimeFractals":    true,
+                
+    //             "timeframe": 10,
+    //             use_IJKLMN: true,
+    //             IJKLMN_use_J_as_pivot: false,
+
+    //             IJKLMN_IJK_min: 0,
+    //             IJKLMN_IJK_max: 10,
+
+    //             IJKLMN_IJN_min: 0,
+    //             IJKLMN_IJN_max: 10,
+
+    //             IJKLMN_JKL_min: 0,
+    //             IJKLMN_JKL_max: 10,
+
+    //             IJKLMN_KLM_min: 0,
+    //             IJKLMN_KLM_max: 10,
+
+    //             IJKLMN_LMN_min: 0,
+    //             IJKLMN_LMN_max: 10,
+    //         }
+    //      }
+    // ]}, 3)
+    
+    console.log("usd: ", tempRes.curUSD)
+    console.log("win: ",tempRes.winratio)
+    console.log("dd: ",tempRes.drawdown)
 
     // Something is wrong here with the backtracer - try running it with just 1 thread or no multi atall
 

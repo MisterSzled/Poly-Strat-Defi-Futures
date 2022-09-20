@@ -200,6 +200,7 @@ function getShapes(priceSlice, strat, curPrice) {
     let c = priceSlice[1].price;
     let d = priceSlice[0].price;
 
+    
     let xab = Math.abs(b - a) / Math.abs(x - a);
     let xad = Math.abs(a - d) / Math.abs(x - a);
     let abc = Math.abs(b - c) / Math.abs(a - b);
@@ -291,8 +292,40 @@ function getShapes(priceSlice, strat, curPrice) {
         let _ab  = _mode === 1 ? a > b : b > a;
         let _bc  = _mode == 1 ? b < c : b > c 
         let _abc = (abc > strat.settings.ABCReversale_AB_min) && (abc < strat.settings.ABCReversale_AB_max);
-        let _bcd = bcd > strat.settings.ABCReversale_BC_min;
+        let _bcd = (bcd > strat.settings.ABCReversale_BC_min) && (bcd < strat.settings.ABCReversale_BC_max);
         return _ab && _bc && _abc && _bcd && (_mode === 1 ? (curPrice > c) : (curPrice < c))
+    }
+
+    let i = priceSlice[5].price;
+    let j = priceSlice[4].price;
+    let k = priceSlice[3].price;
+    let l = priceSlice[2].price;
+    let m = priceSlice[1].price;
+    let n = priceSlice[0].price;
+
+    let ijk = Math.abs(k - j) / Math.abs(i - j);
+    let ijn = Math.abs(n - j) / Math.abs(i - j);
+    let jkl = Math.abs(l - k) / Math.abs(j - k);
+    let klm = Math.abs(m - l) / Math.abs(k - l);
+    let lmn = Math.abs(n - m) / Math.abs(l - m);
+
+    let isIJKLMN = (_mode) => {
+        // Set for l as the bottom - could potential ask if J is the bottom though
+        let l_smallest = _mode === 1 ? ((l < i) && (l < j) && (l < k) && (l < m)) : ((l > i) && (l > j) && (l > k) && (l > m)); 
+        if (strat.settings.IJKLMN_use_J_as_pivot) {
+            l_smallest = _mode === 1 ? ((j < i) && (j < j) && (j < k) && (j < m)) : ((j > i) && (j > j) && (j > k) && (j > m)); 
+        }
+
+        let i_largest  = _mode === 1 ? ((i > a) && (i > b) && (i > c) && (i > d)) : ((i < a) && (i < b) && (i < c) && (i < d)); 
+        let _ijk = (ijk > strat.settings.IJKLMN_IJK_min) && (ijk < strat.settings.IJKLMN_IJK_max);
+        let _ijn = (ijn > strat.settings.IJKLMN_IJN_min) && (ijn < strat.settings.IJKLMN_IJN_max);
+        let _jkl = (jkl > strat.settings.IJKLMN_JKL_min) && (jkl < strat.settings.IJKLMN_JKL_max);
+        let _klm = (klm > strat.settings.IJKLMN_KLM_min) && (klm < strat.settings.IJKLMN_KLM_max);
+        let _lmn = (lmn > strat.settings.IJKLMN_LMN_min) && (lmn < strat.settings.IJKLMN_LMN_max);
+
+        // It's either k or m or both here
+        return i_largest && l_smallest && _ijk && _ijn && _jkl && _klm && _lmn && (_mode === 1 ? (curPrice > k) : (curPrice < k))
+        // return i_largest && l_smallest && l_smallest && _ijk && _ijn && _jkl && _klm && _lmn && (_mode === 1 ? (curPrice > m) : (curPrice < m))
     }
 
     return {
@@ -308,13 +341,14 @@ function getShapes(priceSlice, strat, curPrice) {
         isHnS:      {bull: isHnS(1), bear: isHnS(-1)}, 
         isConTria:  {bull: isConTria(1), bear: isConTria(-1)}, 
         isExpTria:  {bull: isExpTria(1), bear: isExpTria(-1)}, 
-        isABCReversal:  {bull: isABCReversal(1), bear: isABCReversal(-1)}, 
+        isABCReversal:    {bull: isABCReversal(1),   bear: isABCReversal(-1)}, 
+        isIJKLMN:  {bull: isIJKLMN(1), bear: isIJKLMN(-1)}, 
     }
 }
 
 function logShape(type, zeros, ones) {
     let title = type.slice(2, type.length)
-    let gap = " ".repeat(11 - title.length)
+    let gap = " ".repeat(13 - title.length)
     cs.process(title + ": " + gap +
         (zeros[type]["bull"] ? cs.green("X") : zeros[type]["bear"] ? cs.red("X") : "-") + " :: " +
         (ones[type]["bull"]  ? cs.green("X") : ones[type]["bear"]  ? cs.red("X") : "-")
@@ -339,9 +373,10 @@ function fractal(strat, candleData) {
 
     // x4-a3-b2-c1-d0
     let result = 0;
-    let shapes0 = getShapes([...finalPriceArray].slice(0, 5), strat, candleData[0][4]);
-    let shapes1 = getShapes([...finalPriceArray].slice(1, 6), strat, candleData[0][4]);
+    let shapes0 = getShapes([...finalPriceArray].slice(0, 6), strat, candleData[0][4]);
+    let shapes1 = getShapes([...finalPriceArray].slice(1, 7), strat, candleData[0][4]);
 
+    if (strat.settings.use_IJKLMN)      logShape("isIJKLMN", shapes0, shapes1);
     if (strat.settings.use_ABCReversal) logShape("isABCReversal", shapes0, shapes1);
     if (strat.settings.use_Bat)         logShape("isBat", shapes0, shapes1);
     if (strat.settings.use_AltBat)      logShape("isAltBat", shapes0, shapes1);
@@ -356,7 +391,8 @@ function fractal(strat, candleData) {
     if (strat.settings.use_ExpTria)     logShape("isExpTria", shapes0, shapes1);
 
     if (
-        (strat.settings.use_ABCReversal && (shapes0.isABCReversal["bull"] && !shapes1.isABCReversal["bull"])) ||
+        (strat.settings.use_IJKLMN    && (shapes0.isIJKLMN["bull"] && !shapes1.isIJKLMN["bull"])) ||
+        (strat.settings.use_ABCReversal   && (shapes0.isABCReversal["bull"]   && !shapes1.isABCReversal["bull"]))   ||
         (strat.settings.use_Bat       && (shapes0.isBat["bull"]       && !shapes1.isBat["bull"]))       ||
         (strat.settings.use_AltBat    && (shapes0.isAltBat["bull"]    && !shapes1.isAltBat["bull"]))    ||
         (strat.settings.use_Butterfly && (shapes0.isButterfly["bull"] && !shapes1.isButterfly["bull"])) ||
@@ -373,6 +409,7 @@ function fractal(strat, candleData) {
         result = 1;
     }
     if (
+        (strat.settings.use_IJKLMN && (shapes0.isIJKLMN["bear"] && !shapes1.isIJKLMN["bear"])) ||
         (strat.settings.use_ABCReversal && (shapes0.isABCReversal["bear"] && !shapes1.isABCReversal["bear"])) ||
         (strat.settings.use_Bat       && (shapes0.isBat["bear"]       && !shapes1.isBat["bear"]))       ||
         (strat.settings.use_AltBat    && (shapes0.isAltBat["bear"]    && !shapes1.isAltBat["bear"]))    ||
