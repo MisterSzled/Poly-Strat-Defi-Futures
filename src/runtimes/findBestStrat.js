@@ -10,16 +10,18 @@ const { Worker, isMainThread, parentPort, workerData } = require('worker_threads
 // Runs a shallow scan over the lookback length passed in months
 async function findBestStratOver1MAndWrite (stratcombos, shunt) {
     let results = [];
-    let rolloverLimit = 1000;
+    let rolloverLimit = 10;
     for (let i = 0; i < stratcombos.length; i++) {
-        let newEntry = await backtrace(stratcombos[i], 3);
+        let newEntry = await backtrace(stratcombos[i], 12);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
-            await writeToFile("./src/backtest/processed/"+(shunt + i)+".json", results);
+            await writeToFile("./src/backtest/processed/"+(shunt + i)+"WINNERS3.json", results);
+            // await writeToFile("./src/backtest/processed/"+(shunt + i)+".json", results);
             results = [];
         } else if (i === stratcombos.length - 1) {
-            await writeToFile("./src/backtest/processed/"+(shunt + i + 1)+".json", results);
+            await writeToFile("./src/backtest/processed/"+(shunt + i + 1)+"WINNERS3.json", results);
+            // await writeToFile("./src/backtest/processed/"+(shunt + i + 1)+".json", results);
             results = [];
         }
     }
@@ -31,7 +33,7 @@ async function filterMonthListForBest(token, timeframe) {
     let fileNames = fs.readdirSync(path);
     let wallets = [];
 
-    fileNames = fileNames.filter(val => val.includes(".json"));
+    fileNames = fileNames.filter(val => val.includes("WINNERS2.json"));
 
     for (let i = 0; i < fileNames.length; i++) {
         let res = fs.readFileSync(path + fileNames[i]);
@@ -44,7 +46,7 @@ async function filterMonthListForBest(token, timeframe) {
     wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
     wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
 
-    // wallets = filterForConsistent(winners);
+    // wallets = filterForConsistent(wallets);
 
     let bestUSD = wallets.sort((a,b) => {
         if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
@@ -63,10 +65,53 @@ async function filterMonthListForBest(token, timeframe) {
     bestDD[0].walletResult.positionOpens = [];
     bestDD[0].walletResult.positionClosed = [];
 
-    console.log("USD Winner:", bestUSD[0].walletResult);
-    console.log("USD Winner:", bestUSD[0].indicators);
+    // console.log("USD Winner:", bestUSD[0].walletResult);
+    // console.log("USD Winner:", bestUSD[0].indicators);
+
+    // wallets = wallets.filter(val => !val.indicators[0].settings.filterBillWilliams);
+    // wallets = wallets.filter(val => !val.indicators[0].settings.useTimeFractals);
+    // wallets = wallets.filter(val => !val.indicators[0].settings.IJKLMN_use_J_as_pivot);
+    // console.log("Init len: ", wallets.length)
+
+    // // console.log(wallets[0].walletResult.longs)
+    // const longs  = wallets.reduce((partialSum, a) => partialSum + a.walletResult.longs, 0);
+    // const shorts = wallets.reduce((partialSum, a) => partialSum + a.walletResult.shorts, 0);
+    // console.log("Av SHORTS:", shorts / wallets.length)
+    // console.log("Av LONGS:", longs / wallets.length)
+
+    // let IJKLMN_IJK_min = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJK_min === 0.02).length / wallets.length;
+    // let IJKLMN_IJK_max = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJK_max === 1).length / wallets.length;
+    // console.log("IJKLMN_IJK_min: ", IJKLMN_IJK_min)
+    // console.log("IJKLMN_IJK_max: ", IJKLMN_IJK_max)
+
+    // let IJKLMN_IJN_min = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_min === 0.02).length / wallets.length;
+    // let IJKLMN_IJN_max = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max === 1).length / wallets.length;
+    // console.log("IJKLMN_IJN_min: ", IJKLMN_IJN_min)
+    // console.log("IJKLMN_IJN_max: ", IJKLMN_IJN_max)
+
+    // let IJKLMN_JKL_min = wallets.filter(val => val.indicators[0].settings.IJKLMN_JKL_min === 0.02).length / wallets.length;
+    // let IJKLMN_JKL_max = wallets.filter(val => val.indicators[0].settings.IJKLMN_JKL_max === 1).length / wallets.length;
+    // console.log("IJKLMN_JKL_min: ", IJKLMN_JKL_min)
+    // console.log("IJKLMN_JKL_max: ", IJKLMN_JKL_max)
+
+    // let IJKLMN_KLM_min = wallets.filter(val => val.indicators[0].settings.IJKLMN_KLM_min === 0.02).length / wallets.length;
+    // let IJKLMN_KLM_max = wallets.filter(val => val.indicators[0].settings.IJKLMN_KLM_max === 1).length / wallets.length;
+    // console.log("IJKLMN_KLM_min: ", IJKLMN_KLM_min)
+    // console.log("IJKLMN_KLM_max: ", IJKLMN_KLM_max)
+
+    // let IJKLMN_LMN_min = wallets.filter(val => val.indicators[0].settings.IJKLMN_LMN_min === 0.02).length / wallets.length;
+    // let IJKLMN_LMN_max = wallets.filter(val => val.indicators[0].settings.IJKLMN_LMN_max === 1).length / wallets.length;
+    // console.log("IJKLMN_LMN_min: ", IJKLMN_LMN_min)
+    // console.log("IJKLMN_LMN_max: ", IJKLMN_LMN_max)
+    
+    // let timeWallets = wallets.filter(val => val.indicators[0].settings.useTimeFractals);
+    // console.log(timeWallets[0])
     // console.log("DD Winner:", bestDD[0].walletResult);
     // console.log("DD Winner:", bestDD[0].indicators);
+
+    // console.log("Total amt: ", wallets.length)
+    // wallets.filter(val => val.walletResult = {});
+    // await findBestStratOver1MAndWrite(wallets, 0);
 }
 
 function filterForConsistent(list) {
@@ -101,7 +146,7 @@ function filterForConsistent(list) {
         for (let i = 0; i < monthMapKeys.length; i++) {
             let monthMapAtKey = monthMap[monthMapKeys[i]];
             if ((monthMapAtKey["win"] + monthMapAtKey["loss"]) >= significantTrades - 1) {
-                if (monthMapAtKey["sum"] < 0) curResult = falses
+                if (monthMapAtKey["sum"] < 0) curResult = false
             }
         }
 
@@ -114,13 +159,16 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
-    // console.log(stratCombos[0]);
-    console.log(stratCombos.length);
+    // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+    // console.log(stratCombos[0].indicators);
+    // console.log(stratCombos[stratCombos.length - 1].indicators);
+    // let stratSliceA = stratCombos.slice(0,100);
+    // console.log(stratCombos.length);
 
-    // await findBestStratOver1MAndWrite(stratCombos, 0);
-
-    // await filterMonthListForBest("ETHUSDT", "15m");
+    // let start = new Date().getTime();
+    // await findBestStratOver1MAndWrite(stratSliceA, 0);
+    // console.log(new Date().getTime() - start)
+    await filterMonthListForBest("ETHUSDT", "15m");
 
     // YOU NEED TO RUN IT OVER 3M NOW
 
@@ -154,6 +202,7 @@ async function multiThreadStrats() {
     // ]}, 3)
     // 6120:0.66:0.4375
 
+    // let start = new Date().getTime();
     // let tempRes = await backtrace({
     //     "opName": "Generated_0_0",
     //     "token": "ETHUSDT",
@@ -175,25 +224,26 @@ async function multiThreadStrats() {
                 
     //             "timeframe": 10,
     //             use_IJKLMN: true,
-    //             IJKLMN_use_J_as_pivot: false,
+    //             IJKLMN_use_J_as_pivot: true,
 
-    //             IJKLMN_IJK_min: 0,
-    //             IJKLMN_IJK_max: 10,
+    //             IJKLMN_IJK_min: 1.02,
+    //             IJKLMN_IJK_max: 100,
 
-    //             IJKLMN_IJN_min: 0,
-    //             IJKLMN_IJN_max: 10,
+    //             IJKLMN_IJN_min: 1.02,
+    //             IJKLMN_IJN_max: 100,
 
-    //             IJKLMN_JKL_min: 0,
-    //             IJKLMN_JKL_max: 10,
+    //             IJKLMN_JKL_min: 1.02,
+    //             IJKLMN_JKL_max: 100,
 
-    //             IJKLMN_KLM_min: 0,
-    //             IJKLMN_KLM_max: 10,
+    //             IJKLMN_KLM_min: 1.02,
+    //             IJKLMN_KLM_max: 100,
 
-    //             IJKLMN_LMN_min: 0,
-    //             IJKLMN_LMN_max: 10,
+    //             IJKLMN_LMN_min: 1.02,
+    //             IJKLMN_LMN_max: 100,
     //         }
     //      }
-    // ]}, 3)
+    // ]}, 6);
+    // console.log(new Date().getTime() - start);
     
     // console.log("usd: ", tempRes.curUSD)
     // console.log("win: ",tempRes.winratio)
@@ -202,7 +252,7 @@ async function multiThreadStrats() {
     // Something is wrong here with the backtracer - try running it with just 1 thread or no multi atall
 
     // if (isMainThread) {
-    //     let threadCount = 3;
+    //     let threadCount = 6;
     //     // THIS IS THE DREAMA
     //     let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
     //     // THIS IS THE DREAMA
@@ -211,6 +261,9 @@ async function multiThreadStrats() {
     //     const threads = new Set();
 
     //     let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
+
+    //     console.log("Bracket breadth: ", bracketBreadth)
+    //     console.log("stratCombos.length: ", stratCombos.length)
 
     //     for (let i = 0; i < threadCount; i++) {
     //         let lower = i*bracketBreadth;

@@ -309,23 +309,37 @@ function getShapes(priceSlice, strat, curPrice) {
     let klm = Math.abs(m - l) / Math.abs(k - l);
     let lmn = Math.abs(n - m) / Math.abs(l - m);
 
+    // console.log(ijk)
+    // console.log(ijn)
+    // console.log(jkl)
+    // console.log(klm)
+    // console.log(lmn)
+
     let isIJKLMN = (_mode) => {
         // Set for l as the bottom - could potential ask if J is the bottom though
-        let l_smallest = _mode === 1 ? ((l < i) && (l < j) && (l < k) && (l < m)) : ((l > i) && (l > j) && (l > k) && (l > m)); 
-        if (strat.settings.IJKLMN_use_J_as_pivot) {
-            l_smallest = _mode === 1 ? ((j < i) && (j < j) && (j < k) && (j < m)) : ((j > i) && (j > j) && (j > k) && (j > m)); 
-        }
+        // let l_smallest = _mode === 1 ? ((l < i) && (l < j) && (l < k) && (l < m)) : ((l > i) && (l > j) && (l > k) && (l > m)); 
+        // if (strat.settings.IJKLMN_use_J_as_pivot) {
+        //     l_smallest = _mode === 1 ? ((j < i) && (j < l) && (j < k) && (j < m)) : ((j > i) && (j > l) && (j > k) && (j > m)); 
+        // }
 
-        let i_largest  = _mode === 1 ? ((i > a) && (i > b) && (i > c) && (i > d)) : ((i < a) && (i < b) && (i < c) && (i < d)); 
+        // let i_largest  = _mode === 1 ? ((i > j) && (i > k) && (i > l) && (i > m) && (i > n)) : ((i < j) && (i < k) && (i < l) && (i < m) && (i < n)); 
         let _ijk = (ijk > strat.settings.IJKLMN_IJK_min) && (ijk < strat.settings.IJKLMN_IJK_max);
         let _ijn = (ijn > strat.settings.IJKLMN_IJN_min) && (ijn < strat.settings.IJKLMN_IJN_max);
         let _jkl = (jkl > strat.settings.IJKLMN_JKL_min) && (jkl < strat.settings.IJKLMN_JKL_max);
         let _klm = (klm > strat.settings.IJKLMN_KLM_min) && (klm < strat.settings.IJKLMN_KLM_max);
         let _lmn = (lmn > strat.settings.IJKLMN_LMN_min) && (lmn < strat.settings.IJKLMN_LMN_max);
 
+        // console.log("i_largest ", i_largest)
+        // console.log("_ijk ", _ijk)
+        // console.log("_ijn ", _ijn)
+        // console.log("_jkl ", _jkl)
+        // console.log("_klm ", _klm)
+        // console.log("_lmn ", _lmn)
+
         // It's either k or m or both here
-        return i_largest && l_smallest && _ijk && _ijn && _jkl && _klm && _lmn && (_mode === 1 ? (curPrice > k) : (curPrice < k))
-        // return i_largest && l_smallest && l_smallest && _ijk && _ijn && _jkl && _klm && _lmn && (_mode === 1 ? (curPrice > m) : (curPrice < m))
+        // return i_largest && l_smallest && _ijk && _ijn && _jkl && _klm && _lmn && (_mode === 1 ? (curPrice > k) : (curPrice < k))
+        // return l_smallest && _ijk && _ijn && _jkl && _klm && _lmn && (_mode === 1 ? (curPrice > k) : (curPrice < k))
+        return _ijk && _ijn && _jkl && _klm && _lmn && (_mode === 1 ? (curPrice > m) : (curPrice < m))
     }
 
     return {
