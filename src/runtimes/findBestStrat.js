@@ -12,15 +12,15 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt) {
     let results = [];
     let rolloverLimit = 10;
     for (let i = 0; i < stratcombos.length; i++) {
-        let newEntry = await backtrace(stratcombos[i], 12);
+        let newEntry = await backtrace(stratcombos[i], 4);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
-            await writeToFile("./src/backtest/processed/"+(shunt + i)+"WINNERS3.json", results);
+            await writeToFile("./src/backtest/processed/"+(shunt + i)+".json", results);
             // await writeToFile("./src/backtest/processed/"+(shunt + i)+".json", results);
             results = [];
         } else if (i === stratcombos.length - 1) {
-            await writeToFile("./src/backtest/processed/"+(shunt + i + 1)+"WINNERS3.json", results);
+            await writeToFile("./src/backtest/processed/"+(shunt + i + 1)+".json", results);
             // await writeToFile("./src/backtest/processed/"+(shunt + i + 1)+".json", results);
             results = [];
         }
@@ -33,7 +33,7 @@ async function filterMonthListForBest(token, timeframe) {
     let fileNames = fs.readdirSync(path);
     let wallets = [];
 
-    fileNames = fileNames.filter(val => val.includes("WINNERS2.json"));
+    fileNames = fileNames.filter(val => val.includes(".json"));
 
     for (let i = 0; i < fileNames.length; i++) {
         let res = fs.readFileSync(path + fileNames[i]);
@@ -41,19 +41,20 @@ async function filterMonthListForBest(token, timeframe) {
         wallets = wallets.concat(res);
     }
 
-    let winUSDThreshold = 250;
-    let winDDThreshold  = 0.6;
-    wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
-    wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
+    
+    // let winUSDThreshold = 250;
+    // let winDDThreshold  = 0.6;
+    // wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
+    // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
 
     // wallets = filterForConsistent(wallets);
 
-    let bestUSD = wallets.sort((a,b) => {
+    let bestUSD = [...wallets].sort((a,b) => {
         if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
         if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
         return 0;
     });
-    let bestDD = wallets.sort((a,b) => {
+    let bestDD = [...wallets].sort((a,b) => {
         if (a.walletResult.drawdown > b.walletResult.drawdown) return -1
         if (b.walletResult.drawdown > a.walletResult.drawdown) return 1
         return 0;
@@ -65,8 +66,9 @@ async function filterMonthListForBest(token, timeframe) {
     bestDD[0].walletResult.positionOpens = [];
     bestDD[0].walletResult.positionClosed = [];
 
-    // console.log("USD Winner:", bestUSD[0].walletResult);
-    // console.log("USD Winner:", bestUSD[0].indicators);
+    console.log("USD Winner:", bestUSD[0].walletResult);
+    console.log("USD Winner:", bestUSD[0].options);
+    console.log("USD Winner:", bestUSD[0].indicators);
 
     // wallets = wallets.filter(val => !val.indicators[0].settings.filterBillWilliams);
     // wallets = wallets.filter(val => !val.indicators[0].settings.useTimeFractals);
@@ -162,13 +164,12 @@ async function multiThreadStrats() {
     // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
     // console.log(stratCombos[0].indicators);
     // console.log(stratCombos[stratCombos.length - 1].indicators);
-    // let stratSliceA = stratCombos.slice(0,100);
     // console.log(stratCombos.length);
 
     // let start = new Date().getTime();
-    // await findBestStratOver1MAndWrite(stratSliceA, 0);
+    // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start)
-    await filterMonthListForBest("ETHUSDT", "15m");
+    // await filterMonthListForBest("ETHUSDT", "15m");
 
     // YOU NEED TO RUN IT OVER 3M NOW
 
