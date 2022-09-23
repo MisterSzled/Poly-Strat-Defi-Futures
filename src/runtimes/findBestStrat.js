@@ -12,7 +12,7 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt) {
     let results = [];
     let rolloverLimit = 10;
     for (let i = 0; i < stratcombos.length; i++) {
-        let newEntry = await backtrace(stratcombos[i], 4);
+        let newEntry = await backtrace(stratcombos[i], 3);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
@@ -41,13 +41,18 @@ async function filterMonthListForBest(token, timeframe) {
         wallets = wallets.concat(res);
     }
 
-    
-    // let winUSDThreshold = 250;
-    // let winDDThreshold  = 0.6;
-    // wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
-    // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
+    console.log("Total run: ", wallets.length)
 
-    // wallets = filterForConsistent(wallets);
+    let winUSDThreshold = 250;
+    let winDDThreshold  = 0.6;
+    wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
+    wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
+    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 11);
+    // wallets = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max !== 1000);
+
+    console.log("Total wins: ", wallets.length)
+
+    wallets = filterForConsistent(wallets);
 
     let bestUSD = [...wallets].sort((a,b) => {
         if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
@@ -60,15 +65,17 @@ async function filterMonthListForBest(token, timeframe) {
         return 0;
     });
 
-    bestUSD[0].walletResult.positionOpens = [];
-    bestUSD[0].walletResult.positionClosed = [];
+    let checkIndex = 0
+    bestUSD[checkIndex].walletResult.positionOpens = [];
+    bestUSD[checkIndex].walletResult.positionClosed = [];
 
-    bestDD[0].walletResult.positionOpens = [];
-    bestDD[0].walletResult.positionClosed = [];
+    bestDD[checkIndex].walletResult.positionOpens = [];
+    bestDD[checkIndex].walletResult.positionClosed = [];
 
-    console.log("USD Winner:", bestUSD[0].walletResult);
-    console.log("USD Winner:", bestUSD[0].options);
-    console.log("USD Winner:", bestUSD[0].indicators);
+    console.log("USD Winner:", bestUSD[checkIndex].walletResult);
+    console.log("USD Winner:", bestUSD[checkIndex].options);
+    console.log("USD Winner:", bestUSD[checkIndex].indicators);
+    console.log("wallets:", wallets.length);
 
     // wallets = wallets.filter(val => !val.indicators[0].settings.filterBillWilliams);
     // wallets = wallets.filter(val => !val.indicators[0].settings.useTimeFractals);
@@ -166,10 +173,15 @@ async function multiThreadStrats() {
     // console.log(stratCombos[stratCombos.length - 1].indicators);
     // console.log(stratCombos.length);
 
+    // stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
+    // stratCombos = stratCombos.filter(val => val.indicators[0].settings.useTimeFractals);
+    // stratCombos = stratCombos.filter(val => !val.indicators[0].settings.IJKLMN_use_J_as_pivot);
+    // console.log(stratCombos.length);
+
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
-    // console.log(new Date().getTime() - start)
-    // await filterMonthListForBest("ETHUSDT", "15m");
+    // console.log(new Date().getTime() - start);
+    await filterMonthListForBest("ETHUSDT", "15m");
 
     // YOU NEED TO RUN IT OVER 3M NOW
 
