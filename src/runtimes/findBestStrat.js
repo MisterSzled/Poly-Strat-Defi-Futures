@@ -44,10 +44,10 @@ async function filterMonthListForBest(token, timeframe) {
     console.log("Total run: ", wallets.length)
 
     let winUSDThreshold = 250;
-    let winDDThreshold  = 0.6;
+    // let winDDThreshold  = 0.6;
     wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
-    wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
-    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 11);
+    // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
+    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) < 11);
     // wallets = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max !== 1000);
 
     console.log("Total wins: ", wallets.length)
@@ -59,18 +59,10 @@ async function filterMonthListForBest(token, timeframe) {
         if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
         return 0;
     });
-    let bestDD = [...wallets].sort((a,b) => {
-        if (a.walletResult.drawdown > b.walletResult.drawdown) return -1
-        if (b.walletResult.drawdown > a.walletResult.drawdown) return 1
-        return 0;
-    });
 
-    let checkIndex = 0
+    let checkIndex = 2
     bestUSD[checkIndex].walletResult.positionOpens = [];
     bestUSD[checkIndex].walletResult.positionClosed = [];
-
-    bestDD[checkIndex].walletResult.positionOpens = [];
-    bestDD[checkIndex].walletResult.positionClosed = [];
 
     console.log("USD Winner:", bestUSD[checkIndex].walletResult);
     console.log("USD Winner:", bestUSD[checkIndex].options);
@@ -174,7 +166,7 @@ async function multiThreadStrats() {
     // console.log(stratCombos.length);
 
     // stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
-    // stratCombos = stratCombos.filter(val => val.indicators[0].settings.useTimeFractals);
+    // stratCombos = stratCombos.filter(val => !val.indicators[0].settings.useTimeFractals);
     // stratCombos = stratCombos.filter(val => !val.indicators[0].settings.IJKLMN_use_J_as_pivot);
     // console.log(stratCombos.length);
 
@@ -185,7 +177,7 @@ async function multiThreadStrats() {
 
     // YOU NEED TO RUN IT OVER 3M NOW
 
-    // let tempRes = await backtrace({
+    // let tempRes = await backtrace({  
     //     "opName": "Generated_0_0",
     //     "token": "ETHUSDT",
     //     "timeframe": "15m",

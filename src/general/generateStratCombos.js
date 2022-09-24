@@ -205,7 +205,6 @@ function generateStratCombos (variationScheme, targetToken) {
             }
         });
     }
-    
     // let result = [];
     // for (let i = 0; i < mhull_map.length; i++) {
     //     for (let j = 0; j < boomHunter_map.length; j++) {
