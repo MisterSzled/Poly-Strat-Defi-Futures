@@ -44,10 +44,10 @@ async function filterMonthListForBest(token, timeframe) {
     console.log("Total run: ", wallets.length)
 
     let winUSDThreshold = 250;
-    // let winDDThreshold  = 0.6;
+    let winDDThreshold  = 0.6;
     wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
-    // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
-    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) < 11);
+    wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
+    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 25);
     // wallets = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max !== 1000);
 
     console.log("Total wins: ", wallets.length)
@@ -60,7 +60,7 @@ async function filterMonthListForBest(token, timeframe) {
         return 0;
     });
 
-    let checkIndex = 2
+    let checkIndex = 0
     bestUSD[checkIndex].walletResult.positionOpens = [];
     bestUSD[checkIndex].walletResult.positionClosed = [];
 
@@ -68,6 +68,8 @@ async function filterMonthListForBest(token, timeframe) {
     console.log("USD Winner:", bestUSD[checkIndex].options);
     console.log("USD Winner:", bestUSD[checkIndex].indicators);
     console.log("wallets:", wallets.length);
+
+    // console.log(bestUSD.map(val => val.walletResult.curUSD))
 
     // wallets = wallets.filter(val => !val.indicators[0].settings.filterBillWilliams);
     // wallets = wallets.filter(val => !val.indicators[0].settings.useTimeFractals);
@@ -167,88 +169,74 @@ async function multiThreadStrats() {
 
     // stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
     // stratCombos = stratCombos.filter(val => !val.indicators[0].settings.useTimeFractals);
-    // stratCombos = stratCombos.filter(val => !val.indicators[0].settings.IJKLMN_use_J_as_pivot);
+    // stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_use_J_as_pivot);
     // console.log(stratCombos.length);
 
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    await filterMonthListForBest("ETHUSDT", "15m");
+    // await filterMonthListForBest("ETHUSDT", "15m");
 
-    // YOU NEED TO RUN IT OVER 3M NOW
-
-    // let tempRes = await backtrace({  
-    //     "opName": "Generated_0_0",
-    //     "token": "ETHUSDT",
-    //     "timeframe": "15m",
-    //     "options": {
-    //      "swingHighLowLookbackLength": 10,
-    //      "percentageRiskedPerTrade": 25,
-    //      "profitFactor": 2.1,
-    //      "atrLength": 14,
-    //      "useLimitOrders": false,
-    //      "gmxLimitAdjustment": 1
-    //     },
-    //     "indicators": [
-    //      {
-    //       "name": "fractal",
-    //       "settings": {
-    //        "filterBillWilliams": true,
-    //        "useTimeFractals":    true,
-           
-    //        "timeframe": 10,
-    //        use_ABCReversal: true,
-    //        "ABCReversale_AB_min": 0.02,   //For lightning >0
-    //        "ABCReversale_AB_max": 0.99,   //For lightning <1
-    //        "ABCReversale_BC_min": 1,    //For lightning > 1 
-    //        "ABCReversale_BC_max": 100,    //For lightning > 1 
-    //       }
-    //      }
-    // ]}, 3)
-    // 6120:0.66:0.4375
-
-    // let start = new Date().getTime();
-    // let tempRes = await backtrace({
-    //     "opName": "Generated_0_0",
-    //     "token": "ETHUSDT",
-    //     "timeframe": "15m",
-    //     "options": {
-    //      "swingHighLowLookbackLength": 10,
-    //      "percentageRiskedPerTrade": 25,
-    //      "profitFactor": 2.1,
-    //      "atrLength": 14,
-    //      "useLimitOrders": false,
-    //      "gmxLimitAdjustment": 1
-    //     },
-    //     "indicators": [
-    //      {
-    //       "name": "fractal",
-    //       "settings": {
-    //             "filterBillWilliams": true,
-    //             "useTimeFractals":    true,
+    let start = new Date().getTime();
+    let tempRes = await backtrace({
+        "opName": "Generated_0_0",
+        "token": "ETHUSDT",
+        "timeframe": "15m",
+        "options": {
+         "swingHighLowLookbackLength": 60,
+         "percentageRiskedPerTrade": 25,
+         "profitFactor": 2,
+         "atrLength": 14,
+         "useLimitOrders": false,
+         "gmxLimitAdjustment": 1
+        },
+        "indicators": [
+         {
+          "name": "fractal",
+          "settings": {
+                "filterBillWilliams": true,
+                "useTimeFractals":    false,
                 
-    //             "timeframe": 10,
-    //             use_IJKLMN: true,
-    //             IJKLMN_use_J_as_pivot: true,
+                "timeframe": 10,
+                use_IJKLMN: true,
+                IJKLMN_use_J_as_pivot: false,
 
-    //             IJKLMN_IJK_min: 1.02,
-    //             IJKLMN_IJK_max: 100,
+                IJKLMN_IJK_min: 0.02,
+                IJKLMN_IJK_max: 1,
 
-    //             IJKLMN_IJN_min: 1.02,
-    //             IJKLMN_IJN_max: 100,
+                IJKLMN_IJN_min: 0.02,
+                IJKLMN_IJN_max: 1,
 
-    //             IJKLMN_JKL_min: 1.02,
-    //             IJKLMN_JKL_max: 100,
+                IJKLMN_JKL_min: 0.02,
+                IJKLMN_JKL_max: 1000,
 
-    //             IJKLMN_KLM_min: 1.02,
-    //             IJKLMN_KLM_max: 100,
+                IJKLMN_KLM_min: 1,
+                IJKLMN_KLM_max: 1000,
 
-    //             IJKLMN_LMN_min: 1.02,
-    //             IJKLMN_LMN_max: 100,
-    //         }
-    //      }
-    // ]}, 6);
-    // console.log(new Date().getTime() - start);
+                IJKLMN_LMN_min: 1,
+                IJKLMN_LMN_max: 1000,
+            }
+         },
+         {
+            name: "mhull",
+            settings: {
+                source: "close",       
+                hullVariation: "HMA",  
+                lengthMultiplier: 1, 
+                useHtf: false,         
+                higherTimeframe: "4h", 
+
+                length: 500, 
+            }
+        },
+        {
+            name: "volatilityOscillator",
+            settings: {
+                volLength: 50
+            }
+        }
+    ]}, 3);
+    console.log(new Date().getTime() - start);
     
     // console.log("usd: ", tempRes.curUSD)
     // console.log("win: ",tempRes.winratio)
