@@ -163,8 +163,6 @@ function filterForConsistent(list) {
 
 async function multiThreadStrats() {
     // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
-    // console.log(stratCombos[0].indicators);
-    // console.log(stratCombos[stratCombos.length - 1].indicators);
     // console.log(stratCombos.length);
 
     // stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
@@ -210,10 +208,10 @@ async function multiThreadStrats() {
                 IJKLMN_JKL_min: 0.02,
                 IJKLMN_JKL_max: 1000,
 
-                IJKLMN_KLM_min: 1,
+                IJKLMN_KLM_min: 1.02,
                 IJKLMN_KLM_max: 1000,
 
-                IJKLMN_LMN_min: 1,
+                IJKLMN_LMN_min: 1.02,
                 IJKLMN_LMN_max: 1000,
             }
          },
@@ -235,12 +233,12 @@ async function multiThreadStrats() {
                 volLength: 50
             }
         }
-    ]}, 3);
+    ]}, 6);
     console.log(new Date().getTime() - start);
     
-    // console.log("usd: ", tempRes.curUSD)
-    // console.log("win: ",tempRes.winratio)
-    // console.log("dd: ",tempRes.drawdown)
+    console.log("usd: ", tempRes.curUSD)
+    console.log("win: ",tempRes.winratio)
+    console.log("dd: ",tempRes.drawdown)
 
     // Something is wrong here with the backtracer - try running it with just 1 thread or no multi atall
 

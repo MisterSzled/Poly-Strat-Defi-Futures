@@ -247,6 +247,7 @@ async function backtrace(strat, monthsback) {
     wallet["drawdown"] = 1 - ((1 - (strat.options.percentageRiskedPerTrade/100))**worstStreak);
 
     console.log(wallet["curUSD"] + wallet["curPositionAmtIn"]);
+    console.log("win: ", wallet["winratio"]);
     console.log("dd: ", wallet["drawdown"]);
     console.log("long: ", wallet["longs"]);
     console.log("shorts: ", wallet["shorts"]);
