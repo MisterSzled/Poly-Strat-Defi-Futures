@@ -1,6 +1,4 @@
 const strats = require("../../config.js").strats;
-const formatDate = require("../general/formatDate");
-const sleep = require("../general/sleep");
 const cs = require("../general/chalkSpec");
 const getGMXPositions = require("../defi/gmx/getGMXPositions");
 const getPairData = require("../biananceAPIs/getPairData.js");
@@ -25,7 +23,7 @@ let timemap = {
     "1d": 144000 * 60,
   }
 
-async function runManager() {
+async function positionManager() {
     
     for (let i = 0; i < strats.length; i++) {
         global.chain = strats[i].wallet.chain;
@@ -97,34 +95,34 @@ async function runManager() {
     }
 }
 
-async function keeper() {
-    let curTime = new Date().getTime();
-    let cycleDelay = 1000 * 60;
+// async function positionManager() {
+//     let curTime = new Date().getTime();
+//     let cycleDelay = 1000 * 60;
 
-    let initDelay = ((cycleDelay - (curTime % cycleDelay)));
+//     let initDelay = ((cycleDelay - (curTime % cycleDelay))) + (500 * 60);
 
-    console.log("Init delay: ", initDelay)
-    await sleep(initDelay);
+//     console.log("Init delay: ", initDelay)
+//     await sleep(initDelay);
 
-    while (true) {
-      cs.indexer()
-      let startTime = new Date();
-      let timeInX = startTime.getTime() + (1000 * 60);
+//     while (true) {
+//       cs.indexer()
+//       let startTime = new Date();
+//       let timeInX = startTime.getTime() + (1000 * 60);
 
-      console.log("Calling at:  " + formatDate(startTime) + " - " + startTime.getTime());
-      try {
-        await runManager();
-      } catch (error) {
-        console.log("Fatal error: " + error);
-      }
+//       console.log("Calling at:  " + formatDate(startTime) + " - " + startTime.getTime());
+//       try {
+//         await runManager();
+//       } catch (error) {
+//         console.log("Fatal error: " + error);
+//       }
 
-      let endTime = new Date();
-      if (endTime.getTime() > timeInX) {
-          continue;
-      } else {
-          await sleep(Math.floor((timeInX - endTime)));
-      }
-    };
-}
+//       let endTime = new Date();
+//       if (endTime.getTime() > timeInX) {
+//           continue;
+//       } else {
+//           await sleep(Math.floor((timeInX - endTime)));
+//       }
+//     };
+// }
 
-module.exports = keeper;
+module.exports = positionManager;
