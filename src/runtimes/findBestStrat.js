@@ -162,83 +162,89 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
-    // console.log(stratCombos.length);
+    let stratCombos = generateStratCombos(variationScheme, "ETHUSDT");
+    console.log(stratCombos.length);
 
-    // stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
-    // stratCombos = stratCombos.filter(val => !val.indicators[0].settings.useTimeFractals);
-    // stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_use_J_as_pivot);
-    // console.log(stratCombos.length);
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
+    stratCombos = stratCombos.filter(val => !val.indicators[0].settings.useTimeFractals);
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_use_J_as_pivot);
+
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJK_min < val.indicators[0].settings.IJKLMN_IJK_max);
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJN_min < val.indicators[0].settings.IJKLMN_IJN_max);
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_JKL_min < val.indicators[0].settings.IJKLMN_JKL_max);
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_KLM_min < val.indicators[0].settings.IJKLMN_KLM_max);
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_LMN_min < val.indicators[0].settings.IJKLMN_LMN_max);
+    console.log(stratCombos.length);
 
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
     // await filterMonthListForBest("ETHUSDT", "15m");
 
-    let start = new Date().getTime();
-    let tempRes = await backtrace({
-        "opName": "Generated_0_0",
-        "token": "ETHUSDT",
-        "timeframe": "15m",
-        "options": {
-         "swingHighLowLookbackLength": 60,
-         "percentageRiskedPerTrade": 25,
-         "profitFactor": 2,
-         "atrLength": 14,
-         "useLimitOrders": false,
-         "gmxLimitAdjustment": 1
-        },
-        "indicators": [
-         {
-          "name": "fractal",
-          "settings": {
-                "filterBillWilliams": true,
-                "useTimeFractals":    false,
+    // let start = new Date().getTime();
+    // let tempRes = await backtrace({
+    //     "opName": "Generated_0_0",
+    //     "token": "ETHUSDT",
+    //     "timeframe": "15m",
+    //     "options": {
+    //      "swingHighLowLookbackLength": 60,
+    //      "percentageRiskedPerTrade": 25,
+    //      "profitFactor": 2,
+    //      "atrLength": 14,
+    //      "useLimitOrders": false,
+    //      "gmxLimitAdjustment": 1
+    //     },
+    //     "indicators": [
+    //      {
+    //       "name": "fractal",
+    //       "settings": {
+    //             "filterBillWilliams": true,
+    //             "useTimeFractals":    false,
                 
-                "timeframe": 10,
-                use_IJKLMN: true,
-                IJKLMN_use_J_as_pivot: false,
+    //             "timeframe": 10,
+    //             use_IJKLMN: true,
+    //             IJKLMN_use_J_as_pivot: true,
 
-                IJKLMN_IJK_min: 0.02,
-                IJKLMN_IJK_max: 1,
+    //             IJKLMN_IJK_min: 0.02,
+    //             IJKLMN_IJK_max: 1,
 
-                IJKLMN_IJN_min: 0.02,
-                IJKLMN_IJN_max: 1,
+    //             IJKLMN_IJN_min: 0.02,
+    //             IJKLMN_IJN_max: 1000,
 
-                IJKLMN_JKL_min: 0.02,
-                IJKLMN_JKL_max: 1000,
+    //             IJKLMN_JKL_min: 0.02,
+    //             IJKLMN_JKL_max: 1000,
 
-                IJKLMN_KLM_min: 1.02,
-                IJKLMN_KLM_max: 1000,
+    //             IJKLMN_KLM_min: 1.02,
+    //             IJKLMN_KLM_max: 1000,
 
-                IJKLMN_LMN_min: 1.02,
-                IJKLMN_LMN_max: 1000,
-            }
-         },
-         {
-            name: "mhull",
-            settings: {
-                source: "close",       
-                hullVariation: "HMA",  
-                lengthMultiplier: 1, 
-                useHtf: false,         
-                higherTimeframe: "4h", 
+    //             IJKLMN_LMN_min: 0.02,
+    //             IJKLMN_LMN_max: 1000,
+    //         }
+    //      },
+    //      {
+    //         name: "mhull",
+    //         settings: {
+    //             source: "close",       
+    //             hullVariation: "HMA",  
+    //             lengthMultiplier: 1, 
+    //             useHtf: false,         
+    //             higherTimeframe: "4h", 
 
-                length: 500, 
-            }
-        },
-        {
-            name: "volatilityOscillator",
-            settings: {
-                volLength: 50
-            }
-        }
-    ]}, 6);
-    console.log(new Date().getTime() - start);
+    //             length: 500, 
+    //         }
+    //     },
+    //     {
+    //         name: "volatilityOscillator",
+    //         settings: {
+    //             volLength: 50
+    //         }
+    //     }
+    // ]}, 12);
+    // console.log(new Date().getTime() - start);
     
-    console.log("usd: ", tempRes.curUSD)
-    console.log("win: ",tempRes.winratio)
-    console.log("dd: ",tempRes.drawdown)
+    // console.log("usd: ", tempRes.curUSD)
+    // console.log("win: ",tempRes.winratio)
+    // console.log("dd: ",tempRes.drawdown)
 
     // Something is wrong here with the backtracer - try running it with just 1 thread or no multi atall
 
