@@ -28,7 +28,9 @@ async function getGMXPositions(public, tokenAddy) {
 
     return {
         long: longPos[0],
-        short: shortPos[0]
+        longTime: longPos[6],
+        short: shortPos[0],
+        shortTime: shortPos[6]
     }
 }
 

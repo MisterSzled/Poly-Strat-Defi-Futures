@@ -7,6 +7,7 @@ const cs = require("../../general/chalkSpec")
 const ethers = require('ethers');
 const sleep = require("../../general/sleep");
 const getGMXPositions = require("./getGMXPositions");
+const closePosition = require("./closePosition");
 
 let tokens = {
     // Avax
@@ -95,51 +96,6 @@ async function closeOrders(strat) {
         }
     );
     let cancelTwoResp = await cancelTwo.wait();
-
-    return;
-}
-async function closePosition(strat, curPrice) {
-    let gmx          = await getGMXcontract(strat.wallet.priv);
-    let tokenAddy = tokens[strat.token];
-
-    let posInfo = await getGMXPositions(strat.wallet.public, tokenAddy);
-    let delta = 0;
-    let openType; 
-    let tokenPath = [];
-
-    if (parseInt(posInfo["short"]) === 0) {
-        delta = posInfo["long"];
-        openType = true;
-        tokenPath = [tokenAddy]
-    } else {
-        delta = posInfo["short"];
-        openType = false;
-        tokenPath = ["0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E"];
-    }
-
-    let acceptable = curPrice * (
-        openType ? 0.995 : 1.005);
-
-    acceptable = ethers.utils.parseUnits(`${acceptable}`, 30);
-
-    let closePositionRequest = await gmx["createDecreasePosition"](
-        tokenPath,                                                            //-path
-        tokenAddy,                                                            //-indexToken
-        "0",                                                                    //-collateralDelta
-        delta,                                                                //-sizedelta
-        openType,                                                             //-openType
-        strat.wallet.public,                                                 //-receiver (you)
-        acceptable,                                                           //-acceptable price
-        "0",                                                                    //-minout
-        "20000000000000000",                                                    //-exceutionFee
-        false,
-        {
-            gasPrice: await estimateGas(1), 
-            gasLimit: 450000,
-            value: ethers.utils.parseEther(`${0.02}`)
-        }
-    );
-    let closePositionResp = await closePositionRequest.wait();
 
     return;
 }
