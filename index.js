@@ -3,6 +3,7 @@ const strats = require("./config.js").strats;
 
 const livebot = require("./src/runtimes/livebot");
 const keeper = require("./src/runtimes/keeper");
+const positionManager = require("./src/runtimes/positionManager");
 const backtrace = require("./src/runtimes/backtrace");
 const multiThreadStrats = require("./src/runtimes/findBestStrat");
 
@@ -18,7 +19,7 @@ const multiThreadStrats = require("./src/runtimes/findBestStrat");
 //   message += "\n";
 //   message += ((strats.length + 1)  + " - - - " + "Keeper" + "\n");
 //   message += "\n";
-//   message += ((strats.length + 2)  + " - - - " + "Backtrace" + "\n");
+//   message += ((strats.length + 2)  + " - - - " + "Position Manager" + "\n");
 
 //   return {type: 'input', name: 'acc', message: message};
 // }
@@ -39,17 +40,11 @@ const multiThreadStrats = require("./src/runtimes/findBestStrat");
 
 // inquirer.prompt(buildQuestions()).then(answers => {
 //   if ((answers.acc >= 1) && (answers.acc <= strats.length)) {
-//       livebot(strats[answers.acc - 1]);
+//         livebot(strats[answers.acc - 1]);
 //   } else if (answers.acc - 1 === strats.length) {
-//       keeper();
+//         keeper();
 //   } else if (answers.acc - 1 === strats.length + 1) {
-//       inquirer.prompt(askStrat()).then(stratAns => {
-//         let stratPick = strats[stratAns.acc - 1];
-//         inquirer.prompt(askMonths()).then(monthsAns => {
-//           let monthsback = monthsAns.acc;
-//           backtrace(stratPick, monthsback);
-//         });
-//       });
+//         positionManager();
 //   }
 // });
 

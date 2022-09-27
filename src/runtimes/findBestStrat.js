@@ -47,7 +47,7 @@ async function filterMonthListForBest(token, timeframe) {
     let winDDThreshold  = 0.6;
     wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
     wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
-    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 25);
+    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 20);
     // wallets = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max !== 1000);
 
     console.log("Total wins: ", wallets.length)
@@ -179,7 +179,7 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    // await filterMonthListForBest("ETHUSDT", "15m");
+    await filterMonthListForBest("ETHUSDT", "15m");
 
     // let start = new Date().getTime();
     // let tempRes = await backtrace({
