@@ -252,7 +252,7 @@ function generateStratCombos (variationScheme, targetToken) {
                     result.push({               
                         opName: "Generated_" + i+"_"+j+"_"+k+"_"+m, 
                 
-                        token: targetToken, 
+                        // token: targetToken, 
                         timeframe: variationScheme.timeframe,
                 
                         options: options_map[k],
@@ -267,7 +267,17 @@ function generateStratCombos (variationScheme, targetToken) {
             }
         }
     }
-    return result
+
+    let tokenRes = [];
+    for (let i = 0; i < result.length; i++) {
+        for (let j = 0; j < targetToken.length; j++) {
+            tokenRes.push({
+                ...result[i],
+                token: targetToken[j]
+            })
+        }
+    }
+    return tokenRes
 }
 
 module.exports = generateStratCombos
