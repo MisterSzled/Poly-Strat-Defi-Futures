@@ -73,9 +73,15 @@ function resetWalletWhole () {
     }
 }
 
+let binanceGapList = [
+    "1663803900000",
+    "1632897900000",
+    "1628819100000",
+]
+
 async function backtrace(strat, monthsback) {
     // Update the history folder to be used
-    // await updateHistoryData(strat.token, strat.timeframe, monthsback + 1);
+    // await updateHistoryData(strat.token, strat.timeframe, monthsback + 2);
     
     let path = "./src/backtest/history/" + strat.token + "/" + strat.timeframe + "/";
     let files = fs.readdirSync(path);
@@ -90,8 +96,9 @@ async function backtrace(strat, monthsback) {
     // Check it flows in time correctly without gaps
     for (let i = 0; i < historyArray.length - 2; i++) {
         if (parseInt(historyArray[i][0]) !== parseInt(historyArray[i+1][0]) - (timemap[strat.timeframe])) {
-            if (parseInt(historyArray[i][0]) === 1632897900000) {
-                console.log("Sept gap");
+            // if (parseInt(historyArray[i][0]) === 1632897900000) {
+            if (binanceGapList.includes(historyArray[i][0])) {
+                console.log("Gap at: " + new Date(parseInt(historyArray[i][0])));
             } else {
                 console.log("Gap at: ", i);
                 console.log(parseInt(historyArray[i][0]));

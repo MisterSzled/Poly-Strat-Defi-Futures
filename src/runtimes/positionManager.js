@@ -43,11 +43,7 @@ async function positionManager() {
             let roundedTime = (curTime - (curTime % (15000 * 60)));
             let pairData = await getPairData(strats[i].token, strats[i].timeframe, 1000);
             let latestCandle = pairData[pairData.length - 1];
-            let curPrice = await getLatestRaw(strats[i].token);
-
-            if (!!curPrice) {
-                curPrice = parseFloat(curPrice.price);
-            }
+            
 
             pairData = pairData.filter(val => val[6] <= (roundedTime + (15000 * 60)));
 
@@ -71,6 +67,11 @@ async function positionManager() {
                     if (latestCandle[2] >= TP) shouldPositionBeClosed = true;
                     if (latestCandle[3] <= SL) shouldPositionBeClosed = true;
                 } else {
+                    let curPrice = await getLatestRaw(strats[i].token);
+                    if (!!curPrice) {
+                        curPrice = parseFloat(curPrice.price);
+                    }
+
                     if (curPrice >= TP) shouldPositionBeClosed = true;
                     if (curPrice <= SL) shouldPositionBeClosed = true;    
                 }
@@ -79,6 +80,11 @@ async function positionManager() {
                     if (latestCandle[3] <= TP) shouldPositionBeClosed = true;
                     if (latestCandle[2] >= SL) shouldPositionBeClosed = true;
                 } else {
+                    let curPrice = await getLatestRaw(strats[i].token);
+                    if (!!curPrice) {
+                        curPrice = parseFloat(curPrice.price);
+                    }
+                    
                     if (curPrice <= TP) shouldPositionBeClosed = true;
                     if (curPrice >= SL) shouldPositionBeClosed = true;
                 }

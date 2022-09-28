@@ -31,7 +31,7 @@ async function keeper() {
     while (true) {
       cs.indexer()
       let startTime = new Date();
-      let timeInX = startTime.getTime() + (15000*60);
+      let timeInX = startTime.getTime() + (1000*60);
 
       console.log("Calling at:  " + formatDate(startTime) + " - " + startTime.getTime());
       try {
@@ -41,6 +41,7 @@ async function keeper() {
         if (count % 15 === 0) {
           cs.win("Keeper O'clock")
           await runKeeper();
+          count = 1;
         }
         
       } catch (error) {
