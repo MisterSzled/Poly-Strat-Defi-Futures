@@ -77,6 +77,12 @@ async function positionManager() {
                 }
             } else {
                 if (hasBeenMoreThanOneCandle) {
+                    console.log("TP", TP)
+                    console.log("SL", SL)
+                    console.log("latestCandle[2]", latestCandle[2])
+                    console.log("latestCandle[3]", latestCandle[3])
+                    console.log("latestCandle[3] <= TP ", latestCandle[3] <= TP)
+                    console.log("latestCandle[2] >= SL ", latestCandle[2] >= SL)
                     if (latestCandle[3] <= TP) shouldPositionBeClosed = true;
                     if (latestCandle[2] >= SL) shouldPositionBeClosed = true;
                 } else {
@@ -84,7 +90,7 @@ async function positionManager() {
                     if (!!curPrice) {
                         curPrice = parseFloat(curPrice.price);
                     }
-                    
+
                     if (curPrice <= TP) shouldPositionBeClosed = true;
                     if (curPrice >= SL) shouldPositionBeClosed = true;
                 }

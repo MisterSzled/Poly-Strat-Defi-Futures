@@ -98,7 +98,7 @@ async function backtrace(strat, monthsback) {
         if (parseInt(historyArray[i][0]) !== parseInt(historyArray[i+1][0]) - (timemap[strat.timeframe])) {
             // if (parseInt(historyArray[i][0]) === 1632897900000) {
             if (binanceGapList.includes(historyArray[i][0])) {
-                console.log("Gap at: " + new Date(parseInt(historyArray[i][0])));
+                // console.log("Gap at: " + new Date(parseInt(historyArray[i][0])));
             } else {
                 console.log("Gap at: ", i);
                 console.log(parseInt(historyArray[i][0]));

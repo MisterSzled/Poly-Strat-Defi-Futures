@@ -30,7 +30,6 @@ function findLevWhereSLAtLiqidation(entry, SL, isLong) {
     });
 }
 
-
 function getAdjustedLeverageAndAmount(wallet, risk, entry, SL, isLong) {
     const lossRatioAtLiq = 0.7;
     let finalAmt, finalLev;
