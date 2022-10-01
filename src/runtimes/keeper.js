@@ -13,7 +13,7 @@ async function runKeeper() {
         global.chain = walletsToHandle[i].chain;
 
         cs.process("Cleaning wallet: " + walletsToHandle[i].public);
-        await cleanWallet(walletsToHandle[i]);
+        await cleanWallet(walletsToHandle[i], strats[i]);
         cs.win("Cleaned wallet: " + walletsToHandle[i].public + "\n")
     }
 }

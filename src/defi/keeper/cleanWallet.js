@@ -13,7 +13,7 @@ const avaxUpperLimit = 1.5;
 const avaxLowerLimit = 0.5;
 const dollarsIntoAvax = 10;
 
-async function cleanWallet(wallet) {
+async function cleanWallet(wallet, strat) {
     let curWallet = await getWalletTokens(wallet.public, true);
     let swapArray = [];
 
@@ -88,68 +88,73 @@ async function cleanWallet(wallet) {
     }
 
     //Check Orders of each type
-    let GMXOrderbook = await getGMXOrderbook();
-    let GMXOrderbookReader = await getGMXOrderbookReader();
+    if (strat.options.useLimitOrders) {
+        let GMXOrderbook = await getGMXOrderbook();
+        let GMXOrderbookReader = await getGMXOrderbookReader();
 
-    let orderIndex = await GMXOrderbook["decreaseOrdersIndex"](
-        wallet.public,   //addy
-    );
-    orderIndex = parseInt(orderIndex);
-
-    if (orderIndex >= 3) {
-        let orderIndexes = [];
-        for (let i = orderIndex - 1; (i > orderIndex - 11) && (i > 0); i--) {
-            orderIndexes.push(i);
-        }
-    
-        let decreaseOrders = await GMXOrderbookReader["getDecreaseOrders"](
-            "0x4296e307f108B2f583FF2F7B7270ee7831574Ae5",
-            wallet.public,
-            orderIndexes
+        let orderIndex = await GMXOrderbook["decreaseOrdersIndex"](
+            wallet.public,   //addy
         );
-        let orderInfo = [];
-        for (let i = 0; i < decreaseOrders[0].length / 5; i++) {
-            let temp = [];
-            temp.push(orderIndex - 1 - i);
-            temp.push(decreaseOrders[0].slice(i*5, (i*5) + 5));
-            temp.push(decreaseOrders[1].slice((i*2), (i*2) + 2))
-            orderInfo.push(temp.flat());
-        }
-    
-        //IndexNumber
-        //???
-        //Size
-        //isLong
-        //Trigger Price
-        //??
-        //PathFrom
-        //PathTo
-    
-        cs.process("Checking orders");
-        for (let i = 0; i < orderInfo.length; i++) {
-            let iPath = parseInt(orderInfo[i][6]);
-            if (iPath === 0) continue;
-    
-            let check = -1;
-            for (let j = 0; j < orderInfo.length; j++) {
-                if (i === j) continue;
-                if (orderInfo[i][6] === orderInfo[j][6]) check = j;
+        orderIndex = parseInt(orderIndex);
+
+        if (orderIndex >= 3) {
+            let orderIndexes = [];
+            for (let i = orderIndex - 1; (i > orderIndex - 11) && (i > 0); i--) {
+                orderIndexes.push(i);
             }
-    
-            if (check === -1) {
-                // Kill the order at i
-                cs.process("Lone order - " + orderInfo[i][6]);
-    
-                try {
-                    await cancelDecreaseOrder(wallet, orderInfo[i][0]);
-                    cs.win("Closed")
-                } catch (error) {
-                    cs.fail("Error with order: " + orderInfo[i][0])
+        
+            let decreaseOrders = await GMXOrderbookReader["getDecreaseOrders"](
+                "0x4296e307f108B2f583FF2F7B7270ee7831574Ae5",
+                wallet.public,
+                orderIndexes
+            );
+            let orderInfo = [];
+            for (let i = 0; i < decreaseOrders[0].length / 5; i++) {
+                let temp = [];
+                temp.push(orderIndex - 1 - i);
+                temp.push(decreaseOrders[0].slice(i*5, (i*5) + 5));
+                temp.push(decreaseOrders[1].slice((i*2), (i*2) + 2))
+                orderInfo.push(temp.flat());
+            }
+        
+            //IndexNumber
+            //???
+            //Size
+            //isLong
+            //Trigger Price
+            //??
+            //PathFrom
+            //PathTo
+        
+            cs.process("Checking orders");
+            for (let i = 0; i < orderInfo.length; i++) {
+                let iPath = parseInt(orderInfo[i][6]);
+                if (iPath === 0) continue;
+        
+                let check = -1;
+                for (let j = 0; j < orderInfo.length; j++) {
+                    if (i === j) continue;
+                    if (orderInfo[i][6] === orderInfo[j][6]) check = j;
+                }
+        
+                if (check === -1) {
+                    // Kill the order at i
+                    cs.process("Lone order - " + orderInfo[i][6]);
+        
+                    try {
+                        await cancelDecreaseOrder(wallet, orderInfo[i][0]);
+                        cs.win("Closed")
+                    } catch (error) {
+                        cs.fail("Error with order: " + orderInfo[i][0])
+                    }
                 }
             }
+            cs.process("Orders checked");
         }
-        cs.process("Orders checked");
+    } else {
+        cs.process("Not using limits")
     }
+
 
     return;
 }

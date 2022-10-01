@@ -8,12 +8,19 @@ const fs = require('fs');
 const { Worker, isMainThread, parentPort, workerData } = require('worker_threads');
 
 // Runs a shallow scan over the lookback length passed in months
-async function findBestStratOver1MAndWrite (stratcombos, shunt) {
+async function findBestStratOver1MAndWrite (stratcombos, shunt, messenger) {
     let results = [];
     let rolloverLimit = 10;
     for (let i = 0; i < stratcombos.length; i++) {
+
+        if (!!messenger) {
+            messenger(i)
+        }
+
         let newEntry = await backtrace(stratcombos[i], 12);
         results.push({...stratcombos[i], walletResult: newEntry});
+
+        
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
             await writeToFile("./src/backtest/processed/"+(shunt + i)+".json", results);
@@ -40,7 +47,7 @@ async function filterMonthListForBest() {
         wallets = wallets.concat(res);
     }
 
-    wallets = wallets.filter(val => val.token === "ETHUSDT");
+    wallets = wallets.filter(val => val.token === "BTCUSDT");
     console.log("Total run: ", wallets.length)
 
     let winUSDThreshold = 250;
@@ -52,7 +59,7 @@ async function filterMonthListForBest() {
 
     console.log("Total wins: ", wallets.length)
 
-    // wallets = filterForConsistent(wallets);
+    wallets = filterForConsistent(wallets);
 
     let bestUSD = [...wallets].sort((a,b) => {
         if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
@@ -62,7 +69,7 @@ async function filterMonthListForBest() {
 
     // console.log(bestUSD.map(val => val.walletResult.curUSD))
 
-    let checkIndex = 1
+    let checkIndex = 0
     bestUSD[checkIndex].walletResult.positionOpens = [];
     bestUSD[checkIndex].walletResult.positionClosed = [];
 
@@ -256,51 +263,51 @@ async function multiThreadStrats() {
 
     // Something is wrong here with the backtracer - try running it with just 1 thread or no multi atall
 
-    // if (isMainThread) {
-    //     let threadCount = 10;
-    //     let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT", "ETHUSDT", "AVAXUSDT"]);
+    if (isMainThread) {
+        let threadCount = 1;
+        let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
 
-    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJK_min < val.indicators[0].settings.IJKLMN_IJK_max);
-    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJN_min < val.indicators[0].settings.IJKLMN_IJN_max);
-    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_JKL_min < val.indicators[0].settings.IJKLMN_JKL_max);
-    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_KLM_min < val.indicators[0].settings.IJKLMN_KLM_max);
-    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_LMN_min < val.indicators[0].settings.IJKLMN_LMN_max);
+        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJK_min < val.indicators[0].settings.IJKLMN_IJK_max);
+        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJN_min < val.indicators[0].settings.IJKLMN_IJN_max);
+        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_JKL_min < val.indicators[0].settings.IJKLMN_JKL_max);
+        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_KLM_min < val.indicators[0].settings.IJKLMN_KLM_max);
+        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_LMN_min < val.indicators[0].settings.IJKLMN_LMN_max);
 
-    //     console.log("Running with ", threadCount, " threads")
+        console.log("Running with ", threadCount, " threads")
 
-    //     const threads = new Set();
+        const threads = new Set();
 
-    //     let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
+        let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
 
-    //     console.log("Bracket breadth: ", bracketBreadth)
-    //     console.log("stratCombos.length: ", stratCombos.length)
+        console.log("Bracket breadth: ", bracketBreadth)
+        console.log("stratCombos.length: ", stratCombos.length)
 
-    //     for (let i = 0; i < threadCount; i++) {
-    //         let lower = i*bracketBreadth;
-    //         let upper = (i+1)*bracketBreadth;
-    //         console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
+        for (let i = 0; i < threadCount; i++) {
+            let lower = i*bracketBreadth;
+            let upper = (i+1)*bracketBreadth;
+            console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
 
-    //         threads.add(new Worker(__filename, { workerData: 
-    //             { 
-    //                 id: i,
-    //                 lower: lower,
-    //                 upper: upper,
-    //                 combos: stratCombos.slice(lower, upper),
-    //             }
-    //         }));
-    //     }
+            threads.add(new Worker(__filename, { workerData: 
+                { 
+                    id: i,
+                    lower: lower,
+                    upper: upper,
+                    combos: stratCombos.slice(lower, upper),
+                }
+            }));
+        }
 
-    //     threads.forEach(thread => {
-    //         thread.on('message', (msg) => {
-    //             console.log(msg)
-    //         });
-    //     })
-    // } else {
-    //         parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
-    //         let start = new Date().getTime();
-    //         await findBestStratOver1MAndWrite(workerData.combos, workerData.lower);
-    //         parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
-    // }
+        threads.forEach(thread => {
+            thread.on('message', (msg) => {
+                console.log(msg)
+            });
+        })
+    } else {
+            parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
+            let start = new Date().getTime();
+            await findBestStratOver1MAndWrite(workerData.combos, workerData.lower, (text) => parentPort.postMessage("Thread " + workerData.id + " working on " + text));
+            parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
+    }
 }
 
 if (!isMainThread) {

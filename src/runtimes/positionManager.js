@@ -62,16 +62,20 @@ async function positionManager() {
                 cs.process("Position within 1 timeframe.");
             }
 
+            let curPrice = await getLatestRaw(strats[i].token);
+            if (!!curPrice) {
+                curPrice = parseFloat(curPrice.price);
+            }
+
             if (isLong) {
                 if (hasBeenMoreThanOneCandle) {
+                    console.log("TP", TP)
+                    console.log("SL", SL)
+                    console.log("latestCandle[2]", latestCandle[2])
+                    console.log("latestCandle[3]", latestCandle[3])
                     if (latestCandle[2] >= TP) shouldPositionBeClosed = true;
                     if (latestCandle[3] <= SL) shouldPositionBeClosed = true;
                 } else {
-                    let curPrice = await getLatestRaw(strats[i].token);
-                    if (!!curPrice) {
-                        curPrice = parseFloat(curPrice.price);
-                    }
-
                     if (curPrice >= TP) shouldPositionBeClosed = true;
                     if (curPrice <= SL) shouldPositionBeClosed = true;    
                 }
@@ -81,16 +85,9 @@ async function positionManager() {
                     console.log("SL", SL)
                     console.log("latestCandle[2]", latestCandle[2])
                     console.log("latestCandle[3]", latestCandle[3])
-                    console.log("latestCandle[3] <= TP ", latestCandle[3] <= TP)
-                    console.log("latestCandle[2] >= SL ", latestCandle[2] >= SL)
                     if (latestCandle[3] <= TP) shouldPositionBeClosed = true;
                     if (latestCandle[2] >= SL) shouldPositionBeClosed = true;
                 } else {
-                    let curPrice = await getLatestRaw(strats[i].token);
-                    if (!!curPrice) {
-                        curPrice = parseFloat(curPrice.price);
-                    }
-
                     if (curPrice <= TP) shouldPositionBeClosed = true;
                     if (curPrice >= SL) shouldPositionBeClosed = true;
                 }
