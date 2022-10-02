@@ -73,6 +73,8 @@ let prevAns = {};
  * @return {[int]}                      1,0,-1 if indicator directs long, nill, short   
  */
 function mhull(strat, candleData) {
+    cs.header("MHULL");
+
     if (!prevAns[strat.settings.length * strat.settings.lengthMultiplier]) {
         prevAns[strat.settings.length * strat.settings.lengthMultiplier] = {}
     }
@@ -82,10 +84,10 @@ function mhull(strat, candleData) {
 
     let prevAnsNow = prevAns[strat.settings.length * strat.settings.lengthMultiplier][candleData[candleData.length - 1][0]];
     if (typeof(prevAnsNow) === "number") {
+        cs.process("MHULL prev: " + prevAnsNow);
         return prevAnsNow
     }
 
-    let start = new Date().getTime();
     let MA;
     if (strat.settings.useHtf) {
         // Deliver the htf candle data
@@ -98,12 +100,9 @@ function mhull(strat, candleData) {
     SHULL = MA[2]; //Could have a custom var here to decide the amount to lookback
     curClose = candleData[candleData.length - 2][4];
 
-    cs.header("MHULL");
     cs.process("MHULL: " + MHULL);
     cs.process("SHULL: " + SHULL);
 
-    // console.log("MA")
-    // console.log(new Date().getTime() - start);
 
     if ((MHULL > SHULL) && (curClose > MHULL)) {
         prevAns[strat.settings.length * strat.settings.lengthMultiplier][candleData[candleData.length - 1][0]] = 1
