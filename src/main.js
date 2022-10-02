@@ -10,33 +10,49 @@ const cs = require("./general/chalkSpec");
 const getNewPositionProfile = require("./indicators/risk/getNewPositionProfile");
 
 const universal = require("../config").universal;
-const taFuncs = require("./indicators/taFuncs/index")
 
 function processIndicators (strat, pairData) {
-    let resultSum = 0;
-    let configIndicators = strat.indicators
-    for (let i = 0; i < configIndicators.length; i++) {
-        // let start = new Date().getTime();
-        let name = configIndicators[i].name;
-        let temp = indicators[name](configIndicators[i], [...pairData]);
-        // console.log(new Date().getTime() - start);
+    let results = [];
+    
+    for (let j = 0; j < strat.rulesets.length; j++) {
+        let resultSum = 0;
+        let configIndicators = strat.rulesets[j].indicators
 
-        cs[temp === 1 ? "long" : temp === -1 ? "short" : "process"](name +": "+ temp + "\n");
+        for (let i = 0; i < configIndicators.length; i++) {
+            // let start = new Date().getTime();
+            let name = configIndicators[i].name;
+            let temp = indicators[name](configIndicators[i], [...pairData]);
+            // console.log(new Date().getTime() - start);
+    
+            cs[temp === 1 ? "long" : temp === -1 ? "short" : "process"](name +": "+ temp + "\n");
+    
+            resultSum += temp;
+        }
 
-        resultSum += temp;
+        let setResult = 0;
+        if (resultSum === configIndicators.length)        setResult = 1;
+        if (resultSum === (-1 * configIndicators.length)) setResult = -1;
+        results.push({index: j, result: setResult});
     }
+    
+    console.log(results)
 
-    let finalResult = 0;
-    if (resultSum === configIndicators.length)        finalResult = 1;
-    if (resultSum === (-1 * configIndicators.length)) finalResult = -1;
-
-    return finalResult;
+    return results;
 }
 
 async function main(strat) {
     global.chain = strat.wallet.chain;
     let pairData = await getPairData(strat.token, strat.timeframe, universal.maxLookBack);
-    finalResult = processIndicators(strat, pairData);
+    let resArray = processIndicators(strat, pairData);
+
+    let finalResult = 0;
+    let finalIndex = 0;
+    for (let i = 0; i < resArray.length; i++) {
+        if (resArray[i].result !== 0) {
+            finalIndex = resArray[i].index;
+            finalResult = resArray[i].result;
+        }
+    }
 
     //THIS IS FOR THE NEW TA BRACKET
     // Data 0 -> length === oldest -> newest COMPLETE candle
@@ -47,7 +63,8 @@ async function main(strat) {
     //THIS IS FOR THE NEW TA BRACKET
 
     // TEST
-    // finalResult = 1;
+    // finalResult = -1;
+    // finalIndex = 0;
     // TEST
 
     if (Math.abs(finalResult) === 1) {
@@ -57,11 +74,12 @@ async function main(strat) {
 
         if (finalResult === 1) {
             cs.longH("LONG! LONG! LONG!");
-            profile = getNewPositionProfile(strat, usdEquity, pairData, true, pairData[pairData.length - 2][4]);
+            profile = getNewPositionProfile(strat.rulesets[finalIndex].options, usdEquity, pairData, true, pairData[pairData.length - 2][4]);
 
             await openPosition(
                 "long", 
                 strat,
+                finalIndex,
                 profile.longQty, 
                 profile.longSL, 
                 profile.longTp,
@@ -71,11 +89,12 @@ async function main(strat) {
         }
         if (finalResult === -1) {
             cs.shortH("SHORT! SHORT! SHORT!");
-            profile = getNewPositionProfile(strat, usdEquity, pairData, false, pairData[pairData.length - 2][4]);
+            profile = getNewPositionProfile(strat.rulesets[finalIndex].options, usdEquity, pairData, false, pairData[pairData.length - 2][4]);
 
             await openPosition(
                 "short", 
                 strat, 
+                finalIndex,
                 profile.shortQty, 
                 profile.shortSL, 
                 profile.shortTp,
@@ -86,12 +105,6 @@ async function main(strat) {
     }
 
     console.log("\n");
-}
-
-function getLiqRatio(L, entry, lev) {
-    let a = (L * 0.98) / entry;
-    let b = a - 0.98
-    return (b * lev);
 }
 
 module.exports = {main, processIndicators};

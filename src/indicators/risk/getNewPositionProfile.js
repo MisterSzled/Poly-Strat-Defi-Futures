@@ -3,21 +3,22 @@ const getAdjustedLeverageAndAmount    = require("./getAdjustedLeverageAndAmount"
 const cs = require("../../general/chalkSpec");
 const truncateNum = require("../../general/truncateNum.js");
 
-function getNewPositionProfile(strat, wallet, pairData, isLong, currentPrice) {
-    let swingHighLow = taFuncs.swingHiLo(strat.options, [...pairData]);
-    let averageTrueRange = taFuncs.atr(strat.options, [...pairData]);
+function getNewPositionProfile(options, wallet, pairData, isLong, currentPrice) {
+    let swingHighLow = taFuncs.swingHiLo(options, [...pairData]);
+    let averageTrueRange = taFuncs.atr(options, [...pairData]);
     let curClose = parseFloat(pairData[pairData.length - 2][4]);
 
-    let gmxAdjustmentUpper = strat.options.gmxLimitAdjustment;
-    let gmxAdjustmentLower = 1 + (1 - strat.options.gmxLimitAdjustment);
+    let gmxAdjustmentUpper = options.gmxLimitAdjustment;
+    let gmxAdjustmentLower = 1 + (1 - options.gmxLimitAdjustment);
 
     if (isLong) {
         let longSL  = Math.min(curClose - averageTrueRange, swingHighLow.low);
         let longStopPercent = Math.abs((1 - (longSL / curClose)) * 100);
-        let longTpPercent = longStopPercent * strat.options.profitFactor;
+        let longTpPercent = longStopPercent * options.profitFactor;
         let longTp = curClose + (curClose * (longTpPercent / 100));
 
-        let riskCalc = getAdjustedLeverageAndAmount(wallet, strat.options.percentageRiskedPerTrade, currentPrice, longSL, true)
+        let riskCalc = getAdjustedLeverageAndAmount(wallet, options.percentageRiskedPerTrade, currentPrice, longSL, true);
+
         let longQty = riskCalc.amt;
         let lev = riskCalc.lev;
 
@@ -40,10 +41,10 @@ function getNewPositionProfile(strat, wallet, pairData, isLong, currentPrice) {
     } else {
         let shortSL = Math.max(curClose + averageTrueRange, swingHighLow.high);
         let shortStopPercent = Math.abs((1 - (shortSL / curClose)) * 100);
-        let shortTpPercent = shortStopPercent * strat.options.profitFactor;
+        let shortTpPercent = shortStopPercent * options.profitFactor;
         let shortTp = curClose - (curClose * (shortTpPercent / 100));
         
-        let riskCalc = getAdjustedLeverageAndAmount(wallet, strat.options.percentageRiskedPerTrade, currentPrice, shortSL, false)
+        let riskCalc = getAdjustedLeverageAndAmount(wallet, options.percentageRiskedPerTrade, currentPrice, shortSL, false)
         let shortQty = riskCalc.amt;
         let lev = riskCalc.lev;
 

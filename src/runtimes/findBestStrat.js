@@ -54,12 +54,13 @@ async function filterMonthListForBest() {
     let winDDThreshold  = 0.6;
     wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
     wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
-    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 20);
+    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 14);
     // wallets = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max !== 1000);
+    wallets = wallets.filter(val => !val.indicators[0].settings.useTimeFractals);
 
     console.log("Total wins: ", wallets.length)
 
-    wallets = filterForConsistent(wallets);
+    // wallets = filterForConsistent(wallets);
 
     let bestUSD = [...wallets].sort((a,b) => {
         if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
@@ -69,7 +70,7 @@ async function filterMonthListForBest() {
 
     // console.log(bestUSD.map(val => val.walletResult.curUSD))
 
-    let checkIndex = 0
+    let checkIndex = 2
     bestUSD[checkIndex].walletResult.positionOpens = [];
     bestUSD[checkIndex].walletResult.positionClosed = [];
 
@@ -177,7 +178,7 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
+    // let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT"]);
     // console.log(stratCombos.length);
 
     // stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
@@ -199,7 +200,7 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // let tempRes = await backtrace({
     //     "opName": "Generated_0_0",
-    //     "token": "BTCUSDT",
+    //     "token": "AVAXUSDT",
     //     "timeframe": "15m",
     //     "options": {
     //      "swingHighLowLookbackLength": 60,
@@ -254,7 +255,7 @@ async function multiThreadStrats() {
     //             volLength: 20
     //         }
     //     }
-    // ]}, 6);
+    // ]}, 12);
     // console.log(new Date().getTime() - start);
     
     // console.log("usd: ", tempRes.curUSD)
@@ -263,51 +264,57 @@ async function multiThreadStrats() {
 
     // Something is wrong here with the backtracer - try running it with just 1 thread or no multi atall
 
-    if (isMainThread) {
-        let threadCount = 1;
-        let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
+    // if (isMainThread) {
+    //     let threadCount = 8;
+    //     let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT"]);
+    //     console.log(stratCombos.length);
 
-        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJK_min < val.indicators[0].settings.IJKLMN_IJK_max);
-        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJN_min < val.indicators[0].settings.IJKLMN_IJN_max);
-        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_JKL_min < val.indicators[0].settings.IJKLMN_JKL_max);
-        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_KLM_min < val.indicators[0].settings.IJKLMN_KLM_max);
-        stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_LMN_min < val.indicators[0].settings.IJKLMN_LMN_max);
+    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
+    //     stratCombos = stratCombos.filter(val => !val.indicators[0].settings.useTimeFractals);
+    //     stratCombos = stratCombos.filter(val => !val.indicators[0].settings.IJKLMN_use_J_as_pivot);
 
-        console.log("Running with ", threadCount, " threads")
+    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJK_min < val.indicators[0].settings.IJKLMN_IJK_max);
+    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJN_min < val.indicators[0].settings.IJKLMN_IJN_max);
+    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_JKL_min < val.indicators[0].settings.IJKLMN_JKL_max);
+    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_KLM_min < val.indicators[0].settings.IJKLMN_KLM_max);
+    //     stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_LMN_min < val.indicators[0].settings.IJKLMN_LMN_max);
+    //     console.log(stratCombos.length);
 
-        const threads = new Set();
+    //     console.log("Running with ", threadCount, " threads")
 
-        let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
+    //     const threads = new Set();
 
-        console.log("Bracket breadth: ", bracketBreadth)
-        console.log("stratCombos.length: ", stratCombos.length)
+    //     let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
 
-        for (let i = 0; i < threadCount; i++) {
-            let lower = i*bracketBreadth;
-            let upper = (i+1)*bracketBreadth;
-            console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
+    //     console.log("Bracket breadth: ", bracketBreadth)
+    //     console.log("stratCombos.length: ", stratCombos.length)
 
-            threads.add(new Worker(__filename, { workerData: 
-                { 
-                    id: i,
-                    lower: lower,
-                    upper: upper,
-                    combos: stratCombos.slice(lower, upper),
-                }
-            }));
-        }
+    //     for (let i = 0; i < threadCount; i++) {
+    //         let lower = i*bracketBreadth;
+    //         let upper = (i+1)*bracketBreadth;
+    //         console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
 
-        threads.forEach(thread => {
-            thread.on('message', (msg) => {
-                console.log(msg)
-            });
-        })
-    } else {
-            parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
-            let start = new Date().getTime();
-            await findBestStratOver1MAndWrite(workerData.combos, workerData.lower, (text) => parentPort.postMessage("Thread " + workerData.id + " working on " + text));
-            parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
-    }
+    //         threads.add(new Worker(__filename, { workerData: 
+    //             { 
+    //                 id: i,
+    //                 lower: lower,
+    //                 upper: upper,
+    //                 combos: stratCombos.slice(lower, upper),
+    //             }
+    //         }));
+    //     }
+
+    //     threads.forEach(thread => {
+    //         thread.on('message', (msg) => {
+    //             console.log(msg)
+    //         });
+    //     })
+    // } else {
+    //         parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
+    //         let start = new Date().getTime();
+    //         await findBestStratOver1MAndWrite(workerData.combos, workerData.lower, (text) => parentPort.postMessage("Thread " + workerData.id + " working on " + text));
+    //         parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
+    // }
 }
 
 if (!isMainThread) {

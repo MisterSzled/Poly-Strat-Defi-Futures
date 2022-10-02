@@ -31,7 +31,7 @@ async function keeper() {
     while (true) {
       cs.indexer()
       let startTime = new Date();
-      let timeInX = startTime.getTime() + (1000*60);
+      let timeInX = startTime.getTime() + (1000*60 * 0.5);
 
       console.log("Calling at:  " + formatDate(startTime) + " - " + startTime.getTime());
       try {

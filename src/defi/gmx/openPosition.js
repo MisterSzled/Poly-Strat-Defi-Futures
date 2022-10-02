@@ -18,15 +18,7 @@ let tokens = {
     //Arbitrum
 }
 
-async function openPosition(type, strat, amountIn, SL, TP, curPrice, leverage) {
-
-    console.log("type: ", type);
-    console.log("amountIn: ", amountIn);
-    console.log("SL: ", SL);
-    console.log("TP: ", TP);
-    console.log("curPrice: ", curPrice);
-    console.log("leverage: ", leverage);
-
+async function openPosition(type, strat, optionsIndex, amountIn, SL, TP, curPrice, leverage) {
     let tokenAddy = tokens[strat.token];
 
     // Check existing positions
@@ -56,7 +48,7 @@ async function openPosition(type, strat, amountIn, SL, TP, curPrice, leverage) {
     ) {
         cs.process("Existing position of other type closing");
 
-        if (strat.options.useLimitOrders) {
+        if (strat.rulesets[optionsIndex].options.useLimitOrders) {
             cs.process("Closing orders");
             await closeOrders(strat);
         }
@@ -66,7 +58,7 @@ async function openPosition(type, strat, amountIn, SL, TP, curPrice, leverage) {
 
         await sleep(2000*60);
 
-        await openNewPosition(type, strat, amountIn, SL, TP, curPrice, leverage);
+        await openNewPosition(type, strat, optionsIndex, amountIn, SL, TP, curPrice, leverage);
 
         return;
     }
@@ -100,7 +92,7 @@ async function closeOrders(strat) {
     return;
 }
 
-async function openNewPosition(type, strat, amountIn, SL, TP, curPrice, leverage) {
+async function openNewPosition(type, strat, optionsIndex, amountIn, SL, TP, curPrice, leverage) {
     let gmx          = await getGMXcontract(strat.wallet.priv);
     let gmxReader    = await getGMXReader(strat.wallet.priv);
     let gmxOrderbook = await getGMXOrderbook(strat.wallet.priv);
@@ -150,7 +142,7 @@ async function openNewPosition(type, strat, amountIn, SL, TP, curPrice, leverage
     cs.win("Position opened");
 
     await sleep(500*60);
-    if (strat.options.useLimitOrders) {
+    if (strat.rulesets[optionsIndex].options.useLimitOrders) {
         cs.process("Setting limits");
 
         let positions = await gmxReader["getPositions"](
