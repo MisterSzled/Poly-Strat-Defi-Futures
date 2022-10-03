@@ -127,7 +127,19 @@ async function backtrace(strat, monthsback) {
         let mockSlice = historyArray.slice(i - 1000, i + 1);
 
         // let start = new Date().getTime();
-        let finalResult = processIndicators(strat, mockSlice);
+        let resArray = processIndicators(strat, mockSlice);
+
+        let finalResult = 0;
+        let finalIndex = 0;
+        for (let i = 0; i < resArray.length; i++) {
+            if (resArray[i].result !== 0) {
+                finalIndex = resArray[i].index;
+                finalResult = resArray[i].result;
+            }
+        }
+
+        // console.log(resArray)
+
         // console.log(new Date().getTime() - start);
 
         let curPrice = mockSlice[mockSlice.length - 2][4];
@@ -196,7 +208,7 @@ async function backtrace(strat, monthsback) {
                     resString("Short", delta < 0, curDate, wallet.curUSD, delta);
                 }
 
-                let newPosProfile = getNewPositionProfile(strat, wallet.curUSD, mockSlice, true, curPrice);
+                let newPosProfile = getNewPositionProfile(strat.rulesets[finalIndex].options, wallet.curUSD, mockSlice, true, curPrice);
                 wallet = {
                     ...wallet,
                     curUSD: wallet.curUSD - newPosProfile.longQty,
@@ -227,7 +239,7 @@ async function backtrace(strat, monthsback) {
                     if (delta > 0) wallet["longWins"] = wallet["longWins"] + 1;
                     resString("Long ", delta < 0, curDate, wallet.curUSD, delta);
                 }
-                let newPosProfile = getNewPositionProfile(strat, wallet.curUSD, mockSlice, false, curPrice);
+                let newPosProfile = getNewPositionProfile(strat.rulesets[finalIndex].options, wallet.curUSD, mockSlice, false, curPrice);
                 wallet = {
                     ...wallet,
                     curUSD: wallet.curUSD - newPosProfile.shortQty,
@@ -251,7 +263,7 @@ async function backtrace(strat, monthsback) {
 
     let worstStreak = wallet.positionClosed.reduce((res, n) => (n.delta < 0 ? res[res.length-1]++ : res.push(0), res), [0]);
     worstStreak = Math.max(...worstStreak);
-    wallet["drawdown"] = 1 - ((1 - (strat.options.percentageRiskedPerTrade/100))**worstStreak);
+    wallet["drawdown"] = 1 - ((1 - (strat.rulesets[0].options.percentageRiskedPerTrade/100))**worstStreak);
 
     console.log(wallet["curUSD"] + wallet["curPositionAmtIn"]);
     console.log("win: ", wallet["winratio"]);
