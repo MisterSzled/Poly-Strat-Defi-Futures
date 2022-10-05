@@ -154,7 +154,6 @@ async function backtrace(strat, monthsback) {
             break;
         }
 
-        // console.log("CurUSD: ", wallet.curUSD, " amtIn: ", wallet.curPositionAmtIn)
 
         // console.log(parseInt(mockSlice[mockSlice.length - 1][0]))
         // if (parseInt(mockSlice[mockSlice.length - 1][0]) === (1659968100000)) {

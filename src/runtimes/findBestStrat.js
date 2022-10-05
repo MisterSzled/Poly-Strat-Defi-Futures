@@ -121,36 +121,36 @@ async function filterMonthListForBest() {
     // console.log(wallets.map(val => val.ETHUSDT.walletResult.curUSD))
     // console.log(wallets.map(val => val.AVAXUSDT.walletResult.curUSD))
     // console.log(wallets.map(val => val.BTCUSDT.rulesets[0].indicators[0].settings));
-    let temp = [];
+    // let temp = [];
 
-    for (let i = 0; i < wallets.length; i++) {
-        temp.push({
-            shorts: wallets[i].BTCUSDT.walletResult.shorts,
-            longs: wallets[i].BTCUSDT.walletResult.longs,
-            curUSD: wallets[i].BTCUSDT.walletResult.curUSD,
-            wr: wallets[i].BTCUSDT.walletResult.winratio,
-            dd: wallets[i].BTCUSDT.walletResult.drawdown,
-        });
-        temp.push({
-            shorts: wallets[i].ETHUSDT.walletResult.shorts,
-            longs: wallets[i].ETHUSDT.walletResult.longs,
-            curUSD: wallets[i].ETHUSDT.walletResult.curUSD,
-            wr: wallets[i].ETHUSDT.walletResult.winratio,
-            dd: wallets[i].ETHUSDT.walletResult.drawdown,
-        });
-        temp.push({
-            shorts: wallets[i].AVAXUSDT.walletResult.shorts,
-            longs: wallets[i].AVAXUSDT.walletResult.longs,
-            curUSD: wallets[i].AVAXUSDT.walletResult.curUSD,
-            wr: wallets[i].AVAXUSDT.walletResult.winratio,
-            dd: wallets[i].AVAXUSDT.walletResult.drawdown,
-        });
-    }
+    // for (let i = 0; i < wallets.length; i++) {
+    //     temp.push({
+    //         shorts: wallets[i].BTCUSDT.walletResult.shorts,
+    //         longs: wallets[i].BTCUSDT.walletResult.longs,
+    //         curUSD: wallets[i].BTCUSDT.walletResult.curUSD,
+    //         wr: wallets[i].BTCUSDT.walletResult.winratio,
+    //         dd: wallets[i].BTCUSDT.walletResult.drawdown,
+    //     });
+    //     temp.push({
+    //         shorts: wallets[i].ETHUSDT.walletResult.shorts,
+    //         longs: wallets[i].ETHUSDT.walletResult.longs,
+    //         curUSD: wallets[i].ETHUSDT.walletResult.curUSD,
+    //         wr: wallets[i].ETHUSDT.walletResult.winratio,
+    //         dd: wallets[i].ETHUSDT.walletResult.drawdown,
+    //     });
+    //     temp.push({
+    //         shorts: wallets[i].AVAXUSDT.walletResult.shorts,
+    //         longs: wallets[i].AVAXUSDT.walletResult.longs,
+    //         curUSD: wallets[i].AVAXUSDT.walletResult.curUSD,
+    //         wr: wallets[i].AVAXUSDT.walletResult.winratio,
+    //         dd: wallets[i].AVAXUSDT.walletResult.drawdown,
+    //     });
+    // }
 
-    await writeToFile("./src/backtest/processed/CSVTESTX.json", temp);
+    // await writeToFile("./src/backtest/processed/CSVTESTX.json", temp);
 
-    let winUSDThreshold = 250;
-    let winDDThreshold  = 0.6;
+    // let winUSDThreshold = 250;
+    // let winDDThreshold  = 0.6;
     // wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
     // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
     // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 14);
@@ -250,129 +250,72 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    await filterMonthListForBest();
+    // await filterMonthListForBest();
 
-    // let start = new Date().getTime();
-    // let tempRes = await backtrace({
-    //     "opName": "Generated_0_0",
-    //     "token": "ETHUSDT",
-    //     "timeframe": "15m",
-    //     rulesets: [
-    //         {
-    //             "options": {
-    //                 "swingHighLowLookbackLength": 60,
-    //                 "percentageRiskedPerTrade": 25,
-    //                 "profitFactor": 2,
-    //                 "atrLength": 14,
-    //                 "useLimitOrders": false,
-    //                 "gmxLimitAdjustment": 1
-    //             },
-    //             "indicators": [
-    //             {
-    //             "name": "fractal",
-    //             "settings": {
-    //                     "filterBillWilliams": true,
-    //                     "useTimeFractals":    true,
-                        
-    //                     "timeframe": 10,
-    //                     use_IJKLMN: true,
-    //                     IJKLMN_use_J_as_pivot: true,
+    let start = new Date().getTime();
+    let tempRes = await backtrace({
+        opName: "Multi TTT", 
+        token: "BTCUSDT", 
+        timeframe: "15m",
+
+        rulesets: [
+            {
+                // 1-4
+                options: {
+                    swingHighLowLookbackLength: 10,
+                    percentageRiskedPerTrade: 20,
+                    profitFactor: 2,
     
-    //                     IJKLMN_IJK_min: 0,
-    //                     IJKLMN_IJK_max: 1000,
+                    atrLength: 14,
+                    useLimitOrders: false,
+                    gmxLimitAdjustment: 1,
+                },
+                indicators: [
+                    {
+                        name: "fractal",
+                        settings: {
+                            use_IJKLMN: true,
     
-    //                     IJKLMN_IJN_min: 0,
-    //                     IJKLMN_IJN_max: 1000,
-    
-    //                     IJKLMN_JKL_min: 0,
-    //                     IJKLMN_JKL_max: 1,
-    
-    //                     IJKLMN_KLM_min: 0,
-    //                     IJKLMN_KLM_max: 1,
-    
-    //                     IJKLMN_LMN_min: 0,
-    //                     IJKLMN_LMN_max: 1,
-    //                 }
-    //             },
-    //             {
-    //                 name: "mhull",
-    //                 settings: {
-    //                     source: "close",       
-    //                     hullVariation: "HMA",  
-    //                     lengthMultiplier: 1, 
-    //                     useHtf: false,         
-    //                     higherTimeframe: "4h", 
-    
-    //                     length: 600, 
-    //                 }
-    //             },
-    //             {
-    //                 name: "volatilityOscillator",
-    //                 settings: {
-    //                     volLength: 75
-    //                 }
-    //             }
-    //         ]
-    //         },
-    //         {
-    //             "options": {
-    //                 "swingHighLowLookbackLength": 60,
-    //                 "percentageRiskedPerTrade": 25,
-    //                 "profitFactor": 2,
-    //                 "atrLength": 14,
-    //                 "useLimitOrders": false,
-    //                 "gmxLimitAdjustment": 1
-    //             },
-    //             "indicators": [
-    //             {
-    //             "name": "fractal",
-    //             "settings": {
-    //                     "filterBillWilliams": false,
-    //                     "useTimeFractals":    false,
-                        
-    //                     "timeframe": 10,
-    //                     use_IJKLMN: true,
-    //                     IJKLMN_use_J_as_pivot: true,
-    
-    //                     IJKLMN_IJK_min: 0,
-    //                     IJKLMN_IJK_max: 1,
-    
-    //                     IJKLMN_IJN_min: 1,
-    //                     IJKLMN_IJN_max: 1000,
-    
-    //                     IJKLMN_JKL_min: 0,
-    //                     IJKLMN_JKL_max: 1,
-    
-    //                     IJKLMN_KLM_min: 0,
-    //                     IJKLMN_KLM_max: 1000,
-    
-    //                     IJKLMN_LMN_min: 0,
-    //                     IJKLMN_LMN_max: 1000,
-    //                 }
-    //             },
-    //             {
-    //                 name: "mhull",
-    //                 settings: {
-    //                     source: "close",       
-    //                     hullVariation: "HMA",  
-    //                     lengthMultiplier: 1, 
-    //                     useHtf: false,         
-    //                     higherTimeframe: "4h", 
-    
-    //                     length: 600, 
-    //                 }
-    //             },
-    //             {
-    //                 name: "volatilityOscillator",
-    //                 settings: {
-    //                     volLength: 75
-    //                 }
-    //             }
-    //         ]
-    //         }
-    //     ]
-    // }, 12);
-    // console.log(new Date().getTime() - start);
+                            filterBillWilliams: true,
+                            useTimeFractals: true,
+                            timeframe: 10,
+                            IJKLMN_use_J_as_pivot: true,
+            
+                            IJKLMN_IJK_min: 1,
+                            IJKLMN_IJK_max: 1000,
+            
+                            IJKLMN_IJN_min: 0,
+                            IJKLMN_IJN_max: 1000,
+            
+                            IJKLMN_JKL_min: 0,
+                            IJKLMN_JKL_max: 1,
+            
+                            IJKLMN_KLM_min: 0,
+                            IJKLMN_KLM_max: 1,
+            
+                            IJKLMN_LMN_min: 0,
+                            IJKLMN_LMN_max: 1,
+                        }
+                    },
+                    {
+                        name: "mhull",
+                            settings: {
+                                hullVariation: "HMA",  //Only uses HMA atm
+                                length: 700,           //Max value is 2x < 1000 === 499
+                                lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
+                            }
+                    },
+                    {
+                        name: "volatilityOscillator",
+                        settings: {
+                            volLength: 75
+                        }
+                    },
+                ],
+            },
+        ]
+    }, 12);
+    console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
     //     let threadCount = 8;
