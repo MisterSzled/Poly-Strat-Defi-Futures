@@ -82,7 +82,7 @@ function filterForTokenSuccessParity(wallets) {
             (avxTemp.rulesets[0].indicators[2].settings.volLength === ETHUSDT[i].rulesets[0].indicators[2].settings.volLength) 
         });
 
-        let dollarThreshold = 300
+        let dollarThreshold = 1000
         if (
             (ETHUSDT[i].walletResult.curUSD > dollarThreshold) && 
             (sameBTC.walletResult.curUSD > dollarThreshold) && 
@@ -114,13 +114,16 @@ async function filterMonthListForBest() {
 
     console.log("Total run: ", wallets.length);
 
-    wallets = filterForTokenSuccessParity(wallets);
-    console.log("Total triples: ", wallets.length);
+    // wallets = filterForTokenSuccessParity(wallets);
+    // console.log("Total triples: ", wallets.length);
 
-    // console.log(wallets.map(val => val.BTCUSDT.walletResult.curUSD))
-    // console.log(wallets.map(val => val.ETHUSDT.walletResult.curUSD))
-    // console.log(wallets.map(val => val.AVAXUSDT.walletResult.curUSD))
+    // console.log(wallets.map(val => val.BTCUSDT.walletResult.drawdown))
+    // console.log(wallets.map(val => val.ETHUSDT.walletResult.drawdown))
+    // console.log(wallets.map(val => val.AVAXUSDT.walletResult.drawdown))
     // console.log(wallets.map(val => val.BTCUSDT.rulesets[0].indicators[0].settings));
+    // console.log(wallets.map(val => val.AVAXUSDT.rulesets[0].options));
+    // console.log(wallets.map(val => val.AVAXUSDT.rulesets[0].indicators[1].settings));
+    // console.log(wallets.map(val => val.AVAXUSDT.rulesets[0].indicators[2].settings));
     // let temp = [];
 
     // for (let i = 0; i < wallets.length; i++) {
@@ -149,41 +152,40 @@ async function filterMonthListForBest() {
 
     // await writeToFile("./src/backtest/processed/CSVTESTX.json", temp);
 
-    // let winUSDThreshold = 250;
+    let winUSDThreshold = 250;
     // let winDDThreshold  = 0.6;
-    // wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
+    wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
     // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
-    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 14);
+    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 0);
+    // wallets = wallets.filter(val => val.rulesets[0].options.profitFactor === 5);
     // wallets = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max !== 1000);
     // wallets = wallets.filter(val => !val.indicators[0].settings.useTimeFractals);
 
-    // console.log("Total wins: ", wallets.length)
+    console.log("Total wins: ", wallets.length)
 
     // wallets = filterForConsistent(wallets);
 
-    // let bestUSD = [...wallets].sort((a,b) => {
-    //     if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
-    //     if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
-    //     return 0;
-    // });
+    let bestUSD = [...wallets].sort((a,b) => {
+        if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
+        if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
+        return 0;
+    });
 
     // console.log(bestUSD.map(val => val.walletResult.curUSD))
 
     let checkIndex = 0
-    // bestUSD[checkIndex].walletResult.positionOpens = [];
-    // bestUSD[checkIndex].walletResult.positionClosed = [];
+    bestUSD[checkIndex].walletResult.positionOpens = [];
+    bestUSD[checkIndex].walletResult.positionClosed = [];
 
-    // console.log("USD Winner usd:", bestUSD[checkIndex].walletResult.curUSD);
-    // console.log("USD Winner longs:", bestUSD[checkIndex].walletResult.longs);
-    // console.log("USD Winner long wins:", bestUSD[checkIndex].walletResult.longWins);
-    // console.log("USD Winner short wins:", bestUSD[checkIndex].walletResult.shortWins);
-    // console.log("USD Winner shorts:", bestUSD[checkIndex].walletResult.shorts);
-    // console.log("USD Winner wr:", bestUSD[checkIndex].walletResult.winratio);
-    // console.log("USD Winner dd:", bestUSD[checkIndex].walletResult.drawdown);
-    // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].options);
+    console.log("USD Winner usd:", bestUSD[checkIndex].walletResult.curUSD);
+    console.log("USD Winner longs:", bestUSD[checkIndex].walletResult.longs);
+    console.log("USD Winner shorts:", bestUSD[checkIndex].walletResult.shorts);
+    console.log("USD Winner wr:", bestUSD[checkIndex].walletResult.winratio);
+    console.log("USD Winner dd:", bestUSD[checkIndex].walletResult.drawdown);
+    console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].options);
     // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[0].settings);
-    // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[1].settings);
-    // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[2].settings);
+    console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[1].settings);
+    console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[2].settings);
 }
 
 function filterForConsistent(list) {
@@ -231,14 +233,14 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT", "ETHUSDT", "AVAXUSDT"]);
-    // console.log(stratCombos.length);
+    let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
+    console.log(stratCombos.length);
     // console.log(stratCombos[0].rulesets[0].indicators);
     // console.log(stratCombos[1].rulesets[0].indicators);
 
-    // stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
-    // stratCombos = stratCombos.filter(val => !val.indicators[0].settings.useTimeFractals);
-    // stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_use_J_as_pivot);
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.useTimeFractals);
+    stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_use_J_as_pivot);
 
     // stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJK_min < val.indicators[0].settings.IJKLMN_IJK_max);
     // stratCombos = stratCombos.filter(val => val.indicators[0].settings.IJKLMN_IJN_min < val.indicators[0].settings.IJKLMN_IJN_max);
@@ -250,81 +252,81 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    // await filterMonthListForBest();
+    await filterMonthListForBest();
 
-    let start = new Date().getTime();
-    let tempRes = await backtrace({
-        opName: "Multi TTT", 
-        token: "BTCUSDT", 
-        timeframe: "15m",
+    // let start = new Date().getTime();
+    // let tempRes = await backtrace({
+    //     opName: "Multi TTT", 
+    //     token: "AVAXUSDT", 
+    //     timeframe: "15m",
 
-        rulesets: [
-            {
-                // 1-4
-                options: {
-                    swingHighLowLookbackLength: 10,
-                    percentageRiskedPerTrade: 20,
-                    profitFactor: 2,
+    //     rulesets: [
+    //         {
+    //             // 1-4
+    //             options: {
+    //                 swingHighLowLookbackLength: 100,
+    //                 percentageRiskedPerTrade: 12,
+    //                 profitFactor: 2,
     
-                    atrLength: 14,
-                    useLimitOrders: false,
-                    gmxLimitAdjustment: 1,
-                },
-                indicators: [
-                    {
-                        name: "fractal",
-                        settings: {
-                            use_IJKLMN: true,
+    //                 atrLength: 14,
+    //                 useLimitOrders: false,
+    //                 gmxLimitAdjustment: 1,
+    //             },
+    //             indicators: [
+    //                 {
+    //                     name: "fractal",
+    //                     settings: {
+    //                         use_IJKLMN: true,
     
-                            filterBillWilliams: true,
-                            useTimeFractals: true,
-                            timeframe: 10,
-                            IJKLMN_use_J_as_pivot: true,
+    //                         filterBillWilliams: true,
+    //                         useTimeFractals: true,
+    //                         timeframe: 10,
+    //                         IJKLMN_use_J_as_pivot: true,
             
-                            IJKLMN_IJK_min: 1,
-                            IJKLMN_IJK_max: 1000,
+    //                         IJKLMN_IJK_min: 0,
+    //                         IJKLMN_IJK_max: 1000,
             
-                            IJKLMN_IJN_min: 0,
-                            IJKLMN_IJN_max: 1000,
+    //                         IJKLMN_IJN_min: 0,
+    //                         IJKLMN_IJN_max: 1000,
             
-                            IJKLMN_JKL_min: 0,
-                            IJKLMN_JKL_max: 1,
+    //                         IJKLMN_JKL_min: 0,
+    //                         IJKLMN_JKL_max: 1,
             
-                            IJKLMN_KLM_min: 0,
-                            IJKLMN_KLM_max: 1,
+    //                         IJKLMN_KLM_min: 0,
+    //                         IJKLMN_KLM_max: 1,
             
-                            IJKLMN_LMN_min: 0,
-                            IJKLMN_LMN_max: 1,
-                        }
-                    },
-                    {
-                        name: "mhull",
-                            settings: {
-                                hullVariation: "HMA",  //Only uses HMA atm
-                                length: 700,           //Max value is 2x < 1000 === 499
-                                lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
-                            }
-                    },
-                    {
-                        name: "volatilityOscillator",
-                        settings: {
-                            volLength: 75
-                        }
-                    },
-                ],
-            },
-        ]
-    }, 12);
-    console.log(new Date().getTime() - start);
+    //                         IJKLMN_LMN_min: 0,
+    //                         IJKLMN_LMN_max: 1,
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "mhull",
+    //                         settings: {
+    //                             hullVariation: "HMA",  //Only uses HMA atm
+    //                             length: 700,           //Max value is 2x < 1000 === 499
+    //                             lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
+    //                         }
+    //                 },
+    //                 {
+    //                     name: "volatilityOscillator",
+    //                     settings: {
+    //                         volLength: 20
+    //                     }
+    //                 },
+    //             ],
+    //         },
+    //     ]
+    // }, 12);
+    // console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
-    //     let threadCount = 8;
+    //     let threadCount = 10;
     //     let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT", "ETHUSDT", "AVAXUSDT"]);
     //     console.log(stratCombos.length);
 
-    //     // stratCombos = stratCombos.filter(val => val.indicators[0].settings.filterBillWilliams);
-    //     // stratCombos = stratCombos.filter(val => !val.indicators[0].settings.useTimeFractals);
-    //     // stratCombos = stratCombos.filter(val => !val.indicators[0].settings.IJKLMN_use_J_as_pivot);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.filterBillWilliams);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.useTimeFractals);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_use_J_as_pivot);
 
     //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJK_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJK_max);
     //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJN_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJN_max);
