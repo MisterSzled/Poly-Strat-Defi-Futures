@@ -266,6 +266,7 @@ function generateRulesetMap (variationScheme, targetToken) {
     //                 });
     //         }
     // }
+
     let result = [];
     for (let i = 0; i < mhull_map.length; i++) {
         for (let j = 0; j < fractal_map.length; j++) {
