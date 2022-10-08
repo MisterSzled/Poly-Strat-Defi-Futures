@@ -187,29 +187,30 @@ async function filterMonthListForBest() {
 
     console.log("Total wins: ", wallets.length)
 
-    // wallets = filterForConsistent(wallets);
+    wallets = filterForConsistent(wallets);
+    console.log("Total conssitent: ", wallets.length)
 
-    // let bestUSD = [...wallets].sort((a,b) => {
-    //     if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
-    //     if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
-    //     return 0;
-    // });
+    let bestUSD = [...wallets].sort((a,b) => {
+        if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
+        if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
+        return 0;
+    });
 
     // console.log(bestUSD.map(val => val.walletResult.curUSD))
 
-    // let checkIndex = 0
-    // bestUSD[checkIndex].walletResult.positionOpens = [];
-    // bestUSD[checkIndex].walletResult.positionClosed = [];
+    let checkIndex = 0
+    bestUSD[checkIndex].walletResult.positionOpens = [];
+    bestUSD[checkIndex].walletResult.positionClosed = [];
 
-    // console.log("USD Winner usd:", bestUSD[checkIndex].walletResult.curUSD);
-    // console.log("USD Winner longs:", bestUSD[checkIndex].walletResult.longs);
-    // console.log("USD Winner shorts:", bestUSD[checkIndex].walletResult.shorts);
-    // console.log("USD Winner wr:", bestUSD[checkIndex].walletResult.winratio);
-    // console.log("USD Winner dd:", bestUSD[checkIndex].walletResult.drawdown);
-    // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].options);
+    console.log("USD Winner usd:", bestUSD[checkIndex].walletResult.curUSD);
+    console.log("USD Winner longs:", bestUSD[checkIndex].walletResult.longs);
+    console.log("USD Winner shorts:", bestUSD[checkIndex].walletResult.shorts);
+    console.log("USD Winner wr:", bestUSD[checkIndex].walletResult.winratio);
+    console.log("USD Winner dd:", bestUSD[checkIndex].walletResult.drawdown);
+    console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].options);
     // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[0].settings);
-    // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[1].settings);
-    // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[2].settings);
+    console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[1].settings);
+    console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[2].settings);
 }
 
 function filterForConsistent(list) {
@@ -238,7 +239,7 @@ function filterForConsistent(list) {
             }
         }
 
-        let significantTrades = 100 / curWallet.options.percentageRiskedPerTrade;
+        let significantTrades = 100 / curWallet.rulesets[0].options.percentageRiskedPerTrade;
         let monthMapKeys = Object.keys(monthMap);
         let curResult = true;
         for (let i = 0; i < monthMapKeys.length; i++) {
@@ -257,28 +258,28 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
-    // console.log(stratCombos.length);
+    let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
+    console.log(stratCombos.length);
     // console.log(stratCombos[0]);
     // console.log(stratCombos[0].rulesets[0].indicators[0]);
     // console.log(stratCombos[1].rulesets[0].indicators[2]);
     // console.log(stratCombos[0].rulesets[0].indicators);
     // console.log(stratCombos[1].rulesets[0].indicators);
 
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.filterBillWilliams);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.useTimeFractals);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_use_J_as_pivot);
+    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.filterBillWilliams);
+    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.useTimeFractals);
+    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_use_J_as_pivot);
 
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJK_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJK_max);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJN_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJN_max);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_JKL_min < val.rulesets[0].indicators[0].settings.IJKLMN_JKL_max);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_KLM_min < val.rulesets[0].indicators[0].settings.IJKLMN_KLM_max);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_LMN_min < val.rulesets[0].indicators[0].settings.IJKLMN_LMN_max);
-    // console.log(stratCombos.length);
+    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJK_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJK_max);
+    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJN_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJN_max);
+    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_JKL_min < val.rulesets[0].indicators[0].settings.IJKLMN_JKL_max);
+    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_KLM_min < val.rulesets[0].indicators[0].settings.IJKLMN_KLM_max);
+    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_LMN_min < val.rulesets[0].indicators[0].settings.IJKLMN_LMN_max);
+    console.log(stratCombos.length);
 
-    // let start = new Date().getTime();
-    // await findBestStratOver1MAndWrite(stratCombos, 0);
-    // console.log(new Date().getTime() - start);
+    let start = new Date().getTime();
+    await findBestStratOver1MAndWrite(stratCombos, 0);
+    console.log(new Date().getTime() - start);
     // await filterMonthListForBest();
 
     // let start = new Date().getTime();
@@ -346,57 +347,57 @@ async function multiThreadStrats() {
     // }, 12);
     // console.log(new Date().getTime() - start);
     
-    if (isMainThread) {
-        let threadCount = 8;
-        let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT"]);
-        console.log(stratCombos.length);
+    // if (isMainThread) {
+    //     let threadCount = 4;
+    //     let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
+    //     console.log(stratCombos.length);
 
-        stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.filterBillWilliams);
-        stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.useTimeFractals);
-        stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_use_J_as_pivot);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.filterBillWilliams);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.useTimeFractals);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_use_J_as_pivot);
 
-        stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJK_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJK_max);
-        stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJN_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJN_max);
-        stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_JKL_min < val.rulesets[0].indicators[0].settings.IJKLMN_JKL_max);
-        stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_KLM_min < val.rulesets[0].indicators[0].settings.IJKLMN_KLM_max);
-        stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_LMN_min < val.rulesets[0].indicators[0].settings.IJKLMN_LMN_max);
-        console.log(stratCombos.length);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJK_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJK_max);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJN_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJN_max);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_JKL_min < val.rulesets[0].indicators[0].settings.IJKLMN_JKL_max);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_KLM_min < val.rulesets[0].indicators[0].settings.IJKLMN_KLM_max);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_LMN_min < val.rulesets[0].indicators[0].settings.IJKLMN_LMN_max);
+    //     console.log(stratCombos.length);
 
-        console.log("Running with ", threadCount, " threads")
+    //     console.log("Running with ", threadCount, " threads")
 
-        const threads = new Set();
+    //     const threads = new Set();
 
-        let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
+    //     let bracketBreadth = Math.ceil(stratCombos.length/threadCount);
 
-        console.log("Bracket breadth: ", bracketBreadth)
-        console.log("stratCombos.length: ", stratCombos.length)
+    //     console.log("Bracket breadth: ", bracketBreadth)
+    //     console.log("stratCombos.length: ", stratCombos.length)
 
-        for (let i = 0; i < threadCount; i++) {
-            let lower = i*bracketBreadth;
-            let upper = (i+1)*bracketBreadth;
-            console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
+    //     for (let i = 0; i < threadCount; i++) {
+    //         let lower = i*bracketBreadth;
+    //         let upper = (i+1)*bracketBreadth;
+    //         console.log("Thread: ", i, " Lower: ", lower, " Upper: ", upper);
 
-            threads.add(new Worker(__filename, { workerData: 
-                { 
-                    id: i,
-                    lower: lower,
-                    upper: upper,
-                    combos: stratCombos.slice(lower, upper),
-                }
-            }));
-        }
+    //         threads.add(new Worker(__filename, { workerData: 
+    //             { 
+    //                 id: i,
+    //                 lower: lower,
+    //                 upper: upper,
+    //                 combos: stratCombos.slice(lower, upper),
+    //             }
+    //         }));
+    //     }
 
-        threads.forEach(thread => {
-            thread.on('message', (msg) => {
-                console.log(msg)
-            });
-        })
-    } else {
-            parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
-            let start = new Date().getTime();
-            await findBestStratOver1MAndWrite(workerData.combos, workerData.lower, (text) => parentPort.postMessage("Thread " + workerData.id + " working on " + text));
-            parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
-    }
+    //     threads.forEach(thread => {
+    //         thread.on('message', (msg) => {
+    //             console.log(msg)
+    //         });
+    //     })
+    // } else {
+    //         parentPort.postMessage("Thread: " + workerData.id + " from: " + workerData.lower);
+    //         let start = new Date().getTime();
+    //         await findBestStratOver1MAndWrite(workerData.combos, workerData.lower, (text) => parentPort.postMessage("Thread " + workerData.id + " working on " + text));
+    //         parentPort.postMessage("Thread " + workerData.id + " Run time: " + (new Date().getTime() - start));
+    // }
 }
 
 if (!isMainThread) {
