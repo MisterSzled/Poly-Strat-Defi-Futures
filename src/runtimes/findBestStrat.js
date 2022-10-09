@@ -258,7 +258,7 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
+    let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
     console.log(stratCombos.length);
     // console.log(stratCombos[0]);
     // console.log(stratCombos[0].rulesets[0].indicators[0]);
@@ -277,10 +277,10 @@ async function multiThreadStrats() {
     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_LMN_min < val.rulesets[0].indicators[0].settings.IJKLMN_LMN_max);
     console.log(stratCombos.length);
 
-    let start = new Date().getTime();
-    await findBestStratOver1MAndWrite(stratCombos, 0);
-    console.log(new Date().getTime() - start);
-    // await filterMonthListForBest();
+    // let start = new Date().getTime();
+    // await findBestStratOver1MAndWrite(stratCombos, 0);
+    // console.log(new Date().getTime() - start);
+    await filterMonthListForBest();
 
     // let start = new Date().getTime();
     // let tempRes = await backtrace({
