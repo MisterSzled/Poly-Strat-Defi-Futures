@@ -258,7 +258,7 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
+    let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
     console.log(stratCombos.length);
     // console.log(stratCombos[0]);
     // console.log(stratCombos[0].rulesets[0].indicators[0]);
@@ -280,72 +280,124 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    await filterMonthListForBest();
+    // await filterMonthListForBest();
 
-    // let start = new Date().getTime();
-    // let tempRes = await backtrace({
-    //     opName: "Multi TTT", 
-    //     token: "AVAXUSDT", 
-    //     timeframe: "15m",
+    let start = new Date().getTime();
+    let tempRes = await backtrace({
+        opName: "Multi TTT", 
+        token: "BTCUSDT", 
+        timeframe: "15m",
 
-    //     rulesets: [
-    //         {
-    //             // 1-4
-    //             options: {
-    //                 swingHighLowLookbackLength: 100,
-    //                 percentageRiskedPerTrade: 12,
-    //                 profitFactor: 2,
+        rulesets: [
+            {
+                options: {
+                    swingHighLowLookbackLength: 70,
+                    percentageRiskedPerTrade: 25,
+                    profitFactor: 5,
     
-    //                 atrLength: 14,
-    //                 useLimitOrders: false,
-    //                 gmxLimitAdjustment: 1,
-    //             },
-    //             indicators: [
-    //                 {
-    //                     name: "fractal",
-    //                     settings: {
-    //                         use_IJKLMN: true,
+                    atrLength: 14,
+                    useLimitOrders: false,
+                    gmxLimitAdjustment: 1,
+                },
+                indicators: [
+                    {
+                        name: "fractal",
+                        settings: {
+                            use_IJKLMN: true,
     
-    //                         filterBillWilliams: true,
-    //                         useTimeFractals: true,
-    //                         timeframe: 10,
-    //                         IJKLMN_use_J_as_pivot: true,
+                            filterBillWilliams: true,
+                            useTimeFractals: true,
+                            timeframe: 10,
+                            IJKLMN_use_J_as_pivot: true,
             
-    //                         IJKLMN_IJK_min: 0,
-    //                         IJKLMN_IJK_max: 1000,
+                            IJKLMN_IJK_min: 1,
+                            IJKLMN_IJK_max: 1000,
             
-    //                         IJKLMN_IJN_min: 0,
-    //                         IJKLMN_IJN_max: 1000,
+                            IJKLMN_IJN_min: 0,
+                            IJKLMN_IJN_max: 1000,
             
-    //                         IJKLMN_JKL_min: 0,
-    //                         IJKLMN_JKL_max: 1,
+                            IJKLMN_JKL_min: 0,
+                            IJKLMN_JKL_max: 1,
             
-    //                         IJKLMN_KLM_min: 0,
-    //                         IJKLMN_KLM_max: 1,
+                            IJKLMN_KLM_min: 0,
+                            IJKLMN_KLM_max: 1,
             
-    //                         IJKLMN_LMN_min: 0,
-    //                         IJKLMN_LMN_max: 1,
-    //                     }
-    //                 },
-    //                 {
-    //                     name: "mhull",
-    //                         settings: {
-    //                             hullVariation: "HMA",  //Only uses HMA atm
-    //                             length: 700,           //Max value is 2x < 1000 === 499
-    //                             lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
-    //                         }
-    //                 },
-    //                 {
-    //                     name: "volatilityOscillator",
-    //                     settings: {
-    //                         volLength: 20
-    //                     }
-    //                 },
-    //             ],
-    //         },
-    //     ]
-    // }, 12);
-    // console.log(new Date().getTime() - start);
+                            IJKLMN_LMN_min: 0,
+                            IJKLMN_LMN_max: 1,
+                        }
+                    },
+                    {
+                        name: "mhull",
+                            settings: {
+                                hullVariation: "HMA",  //Only uses HMA atm
+                                length: 700,           //Max value is 2x < 1000 === 499
+                                lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
+                            }
+                    },
+                    {
+                        name: "volatilityOscillator",
+                        settings: {
+                            volLength: 70
+                        }
+                    },
+                ],
+            },
+            {
+                options: {
+                    swingHighLowLookbackLength: 60,
+                    percentageRiskedPerTrade: 20,
+                    profitFactor: 4,
+    
+                    atrLength: 14,
+                    useLimitOrders: false,
+                    gmxLimitAdjustment: 1,
+                },
+                indicators: [
+                    {
+                        name: "fractal",
+                        settings: {
+                            use_IJKLMN: true,
+    
+                            filterBillWilliams: true,
+                            useTimeFractals: true,
+                            timeframe: 10,
+                            IJKLMN_use_J_as_pivot: true,
+            
+                            IJKLMN_IJK_min: 0,
+                            IJKLMN_IJK_max: 1000,
+            
+                            IJKLMN_IJN_min: 1,
+                            IJKLMN_IJN_max: 1000,
+            
+                            IJKLMN_JKL_min: 0,
+                            IJKLMN_JKL_max: 1,
+            
+                            IJKLMN_KLM_min: 0,
+                            IJKLMN_KLM_max: 1,
+            
+                            IJKLMN_LMN_min: 0,
+                            IJKLMN_LMN_max: 1,
+                        }
+                    },
+                    {
+                        name: "mhull",
+                            settings: {
+                                hullVariation: "HMA",
+                                length: 700,
+                                lengthMultiplier: 1,
+                            }
+                    },
+                    {
+                        name: "volatilityOscillator",
+                        settings: {
+                            volLength: 50
+                        }
+                    },
+                ],
+            },
+        ]
+    }, 12);
+    console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
     //     let threadCount = 4;
