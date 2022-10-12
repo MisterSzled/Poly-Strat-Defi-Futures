@@ -3,6 +3,7 @@ const mhull = require("./library/mhull");
 const volatilityOscillator = require("./library/volatilityOscillator");
 const fractal = require("./library/fractal");
 const coralTrend = require("./library/coralTrend");
+const adx = require("./library/adx");
 
 let indicators = {
     boomHunter: boomHunter,
@@ -10,6 +11,7 @@ let indicators = {
     volatilityOscillator: volatilityOscillator,
     fractal: fractal,
     coralTrend: coralTrend,
+    adx: adx,
 }
 
 module.exports = indicators

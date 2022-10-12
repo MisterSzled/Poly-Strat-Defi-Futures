@@ -155,19 +155,13 @@ function coralTrend(strat, candleData) {
     // Condition 5: After valid pullback, price then closes above/below (long/short) Coral Trend
     let entryBreakout = (isCoralBullish && (cleanBarArray.closeCrossoverBFR === 0)) || (isCoralBearish && (cleanBarArray.closeCrossunderBFR === 0));
 
-    console.log(cleanBarArray)
-
     let isLong  = isCoralBullish && prePullbackBullBreakout && isPullbackValid && entryBreakout;
     let isShort = isCoralBearish && prePullbackBearBreakout && isPullbackValid && entryBreakout;
-
-    console.log(isCoralBullish ? 1 : isCoralBearish ? -1 : 0)
-    console.log(prePullbackBullBreakout ? 1 : prePullbackBearBreakout ? -1 : 0)
-    console.log(isPullbackValid ? 1 : -1)
-    console.log(entryBreakout ? 1 : -1)
 
     cs[isCoralBullish ? "win" : isCoralBearish ? "fail" : "process"]("Direction:      " + (isCoralBullish ? 1 : isCoralBearish ? -1 : 0));
     cs[prePullbackBullBreakout ? "win" : prePullbackBearBreakout ? "fail" : "process"]("Clean break:    " + (prePullbackBullBreakout ? 1 : prePullbackBearBreakout ? -1 : 0));
     cs[isPullbackValid ? "win" : "process"]("Pullback valid: " + (isPullbackValid));
+    cs[entryBreakout ? "win" : "process"]("Entry breakout: " + (entryBreakout));
 
     return isLong ? 1 : isShort ? -1 : 0;
 }
