@@ -18,8 +18,10 @@ function getDirection(price0, price1) {
     }
 }
 
-function getADX(strat, candleData) {
-    let priceData  = candleData.slice(0, candleData.length - 1);
+function adx(strat, candleData) {
+    cs.header("ADX");
+
+    let priceData  = candleData.slice(0, [...candleData].length - 1);
 
     let smoothedTrueRange = [];
     let smoothDirPlus  = [];
@@ -56,14 +58,25 @@ function getADX(strat, candleData) {
         }
     }
 
-    console.log(ADX[ADX.length - 1])
-}
+    let DIPlus  = smoothDirPlus[smoothDirPlus.length   - 1] / smoothedTrueRange[smoothedTrueRange.length - 1] * 100;
+    let DIMinus = smoothDirMinus[smoothDirMinus.length - 1] / smoothedTrueRange[smoothedTrueRange.length - 1] * 100;
 
-function adx(strat, candleData) {
-    cs.header("ADX");
-    let adx = getADX(strat, [...candleData]);
-
+    let isAdxUp             = ADX[ADX.length - 1]  > ADX[ADX.length - 2];
+    let isAdxValid          = (ADX[ADX.length - 1]  > strat.settings.midLine) && isAdxUp;
+    let longTradeConfirmed  = (DIPlus  > DIMinus) && isAdxValid;
+    let shortTradeConfirmed = (DIMinus > DIPlus)  && isAdxValid;
     
+    cs.process("ADX 0:        " + ADX[ADX.length - 1]);
+    cs.process("ADX 1:        " + ADX[ADX.length - 2]);
+    cs.process("Is ADX up:    " + isAdxUp);
+    cs.process("Is ADX valid: " + isAdxValid);
+
+    if (longTradeConfirmed) cs.win("ADX Long confirmed");
+    if (shortTradeConfirmed) cs.fail("ADX Short confirmed");
+
+    if (longTradeConfirmed) return 1;
+    if (shortTradeConfirmed) return -1;
+    return 0;
 }
 
 module.exports = adx;
