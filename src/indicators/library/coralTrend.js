@@ -75,6 +75,12 @@ function getCoral(strat, candleData) {
 function getCleanBarArray(candleData, bfr) {
     let priceData = candleData.slice(candleData.length - 1 - lookback, candleData.length - 1);
 
+    let closeCrossoverBFR = -1;
+    let closeCrossunderBFR = -1;
+
+    let bullishBFRCrossover = -1;
+    let bearishBFRCrossover = -1;
+
     let bullCountA = -1;
     let bearCountA = -1;
 
@@ -87,27 +93,39 @@ function getCleanBarArray(candleData, bfr) {
     for (let i = priceData.length - 1; i > 1; i--) {
         let bfr0 = bfr[bfr.length - 1 - count];
         let bfr1 = bfr[bfr.length - 2 - count];
+        let bfr2 = bfr[bfr.length - 3 - count];
 
-        if (bullCountA > -1 && bearCountA > -1 &&
-            bullCountB > -1 && bearCountB > -1 &&
-            cleanBelow > -1 && cleanAbove > -1
+        if ((bullCountA > -1) && (bearCountA > -1) &&
+            (bullCountB > -1) && (bearCountB > -1) &&
+            (cleanBelow > -1) && (cleanAbove > -1)
         ) break;
-        if (bullCountA < 0 && (priceData[i][4] > bfr0) && (priceData[i-1][4] < bfr1)) bullCountA = count;
-        if (bearCountA < 0 && (priceData[i][4] < bfr0) && (priceData[i-1][4] > bfr1)) bearCountA = count;
+        if ((bullCountA < 0) && (priceData[i][4] > bfr0) && (priceData[i-1][4] < bfr1)) bullCountA = count;
+        if ((bearCountA < 0) && (priceData[i][4] < bfr0) && (priceData[i-1][4] > bfr1)) bearCountA = count;
 
-        if (bullCountB < 0 && (priceData[i-1][4] > bfr0) && (priceData[i-2][4] < bfr1)) bullCountB = count;
-        if (bearCountB < 0 && (priceData[i-1][4] < bfr0) && (priceData[i-2][4] > bfr1)) bearCountB = count;
+        if ((bullCountB < 0) && (priceData[i-1][4] > bfr0) && (priceData[i-2][4] < bfr1)) bullCountB = count;
+        if ((bearCountB < 0) && (priceData[i-1][4] < bfr0) && (priceData[i-2][4] > bfr1)) bearCountB = count;
 
-        if (cleanAbove < 0 && (cleanAbove < 0) && (priceData[i][3] > bfr0)) cleanAbove = count;
-        if (cleanBelow < 0 && (cleanBelow < 0) && (priceData[i][2] < bfr0)) cleanBelow = count;
+        if ((cleanAbove < 0) && (priceData[i][3] > bfr0)) cleanAbove = count;
+        if ((cleanBelow < 0) && (priceData[i][2] < bfr0)) cleanBelow = count;
+
+        if ((bullishBFRCrossover < 0) && (bfr0 > bfr1) && (bfr1 < bfr2)) bullishBFRCrossover = count
+        if ((bearishBFRCrossover < 0) && (bfr0 < bfr1) && (bfr1 > bfr2)) bearishBFRCrossover = count
+
+        if ((closeCrossoverBFR  < 0) && (priceData[i][4] > bfr0) && (priceData[i-1][4] < bfr1)) closeCrossoverBFR = count
+        if ((closeCrossunderBFR < 0) && (priceData[i][4] < bfr0) && (priceData[i-1][4] > bfr1)) closeCrossunderBFR = count
+
         count++;
     }
 
     return {
-        bull: bullCountB,
-        bear: bearCountB,
+        bull: [bullCountA, bullCountB],
+        bear: [bearCountA, bearCountB],
         above: cleanAbove,
         below: cleanBelow,
+        bullishBFRCrossover: bullishBFRCrossover,
+        bearishBFRCrossover: bearishBFRCrossover,
+        closeCrossoverBFR:   closeCrossoverBFR,
+        closeCrossunderBFR:  closeCrossunderBFR,
     }
 }
 
@@ -117,21 +135,41 @@ function coralTrend(strat, candleData) {
     let bfr = getCoral(strat, [...candleData]);
 
     // Condition 1: is coral bullish
-    let longA = bfr[bfr.length - 1] > bfr[bfr.length - 2];
-    let shortA = bfr[bfr.length - 1] > bfr[bfr.length - 2];
+    let isCoralBullish  = bfr[bfr.length - 1] > bfr[bfr.length - 2];
+    let isCoralBearish = bfr[bfr.length - 1] < bfr[bfr.length - 2];
 
-    // XXX
-    // Need to check this works at the threshold of cross over
-    // XXX
     // Condition 2: At least 1 candle completely above/below (long/short) Coral Trend since last cross above/below (long/short) Coral Trend
     let cleanBarArray = getCleanBarArray(candleData, bfr);
-    console.log(cleanBarArray)
-
-    let longB = cleanBarArray.above  < cleanBarArray.bull[1];
-    let shortB = cleanBarArray.below < cleanBarArray.bear[1];
+    let prePullbackBullBreakout  = cleanBarArray.above < cleanBarArray.bull[1];
+    let prePullbackBearBreakout = cleanBarArray.below < cleanBarArray.bear[1];
 
     // Condition 3: Pullback closes below/above (long/short) Coral Trend
+    let barssinceBullPullbackStart = cleanBarArray.bear[0];
+    let barssinceBearPullbackStart = cleanBarArray.bull[0];
+    let barssincePullbackStart = isCoralBullish ? barssinceBullPullbackStart : isCoralBearish ? barssinceBearPullbackStart : 0
 
+    // Condition 4: Coral Trend colour matched trend direction for duration of pullback
+    let barssinceCoralflip = isCoralBullish ? cleanBarArray.bullishBFRCrossover : isCoralBearish ? cleanBarArray.bearishBFRCrossover : 0
+    let isPullbackValid    = barssincePullbackStart < barssinceCoralflip;
+
+    // Condition 5: After valid pullback, price then closes above/below (long/short) Coral Trend
+    let entryBreakout = (isCoralBullish && (cleanBarArray.closeCrossoverBFR === 0)) || (isCoralBearish && (cleanBarArray.closeCrossunderBFR === 0));
+
+    console.log(cleanBarArray)
+
+    let isLong  = isCoralBullish && prePullbackBullBreakout && isPullbackValid && entryBreakout;
+    let isShort = isCoralBearish && prePullbackBearBreakout && isPullbackValid && entryBreakout;
+
+    console.log(isCoralBullish ? 1 : isCoralBearish ? -1 : 0)
+    console.log(prePullbackBullBreakout ? 1 : prePullbackBearBreakout ? -1 : 0)
+    console.log(isPullbackValid ? 1 : -1)
+    console.log(entryBreakout ? 1 : -1)
+
+    cs[isCoralBullish ? "win" : isCoralBearish ? "fail" : "process"]("Direction:      " + (isCoralBullish ? 1 : isCoralBearish ? -1 : 0));
+    cs[prePullbackBullBreakout ? "win" : prePullbackBearBreakout ? "fail" : "process"]("Clean break:    " + (prePullbackBullBreakout ? 1 : prePullbackBearBreakout ? -1 : 0));
+    cs[isPullbackValid ? "win" : "process"]("Pullback valid: " + (isPullbackValid));
+
+    return isLong ? 1 : isShort ? -1 : 0;
 }
 
 module.exports = coralTrend;
