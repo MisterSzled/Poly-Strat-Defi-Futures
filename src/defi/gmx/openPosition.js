@@ -37,7 +37,7 @@ async function openPosition(type, strat, optionsIndex, amountIn, SL, TP, curPric
         (parseInt(curPosInfo[type === "long" ? "short" : "long"]) === 0)
     ) {
         cs.process("No existing positions opening " + type);
-        await openNewPosition(type, strat, amountIn, SL, TP, curPrice, leverage);
+        await openNewPosition(type, strat, optionsIndex, amountIn, SL, TP, curPrice, leverage);
 
         return;
     }

@@ -43,8 +43,8 @@ function getNewPositionProfile(options, wallet, pairData, isLong, currentPrice) 
         let shortStopPercent = Math.abs((1 - (shortSL / curClose)) * 100);
         let shortTpPercent = shortStopPercent * options.profitFactor;
         let shortTp = curClose - (curClose * (shortTpPercent / 100));
-        
-        let riskCalc = getAdjustedLeverageAndAmount(wallet, options.percentageRiskedPerTrade, currentPrice, shortSL, false)
+
+        let riskCalc = getAdjustedLeverageAndAmount(wallet, options, currentPrice, shortSL, false)
         let shortQty = riskCalc.amt;
         let lev = riskCalc.lev;
 

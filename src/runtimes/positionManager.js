@@ -47,7 +47,7 @@ async function positionManager() {
 
             pairData = pairData.filter(val => val[6] <= (roundedTime + (15000 * 60)));
 
-            let posProfile = getNewPositionProfile(strats[i], 100, pairData, isLong, pairData[pairData.length - 1][4]);
+            let posProfile = getNewPositionProfile(strats[i].rulesets[0].options, 100, pairData, isLong, pairData[pairData.length - 1][4]);
             let SL = isLong ? posProfile.longSL : posProfile.shortSL;
             let TP = isLong ? posProfile.longTp : posProfile.shortTp;
 

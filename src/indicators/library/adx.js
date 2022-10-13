@@ -1,7 +1,5 @@
 const cs = require("../../general/chalkSpec");
 
-const lookback = 200;
-
 function getATRPair(price0, price1) {
     let atr0 = Math.max(Math.max(price0[2] - price0[3], Math.abs(price0[2] - price1[4]), Math.abs(price0[3] - price1[4])));
 
