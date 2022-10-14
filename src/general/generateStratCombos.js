@@ -1,4 +1,8 @@
 function generateKeySeries(scheme) {
+    if (typeof(scheme) === "string") {
+        return scheme;
+    }
+
     if (typeof(scheme) === "boolean") {
         return [true, false];
     }
@@ -66,8 +70,9 @@ function generateStratCombos (variationScheme, targetToken) {
     for (let i = 0; i < combinedSets.length; i++) {
         for (let j = 0; j < targetToken.length; j++) {
             tokenRes.push({
+                token: targetToken[j],
                 ...combinedSets[i],
-                token: targetToken[j]
+                
             })
         }
     }
@@ -96,60 +101,64 @@ function generateRulesetMap (variationScheme, targetToken) {
 
     // For IJKLMN
     let fractal_map = [];
-    let fractalSeries = getIndicatorSeries(variationScheme, "fractal");
-    for (let a = 0; a < fractalSeries.filterBillWilliams.length; a++) {
-    for (let b = 0; b < fractalSeries.useTimeFractals.length; b++) {
-    for (let c = 0; c < fractalSeries.timeframe.length; c++) {
-    for (let d = 0; d < fractalSeries.IJKLMN_use_J_as_pivot.length; d++) {
-        for (let e = 0; e < fractalSeries.IJKLMN_IJK_min.length; e++) {
-        for (let f = 0; f < fractalSeries.IJKLMN_IJK_max.length; f++) {
-            for (let g = 0; g < fractalSeries.IJKLMN_IJN_min.length; g++) {
-            for (let h = 0; h < fractalSeries.IJKLMN_IJN_max.length; h++) {
-                for (let i = 0; i < fractalSeries.IJKLMN_JKL_min.length; i++) {
-                for (let j = 0; j < fractalSeries.IJKLMN_JKL_max.length; j++) {
-                    for (let l = 0; l < fractalSeries.IJKLMN_KLM_min.length; l++) {
-                    for (let m = 0; m < fractalSeries.IJKLMN_KLM_max.length; m++) {
-                        for (let n = 0; n < fractalSeries.IJKLMN_LMN_min.length; n++) {
-                        for (let o = 0; o < fractalSeries.IJKLMN_LMN_max.length; o++) {
-
-                            if (
-                                !(fractalSeries.IJKLMN_IJK_min[e] >= fractalSeries.IJKLMN_IJK_max[f]) &&
-                                !(fractalSeries.IJKLMN_IJN_min[e] >= fractalSeries.IJKLMN_IJN_max[f]) &&
-                                !(fractalSeries.IJKLMN_JKL_min[e] >= fractalSeries.IJKLMN_JKL_max[f]) &&
-                                !(fractalSeries.IJKLMN_KLM_min[e] >= fractalSeries.IJKLMN_KLM_max[f]) &&
-                                !(fractalSeries.IJKLMN_LMN_min[e] >= fractalSeries.IJKLMN_LMN_max[f]) 
-                                // (fractalSeries.timeframe[d] ? (fractalSeries.IJKLMN_IJK_max[f] < 1) : (fractalSeries.IJKLMN_IJK_max[f] > 1))
-                            ) {
-                                fractal_map.push({
-                                    name: "fractal",
+    let fractalScheme = variationScheme.indicators.find(val => val.name === "fractal");
+    if (!!fractalScheme) {
+        let fractalSeries = getIndicatorSeries(variationScheme, "fractal");
+        for (let a = 0; a < fractalSeries.filterBillWilliams.length; a++) {
+        for (let b = 0; b < fractalSeries.useTimeFractals.length; b++) {
+        for (let c = 0; c < fractalSeries.timeframe.length; c++) {
+        for (let d = 0; d < fractalSeries.IJKLMN_use_J_as_pivot.length; d++) {
+            for (let e = 0; e < fractalSeries.IJKLMN_IJK_min.length; e++) {
+            for (let f = 0; f < fractalSeries.IJKLMN_IJK_max.length; f++) {
+                for (let g = 0; g < fractalSeries.IJKLMN_IJN_min.length; g++) {
+                for (let h = 0; h < fractalSeries.IJKLMN_IJN_max.length; h++) {
+                    for (let i = 0; i < fractalSeries.IJKLMN_JKL_min.length; i++) {
+                    for (let j = 0; j < fractalSeries.IJKLMN_JKL_max.length; j++) {
+                        for (let l = 0; l < fractalSeries.IJKLMN_KLM_min.length; l++) {
+                        for (let m = 0; m < fractalSeries.IJKLMN_KLM_max.length; m++) {
+                            for (let n = 0; n < fractalSeries.IJKLMN_LMN_min.length; n++) {
+                            for (let o = 0; o < fractalSeries.IJKLMN_LMN_max.length; o++) {
     
-                                    settings: {
-                                        filterBillWilliams:   fractalSeries.filterBillWilliams[a],
-                                        useTimeFractals:      fractalSeries.useTimeFractals[b],
-                                        // filterBillWilliams:   variationScheme.indicators[0].settings.filterBillWilliams,
-                                        // useTimeFractals:      variationScheme.indicators[0].settings.useTimeFractals,
-                                        timeframe:            fractalSeries.timeframe[c],
-    
-                                        use_IJKLMN:     true,
-                                        IJKLMN_use_J_as_pivot: fractalSeries.IJKLMN_use_J_as_pivot[d],
-                                        // IJKLMN_use_J_as_pivot: variationScheme.indicators[0].settings.IJKLMN_use_J_as_pivot,
-    
-                                        IJKLMN_IJK_min: fractalSeries.IJKLMN_IJK_min[e], 
-                                        IJKLMN_IJK_max: fractalSeries.IJKLMN_IJK_max[f],
-    
-                                        IJKLMN_IJN_min: fractalSeries.IJKLMN_IJN_min[g], 
-                                        IJKLMN_IJN_max: fractalSeries.IJKLMN_IJN_max[h],
-    
-                                        IJKLMN_JKL_min: fractalSeries.IJKLMN_JKL_min[i], 
-                                        IJKLMN_JKL_max: fractalSeries.IJKLMN_JKL_max[j],
-    
-                                        IJKLMN_KLM_min: fractalSeries.IJKLMN_KLM_min[l], 
-                                        IJKLMN_KLM_max: fractalSeries.IJKLMN_KLM_max[m],
-    
-                                        IJKLMN_LMN_min: fractalSeries.IJKLMN_LMN_min[n], 
-                                        IJKLMN_LMN_max: fractalSeries.IJKLMN_LMN_max[o],
-                                    }
-                                });
+                                if (
+                                    !(fractalSeries.IJKLMN_IJK_min[e] >= fractalSeries.IJKLMN_IJK_max[f]) &&
+                                    !(fractalSeries.IJKLMN_IJN_min[e] >= fractalSeries.IJKLMN_IJN_max[f]) &&
+                                    !(fractalSeries.IJKLMN_JKL_min[e] >= fractalSeries.IJKLMN_JKL_max[f]) &&
+                                    !(fractalSeries.IJKLMN_KLM_min[e] >= fractalSeries.IJKLMN_KLM_max[f]) &&
+                                    !(fractalSeries.IJKLMN_LMN_min[e] >= fractalSeries.IJKLMN_LMN_max[f]) 
+                                    // (fractalSeries.timeframe[d] ? (fractalSeries.IJKLMN_IJK_max[f] < 1) : (fractalSeries.IJKLMN_IJK_max[f] > 1))
+                                ) {
+                                    fractal_map.push({
+                                        name: "fractal",
+        
+                                        settings: {
+                                            filterBillWilliams:   fractalSeries.filterBillWilliams[a],
+                                            useTimeFractals:      fractalSeries.useTimeFractals[b],
+                                            // filterBillWilliams:   variationScheme.indicators[0].settings.filterBillWilliams,
+                                            // useTimeFractals:      variationScheme.indicators[0].settings.useTimeFractals,
+                                            timeframe:            fractalSeries.timeframe[c],
+        
+                                            use_IJKLMN:     true,
+                                            IJKLMN_use_J_as_pivot: fractalSeries.IJKLMN_use_J_as_pivot[d],
+                                            // IJKLMN_use_J_as_pivot: variationScheme.indicators[0].settings.IJKLMN_use_J_as_pivot,
+        
+                                            IJKLMN_IJK_min: fractalSeries.IJKLMN_IJK_min[e], 
+                                            IJKLMN_IJK_max: fractalSeries.IJKLMN_IJK_max[f],
+        
+                                            IJKLMN_IJN_min: fractalSeries.IJKLMN_IJN_min[g], 
+                                            IJKLMN_IJN_max: fractalSeries.IJKLMN_IJN_max[h],
+        
+                                            IJKLMN_JKL_min: fractalSeries.IJKLMN_JKL_min[i], 
+                                            IJKLMN_JKL_max: fractalSeries.IJKLMN_JKL_max[j],
+        
+                                            IJKLMN_KLM_min: fractalSeries.IJKLMN_KLM_min[l], 
+                                            IJKLMN_KLM_max: fractalSeries.IJKLMN_KLM_max[m],
+        
+                                            IJKLMN_LMN_min: fractalSeries.IJKLMN_LMN_min[n], 
+                                            IJKLMN_LMN_max: fractalSeries.IJKLMN_LMN_max[o],
+                                        }
+                                    });
+                                }
+                            }
                             }
                         }
                         }
@@ -161,10 +170,11 @@ function generateRulesetMap (variationScheme, targetToken) {
             }
         }
         }
+        }
+        }
     }
-    }
-    }
-    }
+    
+    
 
     let boomHunter_map = [];
     let boomHunterScheme = variationScheme.indicators.find(val => val.name === "boomHunter");
@@ -226,6 +236,80 @@ function generateRulesetMap (variationScheme, targetToken) {
             });
         }
     }
+
+    let coralTrend_map = [];
+    let coralTrendScheme = variationScheme.indicators.find(val => val.name === "coralTrend");
+    if (!!coralTrendScheme) {
+        let coralTrendSeries = getIndicatorSeries(variationScheme, "coralTrend");
+        for (let a = 0; a < coralTrendSeries.smoothingPeriod.length; a++) {
+            for (let b = 0; b < coralTrendSeries.constantD.length; b++) {
+                coralTrend_map.push({
+                    name: "coralTrend",
+
+                    settings: {
+                        smoothingPeriod: coralTrendSeries.smoothingPeriod[a],
+                        constantD:       coralTrendSeries.constantD[b],
+                    }
+                });
+            }
+        }
+    }
+    
+    let adx_map = [];
+    let adxScheme = variationScheme.indicators.find(val => val.name === "adx");
+    if (!!adxScheme) {
+        let adxSeries = getIndicatorSeries(variationScheme, "adx");
+        for (let a = 0; a < adxSeries.length.length; a++) {
+            for (let b = 0; b < adxSeries.midLine.length; b++) {
+                adx_map.push({
+                    name: "adx",
+
+                    settings: {
+                        length:          adxSeries.length[a],
+                        midLine: adxSeries.midLine[b],
+                    }
+                });
+            }
+        }
+    }
+
+    let absoluteStrengthHistogram_map = [];
+    let absoluteStrengthHistogramScheme = variationScheme.indicators.find(val => val.name === "absoluteStrengthHistogram");
+    if (!!absoluteStrengthHistogramScheme) {
+        let absoluteStrengthHistogramSeries = getIndicatorSeries(variationScheme, "absoluteStrengthHistogram");
+        for (let a = 0; a < absoluteStrengthHistogramSeries.evalPeriod.length; a++) {
+            for (let b = 0; b < absoluteStrengthHistogramSeries.smoothingPeriod.length; b++) {
+                absoluteStrengthHistogram_map.push({
+                    name: "absoluteStrengthHistogram",
+
+                    settings: {
+                        length:          absoluteStrengthHistogramSeries.evalPeriod[a],
+                        useTimeFractals: absoluteStrengthHistogramSeries.smoothingPeriod[b],
+
+                        method: "RSI"
+                    }
+                });
+            }
+        }
+    }
+
+    let hawkeyeVolumne_map = [];
+    let hawkeyeVolumneScheme = variationScheme.indicators.find(val => val.name === "hawkeyeVolumne");
+    if (!!hawkeyeVolumneScheme) {
+        let hawkeyeVolumneSeries = getIndicatorSeries(variationScheme, "hawkeyeVolumne");
+        for (let a = 0; a < hawkeyeVolumneSeries.length.length; a++) {
+            for (let b = 0; b < hawkeyeVolumneSeries.divisor.length; b++) {
+                hawkeyeVolumne_map.push({
+                    name: "hawkeyeVolumne",
+
+                    settings: {
+                        length:  hawkeyeVolumneSeries.length[a],
+                        divisor: hawkeyeVolumneSeries.divisor[b],
+                    }
+                });
+            }
+        }
+    }
     
     // let result = [];
     // for (let i = 0; i < mhull_map.length; i++) {
@@ -267,28 +351,73 @@ function generateRulesetMap (variationScheme, targetToken) {
     //         }
     // }
 
+    // let result = [];
+    // for (let i = 0; i < mhull_map.length; i++) {
+    //     for (let j = 0; j < fractal_map.length; j++) {
+    //         for (let k = 0; k < options_map.length; k++) {
+    //             for (let m = 0; m < volatilityOscillator_map.length; m++) {
+    //                 result.push({               
+    //                     opName: "Generated_" + i+"_"+j+"_"+k+"_"+m, 
+                
+    //                     // token: targetToken, 
+                
+    //                     options: options_map[k],
+                
+    //                     indicators: [
+    //                         fractal_map[j],
+    //                         mhull_map[i],
+    //                         volatilityOscillator_map[m],
+    //                     ],
+    //                 });
+    //             }
+    //         }
+    //     }
+    // }
+
+    // CORAL ADX
     let result = [];
-    for (let i = 0; i < mhull_map.length; i++) {
-        for (let j = 0; j < fractal_map.length; j++) {
+    for (let i = 0; i < adx_map.length; i++) {
+        for (let j = 0; j < coralTrend_map.length; j++) {
             for (let k = 0; k < options_map.length; k++) {
-                for (let m = 0; m < volatilityOscillator_map.length; m++) {
-                    result.push({               
-                        opName: "Generated_" + i+"_"+j+"_"+k+"_"+m, 
-                
-                        // token: targetToken, 
-                
-                        options: options_map[k],
-                
-                        indicators: [
-                            fractal_map[j],
-                            mhull_map[i],
-                            volatilityOscillator_map[m],
-                        ],
-                    });
-                }
+                result.push({               
+                    opName: "Generated_" + i+"_"+j+"_"+k, 
+            
+                    // token: targetToken, 
+            
+                    options: options_map[k],
+            
+                    indicators: [
+                        coralTrend_map[j],
+                        adx_map[i],
+                    ],
+                });
             }
         }
     }
+
+    // CORAL ABS HAWKEYE
+    // let result = [];
+    // for (let i = 0; i < absoluteStrengthHistogram_map.length; i++) {
+    //     for (let j = 0; j < coralTrend_map.length; j++) {
+    //         for (let k = 0; k < options_map.length; k++) {
+    //         for (let l = 0; l < hawkeyeVolumne_map.length; l++) {
+    //             result.push({               
+    //                 opName: "Generated_" + i+"_"+j+"_"+k, 
+            
+    //                 token: targetToken, 
+            
+    //                 options: options_map[k],
+            
+    //                 indicators: [
+    //                     coralTrend_map[j],
+    //                     absoluteStrengthHistogram_map[i],
+    //                     hawkeyeVolumne_map[l],
+    //                 ],
+    //             });
+    //         }
+    //         }
+    //     }
+    // }
 
     return result
 }

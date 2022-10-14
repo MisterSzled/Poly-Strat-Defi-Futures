@@ -71,6 +71,7 @@ function adx(strat, candleData) {
     cs.process("Is ADX up:    " + isAdxUp);
     cs.process("Is ADX valid: " + isAdxValid);
 
+
     if (longTradeConfirmed) cs.win("ADX Long confirmed");
     if (shortTradeConfirmed) cs.fail("ADX Short confirmed");
 

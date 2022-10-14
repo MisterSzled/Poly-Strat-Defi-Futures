@@ -24,9 +24,10 @@ function processIndicators (strat, pairData) {
             let name = configIndicators[i].name;
             let temp = indicators[name](configIndicators[i], [...pairData]);
             cs[temp === 1 ? "long" : temp === -1 ? "short" : "process"](name +": "+ temp + "\n");
-    
+
             resultSum += temp;
         }
+
 
         let setResult = 0;
         if (resultSum === configIndicators.length)        setResult = 1;

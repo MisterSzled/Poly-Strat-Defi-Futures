@@ -16,16 +16,16 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt, messenger) {
             messenger(i)
         }
 
-        let newEntry = await backtrace(stratcombos[i], 6);
+        let newEntry = await backtrace(stratcombos[i], 2);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
-            await writeToFile("./src/backtest/processed/eth12_"+(shunt + i)+".json", results);
+            await writeToFile("./src/backtest/processed/coralADXEth_"+(shunt + i)+".json", results);
             results = [];
         } else if (i === stratcombos.length - 1) {
-            await writeToFile("./src/backtest/processed/eth12_"+(shunt + i + 1)+".json", results);
+            await writeToFile("./src/backtest/processed/coralADXEth_"+(shunt + i + 1)+".json", results);
             results = [];
         }
     }
@@ -343,10 +343,11 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT"]);
+    // let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
     // console.log(stratCombos.length);
     // console.log(stratCombos[0]);
-    // console.log(stratCombos[0].rulesets[0].indicators[0]);
+    // console.log(stratCombos[0].rulesets[0].options);
+    // console.log(stratCombos[0].rulesets[0].indicators[1]);
     // console.log(stratCombos[1].rulesets[0].indicators[2]);
     // console.log(stratCombos[0].rulesets[0].indicators);
     // console.log(stratCombos[1].rulesets[0].indicators);
@@ -382,65 +383,48 @@ async function multiThreadStrats() {
     // console.log(mappedWallets[150].rulesets[0].indicators[0]);
 
     // let start = new Date().getTime();
-    // await findBestStratOver1MAndWrite(wallets, 0);
+    // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
     // await filterMonthListForBest();
 
-    let start = new Date().getTime();
-    let tempRes = await backtrace({
-        opName: "Multi TTT", 
-        token: "ETHUSDT", 
-        timeframe: "15m",
+    // let start = new Date().getTime();
+    // let tempRes = await backtrace({
+    //     token: "ETHUSDT", 
+    //     timeframe: "15m",
 
-        rulesets: [
-            {
-                options: {
-                    // Risk settings
-                    swingHighLowLookbackLength: 88,
-                    percentageRiskedPerTrade: 12, // min 1 max 98
-                    profitFactor: 2, // This predominantly effects how long term your positions are
-                    atrLength: 14,
-                    
-                    // GMX settings
-                    gmxLimitAdjustment: 1,
-                },
+    //     rulesets: [
+    //         {
+    //             opName:  "generatedasdasdasd",
+    //             options: {
+    //                 swingHighLowLookbackLength: 50,
+    //                 percentageRiskedPerTrade: 15, 
+    //                 profitFactor: 3, 
+    //                 atrLength: 14,
 
-                indicators: [
-                    {
-                        name: "coralTrend",
-                        settings: {
-                            smoothingPeriod: 30,
-                            constantD: 0.6
-                        }
-                    },
-                    {
-                        name: "adx",
-                        settings: {
-                            length: 14,
-                            midLine: 18
-                        }
-                    },
-                    // {
-                    //     name: "absoluteStrengthHistogram",
-                    //     settings: {
-                    //         evalPeriod: 9,
-                    //         smoothingPeriod: 6,
+    //                 useLimitOrders: false,
+    //                 gmxLimitAdjustment: 1,
+    //             },
 
-                    //         method: "RSI" //RSI STOCHASTIC ADX
-                    //     }
-                    // },
-                    // {
-                    //     name: "hawkeyeVolumne",
-                    //     settings: {
-                    //         length: 10,
-                    //         divisor: 1.6,
-                    //     }
-                    // },
-                ],
-            },
-        ]
-    }, 1);
-    console.log(new Date().getTime() - start);
+    //             indicators: [
+    //                 {
+    //                     name: "coralTrend",
+    //                     settings: {
+    //                         smoothingPeriod: 10,
+    //                         constantD: 0.1
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "adx",
+    //                     settings: {
+    //                         length: 5,
+    //                         midLine: 5
+    //                     }
+    //                 },
+    //             ],
+    //         },
+    //     ]
+    // }, 1);
+    // console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
     //     let threadCount = 8;
