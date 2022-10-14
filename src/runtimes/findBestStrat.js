@@ -16,16 +16,16 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt, messenger) {
             messenger(i)
         }
 
-        let newEntry = await backtrace(stratcombos[i], 12);
+        let newEntry = await backtrace(stratcombos[i], 6);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
-            await writeToFile("./src/backtest/processed/"+(shunt + i)+".json", results);
+            await writeToFile("./src/backtest/processed/eth12_"+(shunt + i)+".json", results);
             results = [];
         } else if (i === stratcombos.length - 1) {
-            await writeToFile("./src/backtest/processed/"+(shunt + i + 1)+".json", results);
+            await writeToFile("./src/backtest/processed/eth12_"+(shunt + i + 1)+".json", results);
             results = [];
         }
     }
@@ -106,13 +106,90 @@ async function filterMonthListForBest() {
 
     fileNames = fileNames.filter(val => val.includes(".json"));
 
+    let btcWins = [];
+    let ethWins = [];
+    let avaxWins = [];
+
     for (let i = 0; i < fileNames.length; i++) {
         let res = fs.readFileSync(path + fileNames[i]);
         res = JSON.parse(res);
+
+        // if (fileNames[i].includes("btc")) {
+        //     btcWins = btcWins.concat(res)
+        // }
+        // if (fileNames[i].includes("avax")) {
+        //     avaxWins = avaxWins.concat(res)
+        // }
+        // if (fileNames[i].includes("eth")) {
+        //     ethWins = ethWins.concat(res)
+        // }
+
         wallets = wallets.concat(res);
     }
 
-    console.log("Total run: ", wallets.length);
+    // console.log("Total run: ", wallets.length);
+
+    // console.log("btcWins run: ", btcWins.length);
+    // console.log("ethWins run: ", ethWins.length);
+    // console.log("avaxWins run: ", avaxWins.length);
+
+    // let tripleIndexes = [];
+
+    // for (let i = 0; i < btcWins.length; i++) {
+    //     let usdThreshold = 1000;
+    //     let ddThreshold = 0.6
+
+    //     let usdCheck = true;
+    //     if (btcWins[i].walletResult.curUSD < usdThreshold) {
+    //         usdCheck = false;
+    //     }
+    //     if (ethWins[i].walletResult.curUSD < usdThreshold) {
+    //         usdCheck = false;
+    //     }
+    //     if (avaxWins[i].walletResult.curUSD < usdThreshold) {
+    //         usdCheck = false;
+    //     }
+    //     let ddCheck = true;
+    //     if (btcWins[i].walletResult.drawdown > ddThreshold) {
+    //         ddCheck = false;
+    //     }
+    //     if (ethWins[i].walletResult.drawdown > ddThreshold) {
+    //         ddCheck = false;
+    //     }
+    //     if (avaxWins[i].walletResult.drawdown > ddThreshold) {
+    //         ddCheck = false;
+    //     }
+
+    //     if (usdCheck && ddCheck) {
+    //         tripleIndexes.push(i)
+    //     }
+    // }
+
+    // console.log("Triple len: ", tripleIndexes.length);
+
+    // console.log(btcWins[tripleIndexes[0]].rulesets[0].options)
+    // console.log(ethWins[tripleIndexes[0]].rulesets[0].options)
+    // console.log(avaxWins[tripleIndexes[0]].rulesets[0].options)
+
+    // console.log(btcWins[tripleIndexes[0]].walletResult.curUSD)
+    // console.log(ethWins[tripleIndexes[0]].walletResult.curUSD)
+    // console.log(avaxWins[tripleIndexes[0]].walletResult.curUSD)
+
+    // let bestTriples = [...tripleIndexes].sort((a,b) => {
+    //     let tokenA = ethWins[a].walletResult.curUSD;
+    //     let tokenB = ethWins[b].walletResult.curUSD;
+
+    //     if (tokenA > tokenB) return -1
+    //     if (tokenB > tokenA) return 1
+    //     return 0;
+    // });
+
+    // console.log(ethWins[bestTriples[0]].rulesets[0].options);
+    // console.log(ethWins[bestTriples[0]].rulesets[0].indicators[0]);
+    // console.log(ethWins[bestTriples[0]].rulesets[0].indicators[1]);
+    // console.log(ethWins[bestTriples[0]].rulesets[0].indicators[2]);
+    // console.log(ethWins[bestTriples[0]].walletResult.curUSD);
+    // console.log(ethWins[bestTriples[0]]);
 
     // wallets = filterForTokenSuccessParity(wallets);
     // console.log("Total triples: ", wallets.length);
@@ -176,41 +253,49 @@ async function filterMonthListForBest() {
 
     // await writeToFile("./src/backtest/processed/CSVTESTX.json", temp);
 
-    let winUSDThreshold = 250;
-    let winDDThreshold  = 0.6;
-    wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
-    wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
+    // let winUSDThreshold = 1000;
+    // let winDDThreshold  = 0.6;
+    // wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
+    // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
     // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 0);
     // wallets = wallets.filter(val => val.rulesets[0].options.profitFactor === 5);
     // wallets = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max !== 1000);
     // wallets = wallets.filter(val => !val.indicators[0].settings.useTimeFractals);
 
-    console.log("Total wins: ", wallets.length)
+    // console.log("Total wins: ", wallets.length)
 
-    wallets = filterForConsistent(wallets);
-    console.log("Total conssitent: ", wallets.length)
+    // wallets = filterForConsistent(wallets);
+    // console.log("Total conssitent: ", wallets.length)
 
-    let bestUSD = [...wallets].sort((a,b) => {
-        if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
-        if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
-        return 0;
-    });
+    // let bestUSD = [...wallets].sort((a,b) => {
+    //     if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
+    //     if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
+    //     return 0;
+    // });
 
     // console.log(bestUSD.map(val => val.walletResult.curUSD))
 
-    let checkIndex = 0
-    bestUSD[checkIndex].walletResult.positionOpens = [];
-    bestUSD[checkIndex].walletResult.positionClosed = [];
+    // let checkIndex = 0
+    // bestUSD[checkIndex].walletResult.positionOpens = [];
+    // bestUSD[checkIndex].walletResult.positionClosed = [];
 
-    console.log("USD Winner usd:", bestUSD[checkIndex].walletResult.curUSD);
-    console.log("USD Winner longs:", bestUSD[checkIndex].walletResult.longs);
-    console.log("USD Winner shorts:", bestUSD[checkIndex].walletResult.shorts);
-    console.log("USD Winner wr:", bestUSD[checkIndex].walletResult.winratio);
-    console.log("USD Winner dd:", bestUSD[checkIndex].walletResult.drawdown);
-    console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].options);
+    // console.log("USD Winner usd:", bestUSD[checkIndex].walletResult.curUSD);
+    // console.log("USD Winner longs:", bestUSD[checkIndex].walletResult.longs);
+    // console.log("USD Winner shorts:", bestUSD[checkIndex].walletResult.shorts);
+    // console.log("USD Winner wr:", bestUSD[checkIndex].walletResult.winratio);
+    // console.log("USD Winner dd:", bestUSD[checkIndex].walletResult.drawdown);
+    // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].options);
     // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[0].settings);
-    console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[1].settings);
-    console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[2].settings);
+    // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[1].settings);
+    // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[2].settings);
+
+    // let resToWrite = bestUSD.map(val => {return {...val, walletResult: {}}});
+    // console.log(resToWrite[0]);
+    // console.log("Res length: ", resToWrite.length);
+
+    // bestUSD = bestUSD.map(wallet => {return {...wallet, walletResult: {...wallet.walletResult, positionOpens: [], positionClosed: []}}})
+
+    // await writeToFile("./src/backtest/processed/btc6Mwinners.json", bestUSD);
 }
 
 function filterForConsistent(list) {
@@ -258,27 +343,46 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
-    console.log(stratCombos.length);
+    // let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT"]);
+    // console.log(stratCombos.length);
     // console.log(stratCombos[0]);
     // console.log(stratCombos[0].rulesets[0].indicators[0]);
     // console.log(stratCombos[1].rulesets[0].indicators[2]);
     // console.log(stratCombos[0].rulesets[0].indicators);
     // console.log(stratCombos[1].rulesets[0].indicators);
 
-    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.filterBillWilliams);
-    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.useTimeFractals);
-    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_use_J_as_pivot);
+    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.LPPeriod1 < val.rulesets[0].indicators[0].settings.LPPeriod2);
+    // console.log(stratCombos.length);
 
-    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJK_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJK_max);
-    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJN_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJN_max);
-    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_JKL_min < val.rulesets[0].indicators[0].settings.IJKLMN_JKL_max);
-    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_KLM_min < val.rulesets[0].indicators[0].settings.IJKLMN_KLM_max);
-    stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_LMN_min < val.rulesets[0].indicators[0].settings.IJKLMN_LMN_max);
-    console.log(stratCombos.length);
+    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.filterBillWilliams);
+    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.useTimeFractals);
+    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_use_J_as_pivot);
+
+    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJK_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJK_max);
+    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJN_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJN_max);
+    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_JKL_min < val.rulesets[0].indicators[0].settings.IJKLMN_JKL_max);
+    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_KLM_min < val.rulesets[0].indicators[0].settings.IJKLMN_KLM_max);
+    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_LMN_min < val.rulesets[0].indicators[0].settings.IJKLMN_LMN_max);
+    // console.log(stratCombos.length);
+
+    // let mappedWallets = [];
+    // for (let i = 0; i < wallets.length; i++) {
+        // mappedWallets.push({...wallets[i], token: "BTCUSDT"});
+        // mappedWallets.push({...wallets[i], token: "ETHUSDT"});
+        // mappedWallets.push({...wallets[i], token: "AVAXUSDT"});
+    // }
+    // console.log(mappedWallets.length)
+
+    // console.log(mappedWallets[0].token);
+    // console.log(mappedWallets[1].token);
+    // console.log(mappedWallets[2].token);
+    // console.log(mappedWallets[0].rulesets[0].indicators[0]);
+    // console.log(mappedWallets[1].rulesets[0].indicators[0]);
+    // console.log(mappedWallets[2].rulesets[0].indicators[0]);
+    // console.log(mappedWallets[150].rulesets[0].indicators[0]);
 
     // let start = new Date().getTime();
-    // await findBestStratOver1MAndWrite(stratCombos, 0);
+    // await findBestStratOver1MAndWrite(wallets, 0);
     // console.log(new Date().getTime() - start);
     // await filterMonthListForBest();
 
@@ -291,8 +395,8 @@ async function multiThreadStrats() {
         rulesets: [
             {
                 options: {
-                    swingHighLowLookbackLength: 70,
-                    percentageRiskedPerTrade: 25,
+                    swingHighLowLookbackLength: 30,
+                    percentageRiskedPerTrade: 20,
                     profitFactor: 5,
     
                     atrLength: 14,
@@ -301,118 +405,43 @@ async function multiThreadStrats() {
                 },
                 indicators: [
                     {
-                        name: "fractal",
+                        name: "boomHunter",
                         settings: {
-                            use_IJKLMN: true,
-    
-                            filterBillWilliams: true,
-                            useTimeFractals: true,
-                            timeframe: 10,
-                            IJKLMN_use_J_as_pivot: true,
+                            triggerLength: 1, 
             
-                            IJKLMN_IJK_min: 1,
-                            IJKLMN_IJK_max: 1000,
+                            LPPeriod1: 15,    
+                            k1: 0,
             
-                            IJKLMN_IJN_min: 0,
-                            IJKLMN_IJN_max: 1000,
-            
-                            IJKLMN_JKL_min: 0,
-                            IJKLMN_JKL_max: 1,
-            
-                            IJKLMN_KLM_min: 0,
-                            IJKLMN_KLM_max: 1,
-            
-                            IJKLMN_LMN_min: 0,
-                            IJKLMN_LMN_max: 1,
+                            LPPeriod2: 20,    
+                            k12: 0.6, 
                         }
                     },
                     {
                         name: "mhull",
                             settings: {
                                 hullVariation: "HMA",  //Only uses HMA atm
-                                length: 700,           //Max value is 2x < 1000 === 499
+                                length: 600,           //Max value is 2x < 1000 === 499
                                 lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
                             }
                     },
                     {
                         name: "volatilityOscillator",
                         settings: {
-                            volLength: 70
-                        }
-                    },
-                ],
-            },
-            {
-                options: {
-                    swingHighLowLookbackLength: 60,
-                    percentageRiskedPerTrade: 20,
-                    profitFactor: 4,
-    
-                    atrLength: 14,
-                    useLimitOrders: false,
-                    gmxLimitAdjustment: 1,
-                },
-                indicators: [
-                    {
-                        name: "fractal",
-                        settings: {
-                            use_IJKLMN: true,
-    
-                            filterBillWilliams: true,
-                            useTimeFractals: true,
-                            timeframe: 10,
-                            IJKLMN_use_J_as_pivot: true,
-            
-                            IJKLMN_IJK_min: 0,
-                            IJKLMN_IJK_max: 1000,
-            
-                            IJKLMN_IJN_min: 1,
-                            IJKLMN_IJN_max: 1000,
-            
-                            IJKLMN_JKL_min: 0,
-                            IJKLMN_JKL_max: 1,
-            
-                            IJKLMN_KLM_min: 0,
-                            IJKLMN_KLM_max: 1,
-            
-                            IJKLMN_LMN_min: 0,
-                            IJKLMN_LMN_max: 1,
-                        }
-                    },
-                    {
-                        name: "mhull",
-                            settings: {
-                                hullVariation: "HMA",
-                                length: 700,
-                                lengthMultiplier: 1,
-                            }
-                    },
-                    {
-                        name: "volatilityOscillator",
-                        settings: {
-                            volLength: 50
+                            volLength: 100
                         }
                     },
                 ],
             },
         ]
-    }, 12);
+    }, 6);
     console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
-    //     let threadCount = 4;
-    //     let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
+    //     let threadCount = 8;
+    //     let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
     //     console.log(stratCombos.length);
 
-    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.filterBillWilliams);
-    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.useTimeFractals);
-    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_use_J_as_pivot);
-
-    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJK_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJK_max);
-    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJN_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJN_max);
-    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_JKL_min < val.rulesets[0].indicators[0].settings.IJKLMN_JKL_max);
-    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_KLM_min < val.rulesets[0].indicators[0].settings.IJKLMN_KLM_max);
-    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_LMN_min < val.rulesets[0].indicators[0].settings.IJKLMN_LMN_max);
+    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.LPPeriod1 < val.rulesets[0].indicators[0].settings.LPPeriod2);
     //     console.log(stratCombos.length);
 
     //     console.log("Running with ", threadCount, " threads")

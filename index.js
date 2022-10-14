@@ -31,6 +31,6 @@ const multiThreadStrats = require("./src/runtimes/findBestStrat");
 //   }
 // });
 
-livebot(strats[5]);
-// multiThreadStrats();
+// livebot(strats[5]);
+multiThreadStrats();
 // positionManager();
