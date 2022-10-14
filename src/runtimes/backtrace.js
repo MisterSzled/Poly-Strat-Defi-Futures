@@ -138,10 +138,6 @@ async function backtrace(strat, monthsback) {
             }
         }
 
-        // console.log(resArray)
-
-        // console.log(new Date().getTime() - start);
-
         let curPrice = mockSlice[mockSlice.length - 2][4];
         let lastHigh = mockSlice[mockSlice.length - 2][2];
         let lastLow  = mockSlice[mockSlice.length - 2][3];
@@ -156,7 +152,7 @@ async function backtrace(strat, monthsback) {
 
 
         // console.log(parseInt(mockSlice[mockSlice.length - 1][0]))
-        // if (parseInt(mockSlice[mockSlice.length - 1][0]) === (1659968100000)) {
+        // if (parseInt(mockSlice[mockSlice.length - 1][0]) === (1665068400000)) {
         //     xxxx++
         // }
 
@@ -291,10 +287,10 @@ async function backtrace(strat, monthsback) {
     return finalWallet;
 }
 function resString(type, isLoss, date, usd, delta) {
-    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), (isLoss ? chalk.redBright("LOSS") : chalk.greenBright("WIN ")), date.toLocaleString().replaceAll(",", ""), " - ", truncateNum(usd,5), "(", truncateNum(delta, 5), ")");
+    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), (isLoss ? chalk.redBright("LOSS") : chalk.greenBright("WIN ")), date.toUTCString().replaceAll(",", ""), " - ", truncateNum(usd,5), "(", truncateNum(delta, 5), ")");
 }
 function openString(type, date, amt, lev, sl, tp) {
-    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), chalk.cyanBright("OPEN"), date.toLocaleString().replaceAll(",", ""), " - ", truncateNum(amt, 5), " Lev: ", truncateNum(lev, 2), " SL: ", truncateNum(sl, 5), " TP: ", truncateNum(tp, 5));
+    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), chalk.cyanBright("OPEN"), date.toUTCString().replaceAll(",", ""), " - ", truncateNum(amt, 5), " Lev: ", truncateNum(lev, 2), " SL: ", truncateNum(sl, 5), " TP: ", truncateNum(tp, 5));
 }
 
 function calculateClosePosition(openPrice, closePrice, amtIn, lev, isLong) {

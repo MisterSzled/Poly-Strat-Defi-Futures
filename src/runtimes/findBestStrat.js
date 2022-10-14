@@ -389,51 +389,57 @@ async function multiThreadStrats() {
     let start = new Date().getTime();
     let tempRes = await backtrace({
         opName: "Multi TTT", 
-        token: "BTCUSDT", 
+        token: "ETHUSDT", 
         timeframe: "15m",
 
         rulesets: [
             {
                 options: {
-                    swingHighLowLookbackLength: 30,
-                    percentageRiskedPerTrade: 20,
-                    profitFactor: 5,
-    
+                    // Risk settings
+                    swingHighLowLookbackLength: 88,
+                    percentageRiskedPerTrade: 12, // min 1 max 98
+                    profitFactor: 2, // This predominantly effects how long term your positions are
                     atrLength: 14,
-                    useLimitOrders: false,
+                    
+                    // GMX settings
                     gmxLimitAdjustment: 1,
                 },
+
                 indicators: [
                     {
-                        name: "boomHunter",
+                        name: "coralTrend",
                         settings: {
-                            triggerLength: 1, 
-            
-                            LPPeriod1: 15,    
-                            k1: 0,
-            
-                            LPPeriod2: 20,    
-                            k12: 0.6, 
+                            smoothingPeriod: 30,
+                            constantD: 0.6
                         }
                     },
                     {
-                        name: "mhull",
-                            settings: {
-                                hullVariation: "HMA",  //Only uses HMA atm
-                                length: 600,           //Max value is 2x < 1000 === 499
-                                lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
-                            }
-                    },
-                    {
-                        name: "volatilityOscillator",
+                        name: "adx",
                         settings: {
-                            volLength: 100
+                            length: 14,
+                            midLine: 18
                         }
                     },
+                    // {
+                    //     name: "absoluteStrengthHistogram",
+                    //     settings: {
+                    //         evalPeriod: 9,
+                    //         smoothingPeriod: 6,
+
+                    //         method: "RSI" //RSI STOCHASTIC ADX
+                    //     }
+                    // },
+                    // {
+                    //     name: "hawkeyeVolumne",
+                    //     settings: {
+                    //         length: 10,
+                    //         divisor: 1.6,
+                    //     }
+                    // },
                 ],
             },
         ]
-    }, 6);
+    }, 1);
     console.log(new Date().getTime() - start);
     
     // if (isMainThread) {

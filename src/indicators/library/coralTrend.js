@@ -69,6 +69,14 @@ function getCoral(strat, candleData) {
     // console.log("i6: ", i6[i6.length - 1]);
     // console.log("BFR: ", bfr[bfr.length - 1]);
 
+    // console.log("i1: ", i1[i1.length - 2]);
+    // console.log("i2: ", i2[i2.length - 2]);
+    // console.log("i3: ", i3[i3.length - 2]);
+    // console.log("i4: ", i4[i4.length - 2]);
+    // console.log("i5: ", i5[i5.length - 2]);
+    // console.log("i6: ", i6[i6.length - 2]);
+    // console.log("BFR: ", bfr[bfr.length - 2]);
+
     return bfr;
 }
 
@@ -100,11 +108,12 @@ function getCleanBarArray(candleData, bfr) {
             (cleanBelow > -1) && (cleanAbove > -1) &&
             (bullishBFRCrossover > -1) && (bearishBFRCrossover > -1)
         ) break;
+
         if ((bullCountA < 0) && (priceData[i][4] > bfr0) && (priceData[i-1][4] < bfr1)) bullCountA = count;
         if ((bearCountA < 0) && (priceData[i][4] < bfr0) && (priceData[i-1][4] > bfr1)) bearCountA = count;
 
-        if ((bullCountB < 0) && (priceData[i-1][4] > bfr0) && (priceData[i-2][4] < bfr1)) bullCountB = count;
-        if ((bearCountB < 0) && (priceData[i-1][4] < bfr0) && (priceData[i-2][4] > bfr1)) bearCountB = count;
+        if ((bullCountB < 0) && (priceData[i-1][4] > bfr1) && (priceData[i-2][4] < bfr2)) bullCountB = count;
+        if ((bearCountB < 0) && (priceData[i-1][4] < bfr1) && (priceData[i-2][4] > bfr2)) bearCountB = count;
 
         if ((cleanAbove < 0) && (priceData[i][3] > bfr0)) cleanAbove = count;
         if ((cleanBelow < 0) && (priceData[i][2] < bfr0)) cleanBelow = count;
