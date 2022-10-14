@@ -75,8 +75,8 @@ function getCoral(strat, candleData) {
 function getCleanBarArray(candleData, bfr) {
     let priceData = candleData.slice(candleData.length - 1 - lookback, candleData.length - 1);
 
-    let closeCrossoverBFR = -1;
-    let closeCrossunderBFR = -1;
+    let sincePrePullbackBullBreakout = -1;
+    let sincePrePullbackBearBreakout = -1;
 
     let bullishBFRCrossover = -1;
     let bearishBFRCrossover = -1;
@@ -97,7 +97,8 @@ function getCleanBarArray(candleData, bfr) {
 
         if ((bullCountA > -1) && (bearCountA > -1) &&
             (bullCountB > -1) && (bearCountB > -1) &&
-            (cleanBelow > -1) && (cleanAbove > -1)
+            (cleanBelow > -1) && (cleanAbove > -1) &&
+            (bullishBFRCrossover > -1) && (bearishBFRCrossover > -1)
         ) break;
         if ((bullCountA < 0) && (priceData[i][4] > bfr0) && (priceData[i-1][4] < bfr1)) bullCountA = count;
         if ((bearCountA < 0) && (priceData[i][4] < bfr0) && (priceData[i-1][4] > bfr1)) bearCountA = count;
@@ -111,11 +112,19 @@ function getCleanBarArray(candleData, bfr) {
         if ((bullishBFRCrossover < 0) && (bfr0 > bfr1) && (bfr1 < bfr2)) bullishBFRCrossover = count
         if ((bearishBFRCrossover < 0) && (bfr0 < bfr1) && (bfr1 > bfr2)) bearishBFRCrossover = count
 
-        if ((closeCrossoverBFR  < 0) && (priceData[i][4] > bfr0) && (priceData[i-1][4] < bfr1)) closeCrossoverBFR = count
-        if ((closeCrossunderBFR < 0) && (priceData[i][4] < bfr0) && (priceData[i-1][4] > bfr1)) closeCrossunderBFR = count
+        if ((sincePrePullbackBullBreakout  < 0) && (priceData[i][4] > bfr0) && (priceData[i-1][4] < bfr1)) sincePrePullbackBullBreakout = count
+        if ((sincePrePullbackBearBreakout < 0) && (priceData[i][4] < bfr0) && (priceData[i-1][4] > bfr1)) sincePrePullbackBearBreakout = count
 
         count++;
     }
+
+    // console.log("cleanAbove: ", cleanAbove)
+    // console.log("cleanBelow: ", cleanBelow)
+    // console.log("sincePrePullbackBullBreakout: ", sincePrePullbackBullBreakout)
+    // console.log("sincePrePullbackBearBreakout: ", sincePrePullbackBearBreakout)
+    // console.log("bullishBFRCrossover: ", bullishBFRCrossover)
+    // console.log("bearishBFRCrossover: ", bearishBFRCrossover)
+    
 
     return {
         bull: [bullCountA, bullCountB],
@@ -124,8 +133,8 @@ function getCleanBarArray(candleData, bfr) {
         below: cleanBelow,
         bullishBFRCrossover: bullishBFRCrossover,
         bearishBFRCrossover: bearishBFRCrossover,
-        closeCrossoverBFR:   closeCrossoverBFR,
-        closeCrossunderBFR:  closeCrossunderBFR,
+        sincePrePullbackBullBreakout:   sincePrePullbackBullBreakout,
+        sincePrePullbackBearBreakout:  sincePrePullbackBearBreakout,
     }
 }
 
@@ -146,14 +155,14 @@ function coralTrend(strat, candleData) {
     // Condition 3: Pullback closes below/above (long/short) Coral Trend
     let barssinceBullPullbackStart = cleanBarArray.bear[0];
     let barssinceBearPullbackStart = cleanBarArray.bull[0];
-    let barssincePullbackStart = isCoralBullish ? barssinceBullPullbackStart : isCoralBearish ? barssinceBearPullbackStart : 0
+    let barssincePullbackStart = isCoralBullish ? barssinceBullPullbackStart : isCoralBearish ? barssinceBearPullbackStart : 0;
 
     // Condition 4: Coral Trend colour matched trend direction for duration of pullback
     let barssinceCoralflip = isCoralBullish ? cleanBarArray.bullishBFRCrossover : isCoralBearish ? cleanBarArray.bearishBFRCrossover : 0
     let isPullbackValid    = barssincePullbackStart < barssinceCoralflip;
 
     // Condition 5: After valid pullback, price then closes above/below (long/short) Coral Trend
-    let entryBreakout = (isCoralBullish && (cleanBarArray.closeCrossoverBFR === 0)) || (isCoralBearish && (cleanBarArray.closeCrossunderBFR === 0));
+    let entryBreakout = (isCoralBullish && (cleanBarArray.sincePrePullbackBullBreakout === 0)) || (isCoralBearish && (cleanBarArray.sincePrePullbackBearBreakout === 0));
 
     let isLong  = isCoralBullish && prePullbackBullBreakout && isPullbackValid && entryBreakout;
     let isShort = isCoralBearish && prePullbackBearBreakout && isPullbackValid && entryBreakout;
