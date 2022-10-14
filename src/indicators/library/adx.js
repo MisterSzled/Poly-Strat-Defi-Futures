@@ -66,6 +66,8 @@ function adx(strat, candleData) {
     
     cs.process("ADX 0:        " + ADX[ADX.length - 1]);
     cs.process("ADX 1:        " + ADX[ADX.length - 2]);
+    cs.process("DIPlus:       " + DIPlus);
+    cs.process("DIMinus:      " + DIMinus);
     cs.process("Is ADX up:    " + isAdxUp);
     cs.process("Is ADX valid: " + isAdxValid);
 
