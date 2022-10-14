@@ -5,6 +5,7 @@ const fractal = require("./library/fractal");
 const coralTrend = require("./library/coralTrend");
 const adx = require("./library/adx");
 const absoluteStrengthHistogram = require("./library/absoluteStrengthHistogram");
+const hawkeyeVolumne = require("./library/hawkeyeVolumne");
 
 let indicators = {
     boomHunter: boomHunter,
@@ -14,6 +15,7 @@ let indicators = {
     coralTrend: coralTrend,
     adx: adx,
     absoluteStrengthHistogram: absoluteStrengthHistogram,
+    hawkeyeVolumne: hawkeyeVolumne,
 }
 
 module.exports = indicators
