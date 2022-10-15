@@ -22,10 +22,10 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt, messenger) {
         
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
-            await writeToFile("./src/backtest/processed/coralADXEth_"+(shunt + i)+".json", results);
+            await writeToFile("./src/backtest/processed/coralADXAvax_"+(shunt + i)+".json", results);
             results = [];
         } else if (i === stratcombos.length - 1) {
-            await writeToFile("./src/backtest/processed/coralADXEth_"+(shunt + i + 1)+".json", results);
+            await writeToFile("./src/backtest/processed/coralADXAvax_"+(shunt + i + 1)+".json", results);
             results = [];
         }
     }
@@ -127,7 +127,7 @@ async function filterMonthListForBest() {
         wallets = wallets.concat(res);
     }
 
-    // console.log("Total run: ", wallets.length);
+    console.log("Total run: ", wallets.length);
 
     // console.log("btcWins run: ", btcWins.length);
     // console.log("ethWins run: ", ethWins.length);
@@ -253,25 +253,25 @@ async function filterMonthListForBest() {
 
     // await writeToFile("./src/backtest/processed/CSVTESTX.json", temp);
 
-    // let winUSDThreshold = 1000;
-    // let winDDThreshold  = 0.6;
-    // wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
-    // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
+    let winUSDThreshold = 250;
+    let winDDThreshold  = 0.6;
+    wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
+    wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
     // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 0);
     // wallets = wallets.filter(val => val.rulesets[0].options.profitFactor === 5);
     // wallets = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max !== 1000);
     // wallets = wallets.filter(val => !val.indicators[0].settings.useTimeFractals);
 
-    // console.log("Total wins: ", wallets.length)
+    console.log("Total wins: ", wallets.length)
 
     // wallets = filterForConsistent(wallets);
     // console.log("Total conssitent: ", wallets.length)
 
-    // let bestUSD = [...wallets].sort((a,b) => {
-    //     if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
-    //     if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
-    //     return 0;
-    // });
+    let bestUSD = [...wallets].sort((a,b) => {
+        if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
+        if (b.walletResult.curUSD > a.walletResult.curUSD) return 1
+        return 0;
+    });
 
     // console.log(bestUSD.map(val => val.walletResult.curUSD))
 
@@ -295,7 +295,7 @@ async function filterMonthListForBest() {
 
     // bestUSD = bestUSD.map(wallet => {return {...wallet, walletResult: {...wallet.walletResult, positionOpens: [], positionClosed: []}}})
 
-    // await writeToFile("./src/backtest/processed/btc6Mwinners.json", bestUSD);
+    // await writeToFile("./src/backtest/processed/btceth2Mwinners.json", bestUSD);
 }
 
 function filterForConsistent(list) {
@@ -343,28 +343,27 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
-    // console.log(stratCombos.length);
+    let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
+    console.log(stratCombos.length);
     // console.log(stratCombos[0]);
-    // console.log(stratCombos[0].rulesets[0].options);
-    // console.log(stratCombos[0].rulesets[0].indicators[1]);
-    // console.log(stratCombos[1].rulesets[0].indicators[2]);
-    // console.log(stratCombos[0].rulesets[0].indicators);
-    // console.log(stratCombos[1].rulesets[0].indicators);
 
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.LPPeriod1 < val.rulesets[0].indicators[0].settings.LPPeriod2);
-    // console.log(stratCombos.length);
+    // let path = './src/backtest/processed/';
+    // let fileNames = fs.readdirSync(path);
 
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.filterBillWilliams);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.useTimeFractals);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_use_J_as_pivot);
+    // fileNames = fileNames.filter(val => val.includes("btceth2Mwinners.json"));
 
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJK_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJK_max);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_IJN_min < val.rulesets[0].indicators[0].settings.IJKLMN_IJN_max);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_JKL_min < val.rulesets[0].indicators[0].settings.IJKLMN_JKL_max);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_KLM_min < val.rulesets[0].indicators[0].settings.IJKLMN_KLM_max);
-    // stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.IJKLMN_LMN_min < val.rulesets[0].indicators[0].settings.IJKLMN_LMN_max);
-    // console.log(stratCombos.length);
+    // let stratCombos = []
+
+    // for (let i = 0; i < fileNames.length; i++) {
+    //     let res = fs.readFileSync(path + fileNames[i]);
+    //     res = JSON.parse(res);
+
+    //     stratCombos = stratCombos.concat(res);
+    // }
+
+    // stratCombos = stratCombos.map(val => ({...val, token: "AVAXUSDT", walletResult: {}}));
+
+    console.log("Total run: ", stratCombos.length);
 
     // let mappedWallets = [];
     // for (let i = 0; i < wallets.length; i++) {
@@ -385,7 +384,7 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    // await filterMonthListForBest();
+    await filterMonthListForBest();
 
     // let start = new Date().getTime();
     // let tempRes = await backtrace({
@@ -428,11 +427,9 @@ async function multiThreadStrats() {
     
     // if (isMainThread) {
     //     let threadCount = 8;
-    //     let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
+    //     let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
     //     console.log(stratCombos.length);
 
-    //     stratCombos = stratCombos.filter(val => val.rulesets[0].indicators[0].settings.LPPeriod1 < val.rulesets[0].indicators[0].settings.LPPeriod2);
-    //     console.log(stratCombos.length);
 
     //     console.log("Running with ", threadCount, " threads")
 

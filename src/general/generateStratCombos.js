@@ -375,49 +375,49 @@ function generateRulesetMap (variationScheme, targetToken) {
     // }
 
     // CORAL ADX
-    let result = [];
-    for (let i = 0; i < adx_map.length; i++) {
-        for (let j = 0; j < coralTrend_map.length; j++) {
-            for (let k = 0; k < options_map.length; k++) {
-                result.push({               
-                    opName: "Generated_" + i+"_"+j+"_"+k, 
-            
-                    // token: targetToken, 
-            
-                    options: options_map[k],
-            
-                    indicators: [
-                        coralTrend_map[j],
-                        adx_map[i],
-                    ],
-                });
-            }
-        }
-    }
-
-    // CORAL ABS HAWKEYE
     // let result = [];
-    // for (let i = 0; i < absoluteStrengthHistogram_map.length; i++) {
+    // for (let i = 0; i < adx_map.length; i++) {
     //     for (let j = 0; j < coralTrend_map.length; j++) {
     //         for (let k = 0; k < options_map.length; k++) {
-    //         for (let l = 0; l < hawkeyeVolumne_map.length; l++) {
     //             result.push({               
     //                 opName: "Generated_" + i+"_"+j+"_"+k, 
             
-    //                 token: targetToken, 
+    //                 // token: targetToken, 
             
     //                 options: options_map[k],
             
     //                 indicators: [
     //                     coralTrend_map[j],
-    //                     absoluteStrengthHistogram_map[i],
-    //                     hawkeyeVolumne_map[l],
+    //                     adx_map[i],
     //                 ],
     //             });
     //         }
-    //         }
     //     }
     // }
+
+    // CORAL ABS HAWKEYE
+    let result = [];
+    for (let i = 0; i < absoluteStrengthHistogram_map.length; i++) {
+        for (let j = 0; j < coralTrend_map.length; j++) {
+            for (let k = 0; k < options_map.length; k++) {
+            for (let l = 0; l < hawkeyeVolumne_map.length; l++) {
+                result.push({               
+                    opName: "Generated_" + i+"_"+j+"_"+k, 
+            
+                    token: targetToken, 
+            
+                    options: options_map[k],
+            
+                    indicators: [
+                        coralTrend_map[j],
+                        absoluteStrengthHistogram_map[i],
+                        hawkeyeVolumne_map[l],
+                    ],
+                });
+            }
+            }
+        }
+    }
 
     return result
 }
