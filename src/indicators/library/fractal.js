@@ -364,8 +364,8 @@ function logShape(type, zeros, ones) {
     let title = type.slice(2, type.length)
     let gap = " ".repeat(13 - title.length)
     cs.process(title + ": " + gap +
-        (zeros[type]["bull"] ? cs.green("X") : zeros[type]["bear"] ? cs.red("X") : "-") + " :: " +
-        (ones[type]["bull"]  ? cs.green("X") : ones[type]["bear"]  ? cs.red("X") : "-")
+        (zeros[type]["bull"] ? cs.green("1") : zeros[type]["bear"] ? cs.red("-1") : "0") + " :: " +
+        (ones[type]["bull"]  ? cs.green("1") : ones[type]["bear"]  ? cs.red("-1") : "0")
     )
 }
 

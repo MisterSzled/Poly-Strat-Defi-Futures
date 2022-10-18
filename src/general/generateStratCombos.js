@@ -283,8 +283,8 @@ function generateRulesetMap (variationScheme, targetToken) {
                     name: "absoluteStrengthHistogram",
 
                     settings: {
-                        length:          absoluteStrengthHistogramSeries.evalPeriod[a],
-                        useTimeFractals: absoluteStrengthHistogramSeries.smoothingPeriod[b],
+                        evalPeriod:          absoluteStrengthHistogramSeries.evalPeriod[a],
+                        smoothingPeriod: absoluteStrengthHistogramSeries.smoothingPeriod[b],
 
                         method: "RSI"
                     }

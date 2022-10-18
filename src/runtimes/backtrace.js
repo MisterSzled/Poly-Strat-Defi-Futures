@@ -145,10 +145,10 @@ async function backtrace(strat, monthsback) {
 
         let isInPosition = wallet.curPositionAmtIn > 0;
 
-        if (wallet.curPositionAmtIn + wallet.curUSD < 100) {
-            console.log("Borked")
-            break;
-        }
+        // if (wallet.curPositionAmtIn + wallet.curUSD < 100) {
+        //     console.log("Borked")
+        //     break;
+        // }
 
 
         // console.log(parseInt(mockSlice[mockSlice.length - 1][0]))
@@ -218,7 +218,7 @@ async function backtrace(strat, monthsback) {
 
                     positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.longSL, TP: newPosProfile.longTp, type: "long"}]
                 };
-                openString("Long ", curDate, newPosProfile.longQty, newPosProfile.lev, newPosProfile.longSL, newPosProfile.longTp)
+                openString("Long ", curDate, newPosProfile.longQty, newPosProfile.lev, newPosProfile.longSL, newPosProfile.longTp, curPrice)
             }
             if (finalResult === -1) {
                 //Short indicated
@@ -249,7 +249,7 @@ async function backtrace(strat, monthsback) {
 
                     positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.shortSL, TP: newPosProfile.shortTp, type: "short"}]
                 };
-                openString("Short", curDate, newPosProfile.shortQty, newPosProfile.lev, newPosProfile.shortSL, newPosProfile.shortTp);
+                openString("Short", curDate, newPosProfile.shortQty, newPosProfile.lev, newPosProfile.shortSL, newPosProfile.shortTp, curPrice);
             }
         }
     }
@@ -289,8 +289,22 @@ async function backtrace(strat, monthsback) {
 function resString(type, isLoss, date, usd, delta) {
     console.log(type === "Short" ? chalk.red(type) : chalk.green(type), (isLoss ? chalk.redBright("LOSS") : chalk.greenBright("WIN ")), date.toUTCString().replaceAll(",", ""), " - ", truncateNum(usd,5), "(", truncateNum(delta, 5), ")");
 }
-function openString(type, date, amt, lev, sl, tp) {
-    console.log(type === "Short" ? chalk.red(type) : chalk.green(type), chalk.cyanBright("OPEN"), date.toUTCString().replaceAll(",", ""), " - ", truncateNum(amt, 5), " Lev: ", truncateNum(lev, 2), " SL: ", truncateNum(sl, 5), " TP: ", truncateNum(tp, 5));
+function openString(type, date, amt, lev, sl, tp, openPrice) {
+    console.log(
+        type === "Short" ? chalk.red(type) : chalk.green(type), 
+        chalk.cyanBright("OPEN"), 
+        date.toUTCString().replaceAll(",", ""), 
+        " - ", 
+        truncateNum(amt, 5), 
+        " Lev: ", 
+        truncateNum(lev, 2), 
+        " SL: ", 
+        truncateNum(sl, 5), 
+        " TP: ", 
+        truncateNum(tp, 5),
+        " Open: ",
+        truncateNum(openPrice, 5)
+        );
 }
 
 function calculateClosePosition(openPrice, closePrice, amtIn, lev, isLong) {
