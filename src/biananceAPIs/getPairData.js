@@ -1,7 +1,11 @@
 const axios = require("axios");
 
 function getPairData(pair, timeframe, maxLookBack) {
-    return new Promise(resolve => {
+    const promise1 = new Promise((resolve, reject) => {
+        setTimeout(resolve, 30000, 'one');
+    });
+
+    const promise2 = new Promise(resolve => {
         axios.get("https://api.binance.com/api/v3/klines?symbol=" + pair + "&interval=" + timeframe + "&limit=" + (maxLookBack+4))
         .then(response => {
             resolve(response.data);
@@ -11,6 +15,8 @@ function getPairData(pair, timeframe, maxLookBack) {
             resolve([])
         });
     });
+
+    return Promise.race([promise1, promise2])
 };
 
 /**
