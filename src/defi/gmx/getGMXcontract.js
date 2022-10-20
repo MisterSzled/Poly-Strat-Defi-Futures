@@ -6,7 +6,7 @@ let rpcLookup = {
     "ARBITRUM": "https://arb1.arbitrum.io/rpc",
 }
 let contractLookup = {
-    "AVAX": "0x195256074192170d1530527abC9943759c7167d8",
+    "AVAX": "0xffF6D276Bc37c61A23f06410Dce4A400f66420f8",
     "ARBITRUM": "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
 }
 async function getGMXcontract(privKey) {

@@ -131,6 +131,7 @@ async function openNewPosition(type, strat, optionsIndex, amountIn, SL, TP, curP
         acceptable,                                                           //acceptablePrice
         "20000000000000000",                                                  //executionFee
         "0x0000000000000000000000000000000000000000000000000000000000000000", //_referralCode
+        "0x0000000000000000000000000000000000000000", //callback
         {
             gasPrice: await estimateGas(1), 
             gasLimit: 450000,
