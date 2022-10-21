@@ -43,7 +43,8 @@ async function closePosition(strat, curPrice) {
         acceptable,                                                           //-acceptable price
         "0",                                                                    //-minout
         "20000000000000000",                                                    //-exceutionFee
-        false,
+        false,                                                               //WithdrawEth
+        "0x0000000000000000000000000000000000000000",                        //callback
         {
             gasPrice: await estimateGas(1), 
             gasLimit: 450000,

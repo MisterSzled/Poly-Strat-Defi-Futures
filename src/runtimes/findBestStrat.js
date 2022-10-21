@@ -16,7 +16,7 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt, messenger) {
             messenger(i)
         }
 
-        let newEntry = await backtrace(stratcombos[i], 10);
+        let newEntry = await backtrace(stratcombos[i], 18);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         
@@ -108,6 +108,7 @@ async function filterMonthListForBest() {
     fileNames = fileNames.filter(val => !val.includes("btc2MExtreams"));
     fileNames = fileNames.filter(val => !val.includes("btc4MExtreams"));
     fileNames = fileNames.filter(val => !val.includes("btc6MExtreams"));
+    fileNames = fileNames.filter(val => !val.includes("btc10MExtreams"));
 
     let btcWins = [];
     let ethWins = [];
@@ -301,18 +302,18 @@ async function filterMonthListForBest() {
 
     // bestUSD = bestUSD.map(wallet => {return {...wallet, walletResult: {...wallet.walletResult, positionOpens: [], positionClosed: []}}})
 
-    let letUpperWR = 0.63;
-    let letLowerWR = 0.33;
+    let letUpperWR = 0.57;
+    let letLowerWR = 0.4;
     let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
     let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
 
-    console.log(Math.max(...uppers.map(val => val.walletResult.curUSD)));
-    console.log(Math.max(...uppers.map(val => val.walletResult.winratio)));
+    console.log(uppers.length)
+    console.log(lowers.length)
 
     let res = uppers.concat(lowers);
     console.log(res.length)
 
-    // await writeToFile("./src/backtest/processed/btc6MExtreams.json", res);
+    // await writeToFile("./src/backtest/processed/btc18MExtreams.json", res);
 }
 
 function filterForConsistent(list) {
@@ -366,7 +367,7 @@ async function multiThreadStrats() {
     // let path = './src/backtest/processed/';
     // let fileNames = fs.readdirSync(path);
 
-    // fileNames = fileNames.filter(val => val.includes("tripleWinners2M.json"));
+    // fileNames = fileNames.filter(val => val.includes("btc6MExtreams.json"));
 
     // let stratCombos = []
 
@@ -399,7 +400,7 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    await filterMonthListForBest();
+    // await filterMonthListForBest();
 
     // let start = new Date().getTime();
     // let tempRes = await backtrace({
@@ -456,13 +457,13 @@ async function multiThreadStrats() {
     // console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
-    //     let threadCount = 8;
+    //     let threadCount = 6;
     //     // let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT"]);
     //     // console.log(stratCombos.length);
 
     //     let path = './src/backtest/processed/';
     //     let fileNames = fs.readdirSync(path);
-    //     fileNames = fileNames.filter(val => val.includes("btc4MExtreams.json"));
+    //     fileNames = fileNames.filter(val => val.includes("btc10MExtreams.json"));
     //     let stratCombos = []
     //     for (let i = 0; i < fileNames.length; i++) {
     //         let res = fs.readFileSync(path + fileNames[i]);
