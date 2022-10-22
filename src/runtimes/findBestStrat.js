@@ -99,6 +99,39 @@ function filterForTokenSuccessParity(wallets) {
     return triples;
 }
 
+function getLargestDeviationFromRatio(wallet, getMinMax) {
+    let target = wallet;
+
+    let fullLen = target.walletResult.positionClosed.length;
+    let slice_1_4 = [...target.walletResult.positionClosed].slice(0,           fullLen/4);
+    let slice_2_4 = [...target.walletResult.positionClosed].slice(fullLen/4,   fullLen/2);
+    let slice_3_4 = [...target.walletResult.positionClosed].slice(fullLen/2, fullLen*3/4);
+    let slice_4_4 = [...target.walletResult.positionClosed].slice(fullLen*3/4,   fullLen);
+    let slice_1_2 = [...target.walletResult.positionClosed].slice(0,           fullLen/2);
+    let slice_2_2 = [...target.walletResult.positionClosed].slice(fullLen/2,     fullLen);
+
+    let s14 = slice_1_4.filter(val => val.delta > 0).length / slice_1_4.length;
+    let s24 = slice_2_4.filter(val => val.delta > 0).length / slice_2_4.length;
+    let s34 = slice_3_4.filter(val => val.delta > 0).length / slice_3_4.length;
+    let s44 = slice_4_4.filter(val => val.delta > 0).length / slice_4_4.length;
+
+    let s12 = slice_1_2.filter(val => val.delta > 0).length / slice_1_2.length;
+    let s22 = slice_2_2.filter(val => val.delta > 0).length / slice_2_2.length;
+
+    let all = [s14, s24, s34, s44, s12, s22];
+    let min = Math.min(...all);
+    let max = Math.max(...all);
+
+    if (getMinMax) {
+        return {min:min, max:max};
+    }
+
+    let totRatio = target.walletResult.winratio;
+    let result = Math.max(totRatio - min, max - totRatio);
+
+    return result
+}
+
 async function filterMonthListForBest() {
     let path = './src/backtest/processed/';
     let fileNames = fs.readdirSync(path);
@@ -132,137 +165,48 @@ async function filterMonthListForBest() {
     }
 
     console.log("Total run: ", wallets.length);
+    getLargestDeviationFromRatio(wallets[0])
 
-    // console.log("btcWins run: ", btcWins.length);
-    // console.log("ethWins run: ", ethWins.length);
-    // console.log("avaxWins run: ", avaxWins.length);
+    let deviants = [];
+    for (let i = 0; i < wallets.length; i++) {
+        let temp = {...wallets[i]};
+        temp.deviation = getLargestDeviationFromRatio(wallets[i]);
+        deviants.push(temp)
+    }
 
-    // let tripleIndexes = [];
+    let deviantsSorted = [...deviants].sort((a,b) => {
+        if (a.deviation > b.deviation) return 1
+        if (b.deviation > a.deviation) return -1
+        return 0;
+    });
 
-    // for (let i = 0; i < btcWins.length; i++) {
-    //     let usdThreshold = 250;
-    //     let ddThreshold = 0.9
+    console.log("Wallet: ", deviantsSorted[0].walletResult.curUSD, 
+                " winratio: ", 
+                deviantsSorted[0].walletResult.winratio, 
+                "::", 
+                getLargestDeviationFromRatio(deviantsSorted[0], true).max,
+                getLargestDeviationFromRatio(deviantsSorted[0], true).min);
 
-    //     let usdCheck = true;
-    //     if (btcWins[i].walletResult.curUSD < usdThreshold) {
-    //         usdCheck = false;
-    //     }
-    //     if (ethWins[i].walletResult.curUSD < usdThreshold) {
-    //         usdCheck = false;
-    //     }
-    //     if (avaxWins[i].walletResult.curUSD < usdThreshold) {
-    //         usdCheck = false;
-    //     }
-    //     let ddCheck = true;
-    //     if (btcWins[i].walletResult.drawdown > ddThreshold) {
-    //         ddCheck = false;
-    //     }
-    //     if (ethWins[i].walletResult.drawdown > ddThreshold) {
-    //         ddCheck = false;
-    //     }
-    //     if (avaxWins[i].walletResult.drawdown > ddThreshold) {
-    //         ddCheck = false;
-    //     }
+    console.log("Wallet: ", deviantsSorted[2].walletResult.curUSD, 
+                " winratio: ", 
+                deviantsSorted[2].walletResult.winratio, 
+                "::", 
+                getLargestDeviationFromRatio(deviantsSorted[2], true).max,
+                getLargestDeviationFromRatio(deviantsSorted[2], true).min);
+    
+    let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
+    console.log("Wallet: ", winDeviants[0].walletResult.curUSD, 
+                " winratio: ", 
+                winDeviants[0].walletResult.winratio, 
+                " ::", 
+                getLargestDeviationFromRatio(winDeviants[0], true).max,
+                getLargestDeviationFromRatio(winDeviants[0], true).min);
 
-    //     if (usdCheck && ddCheck) {
-    //         tripleIndexes.push(i)
-    //     }
-    // }
-
-    // console.log("Triple len: ", tripleIndexes.length);
-
-    // console.log(btcWins[tripleIndexes[0]].rulesets[0].options)
-
-    // console.log(btcWins[tripleIndexes[0]].walletResult.drawdown)
-    // console.log(ethWins[tripleIndexes[0]].walletResult.drawdown)
-    // console.log(avaxWins[tripleIndexes[0]].walletResult.drawdown)
-
-    // let bestTriples = [...tripleIndexes].sort((a,b) => {
-    //     let tokenA = ethWins[a].walletResult.curUSD;
-    //     let tokenB = ethWins[b].walletResult.curUSD;
-
-    //     if (tokenA > tokenB) return -1
-    //     if (tokenB > tokenA) return 1
-    //     return 0;
-    // });
-
-    // console.log(ethWins[bestTriples[0]].rulesets[0].options);
-    // console.log(ethWins[bestTriples[0]].rulesets[0].indicators[0]);
-    // console.log(ethWins[bestTriples[0]].rulesets[0].indicators[1]);
-    // console.log(ethWins[bestTriples[0]].rulesets[0].indicators[2]);
-    // console.log(ethWins[bestTriples[0]].walletResult.curUSD);
-    // console.log(ethWins[bestTriples[0]]);
-
-    // wallets = filterForTokenSuccessParity(wallets);
-    // console.log("Total triples: ", wallets.length);
-
-    // console.log(wallets.map(val => val.BTCUSDT.walletResult.curUSD))
-    // console.log(wallets.map(val => val.ETHUSDT.walletResult.curUSD))
-    // console.log(wallets.map(val => val.AVAXUSDT.walletResult.curUSD))
-    // console.log(wallets.map(val => val.BTCUSDT.rulesets[0].indicators[0].curUSD));
-    // console.log(wallets.map(val => val.ETHUSDT.rulesets[0].indicators[0].curUSD));
-    // console.log(wallets.map(val => val.AVAXUSDT.rulesets[0].indicators[0].curUSD));
-
-    // let checkDex = 0
-    // console.log("BTC:");
-    // console.log("BTC: ", wallets[checkDex].BTCUSDT.walletResult.curUSD);
-    // console.log("BTC: ", wallets[checkDex].BTCUSDT.walletResult.winratio);
-    // console.log("BTC: ", wallets[checkDex].BTCUSDT.walletResult.drawdown);
-    // console.log(wallets[checkDex].BTCUSDT.rulesets[0].options.swingHighLowLookbackLength);
-    // console.log(wallets[checkDex].BTCUSDT.rulesets[0].options.percentageRiskedPerTrade);
-    // console.log(wallets[checkDex].BTCUSDT.rulesets[0].options.profitFactor);
-    // console.log(wallets[checkDex].BTCUSDT.rulesets[0].indicators[0].settings);
-    // console.log(wallets[checkDex].BTCUSDT.rulesets[0].indicators[1].settings);
-    // console.log(wallets[checkDex].BTCUSDT.rulesets[0].indicators[2].settings);
-
-    // console.log("ETH:");
-    // console.log("ETH: ", wallets[checkDex].ETHUSDT.walletResult.curUSD);
-    // console.log("ETH: ", wallets[checkDex].ETHUSDT.walletResult.winratio);
-    // console.log("ETH: ", wallets[checkDex].ETHUSDT.walletResult.drawdown);
-
-    // console.log("AVX:");
-    // console.log("AVX: ", wallets[checkDex].AVAXUSDT.walletResult.curUSD);
-    // console.log("AVX: ", wallets[checkDex].AVAXUSDT.walletResult.winratio);
-    // console.log("AVX: ", wallets[checkDex].AVAXUSDT.walletResult.drawdown);
-    // console.log(wallets.map(val => val.AVAXUSDT.rulesets[0].options));
-    // console.log(wallets.map(val => val.AVAXUSDT.rulesets[0].indicators[1].settings));
-    // console.log(wallets.map(val => val.AVAXUSDT.rulesets[0].indicators[2].settings));
-    // let temp = [];
-
-    // for (let i = 0; i < wallets.length; i++) {
-    //     temp.push({
-    //         shorts: wallets[i].BTCUSDT.walletResult.shorts,
-    //         longs: wallets[i].BTCUSDT.walletResult.longs,
-    //         curUSD: wallets[i].BTCUSDT.walletResult.curUSD,
-    //         wr: wallets[i].BTCUSDT.walletResult.winratio,
-    //         dd: wallets[i].BTCUSDT.walletResult.drawdown,
-    //     });
-    //     temp.push({
-    //         shorts: wallets[i].ETHUSDT.walletResult.shorts,
-    //         longs: wallets[i].ETHUSDT.walletResult.longs,
-    //         curUSD: wallets[i].ETHUSDT.walletResult.curUSD,
-    //         wr: wallets[i].ETHUSDT.walletResult.winratio,
-    //         dd: wallets[i].ETHUSDT.walletResult.drawdown,
-    //     });
-    //     temp.push({
-    //         shorts: wallets[i].AVAXUSDT.walletResult.shorts,
-    //         longs: wallets[i].AVAXUSDT.walletResult.longs,
-    //         curUSD: wallets[i].AVAXUSDT.walletResult.curUSD,
-    //         wr: wallets[i].AVAXUSDT.walletResult.winratio,
-    //         dd: wallets[i].AVAXUSDT.walletResult.drawdown,
-    //     });
-    // }
-
-    // await writeToFile("./src/backtest/processed/CSVTESTX.json", temp);
 
     // let winUSDThreshold = 300;
     // let winDDThreshold  = 0.6;
     // wallets = wallets.filter(val => val.walletResult.curUSD > winUSDThreshold);
     // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
-    // wallets = wallets.filter(val => (val.walletResult.longs + val.walletResult.shorts) > 0);
-    // wallets = wallets.filter(val => val.rulesets[0].options.profitFactor === 5);
-    // wallets = wallets.filter(val => val.indicators[0].settings.IJKLMN_IJN_max !== 1000);
-    // wallets = wallets.filter(val => !val.indicators[0].settings.useTimeFractals);
 
     // console.log("Total wins: ", wallets.length)
 
@@ -291,27 +235,22 @@ async function filterMonthListForBest() {
     // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[1].settings);
     // console.log("USD Winner:", bestUSD[checkIndex].rulesets[0].indicators[2].settings);
 
-    // let min = Math.min(...bestUSD.map(val => val.rulesets[0].indicators[2].settings.divisor))
-    // let max = Math.max(...bestUSD.map(val => val.rulesets[0].indicators[2].settings.divisor))
-    // console.log(min)
-    // console.log(max)
-
     // let resToWrite = bestUSD.map(val => {return {...val, walletResult: {}}});
     // console.log(resToWrite[0]);
     // console.log("Res length: ", resToWrite.length);
 
     // bestUSD = bestUSD.map(wallet => {return {...wallet, walletResult: {...wallet.walletResult, positionOpens: [], positionClosed: []}}})
 
-    let letUpperWR = 0.57;
-    let letLowerWR = 0.4;
-    let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
-    let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
+    // let letUpperWR = 0.57;
+    // let letLowerWR = 0.4;
+    // let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
+    // let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
 
-    console.log(uppers.length)
-    console.log(lowers.length)
+    // console.log(uppers.length)
+    // console.log(lowers.length)
 
-    let res = uppers.concat(lowers);
-    console.log(res.length)
+    // let res = uppers.concat(lowers);
+    // console.log(res.length)
 
     // await writeToFile("./src/backtest/processed/btc18MExtreams.json", res);
 }
@@ -400,7 +339,7 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    // await filterMonthListForBest();
+    await filterMonthListForBest();
 
     // let start = new Date().getTime();
     // let tempRes = await backtrace({
