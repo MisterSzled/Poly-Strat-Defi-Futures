@@ -355,7 +355,8 @@ async function multiThreadStrats() {
             {
                 opName:  "generatedasdasdasd",
                 options: {
-                    reverse: true,
+                    // soft_reverse: true,
+                    hard_reverse: true,
 
                     swingHighLowLookbackLength: 10,
                     percentageRiskedPerTrade: 12, 

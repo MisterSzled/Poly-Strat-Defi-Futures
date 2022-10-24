@@ -28,7 +28,7 @@ function processIndicators (strat, pairData) {
             resultSum += temp;
         }
 
-        if (strat.rulesets[j].options.reverse)  {
+        if (strat.rulesets[j].options.soft_reverse || strat.rulesets[j].options.hard_reverse)  {
             resultSum = resultSum * -1
         }
 

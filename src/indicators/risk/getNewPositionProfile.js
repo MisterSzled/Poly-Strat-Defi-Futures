@@ -11,6 +11,8 @@ function getNewPositionProfile(options, wallet, pairData, isLong, currentPrice) 
     let gmxAdjustmentUpper = options.gmxLimitAdjustment;
     let gmxAdjustmentLower = 1 + (1 - options.gmxLimitAdjustment);
 
+    if (options.hard_reverse) isLong = !isLong;
+
     if (isLong) {
         let longSL  = Math.min(curClose - averageTrueRange, swingHighLow.low);
         let longStopPercent = Math.abs((1 - (longSL / curClose)) * 100);
@@ -30,6 +32,16 @@ function getNewPositionProfile(options, wallet, pairData, isLong, currentPrice) 
         cs.long("Long TP: " + longTp +  " => " + truncateNum(longTp, 4));
         cs.long("Long SL: " + longSL + " => " + truncateNum(longSL, 4));
         cs.long("curClose: " + curClose + " => " + truncateNum(curClose, 4));
+
+        if (options.hard_reverse) {
+            return {
+                shortQty: longQty,
+                shortSL:  longTp,
+                shortTp: longSL,
+                curClose: curClose,
+                lev: lev,
+            }
+        }
 
         return {
             longQty: longQty,
@@ -57,6 +69,16 @@ function getNewPositionProfile(options, wallet, pairData, isLong, currentPrice) 
         cs.short("Short TP: " + shortTp + " => " + truncateNum(shortTp, 4));
         cs.short("Short SL: " + shortSL + " => " + truncateNum(shortSL, 4));
         cs.short("curClose: " + curClose + " => " + truncateNum(curClose, 4));
+
+        if (options.hard_reverse) {
+            return {
+                longQty: shortQty,
+                longSL:  shortTp,
+                longTp: shortSL,
+                curClose: curClose,
+                lev: lev,
+            }
+        }
 
         return {
             shortQty: shortQty,
