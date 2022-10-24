@@ -28,6 +28,10 @@ function processIndicators (strat, pairData) {
             resultSum += temp;
         }
 
+        if (strat.rulesets[j].options.reverse)  {
+            resultSum = resultSum * -1
+        }
+
 
         let setResult = 0;
         if (resultSum === configIndicators.length)        setResult = 1;

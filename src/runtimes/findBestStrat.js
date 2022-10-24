@@ -187,20 +187,25 @@ async function filterMonthListForBest() {
                 getLargestDeviationFromRatio(deviantsSorted[0], true).max,
                 getLargestDeviationFromRatio(deviantsSorted[0], true).min);
 
-    console.log("Wallet: ", deviantsSorted[2].walletResult.curUSD, 
-                " winratio: ", 
-                deviantsSorted[2].walletResult.winratio, 
-                "::", 
-                getLargestDeviationFromRatio(deviantsSorted[2], true).max,
-                getLargestDeviationFromRatio(deviantsSorted[2], true).min);
+    console.log(deviantsSorted[0].rulesets[0].options)
+    console.log(deviantsSorted[0].rulesets[0].indicators[0])
+    console.log(deviantsSorted[0].rulesets[0].indicators[1])
+    console.log(deviantsSorted[0].rulesets[0].indicators[2])
+
+    // console.log("Wallet: ", deviantsSorted[2].walletResult.curUSD, 
+    //             " winratio: ", 
+    //             deviantsSorted[2].walletResult.winratio, 
+    //             "::", 
+    //             getLargestDeviationFromRatio(deviantsSorted[2], true).max,
+    //             getLargestDeviationFromRatio(deviantsSorted[2], true).min);
     
-    let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
-    console.log("Wallet: ", winDeviants[0].walletResult.curUSD, 
-                " winratio: ", 
-                winDeviants[0].walletResult.winratio, 
-                " ::", 
-                getLargestDeviationFromRatio(winDeviants[0], true).max,
-                getLargestDeviationFromRatio(winDeviants[0], true).min);
+    // let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
+    // console.log("Wallet: ", winDeviants[0].walletResult.curUSD, 
+    //             " winratio: ", 
+    //             winDeviants[0].walletResult.winratio, 
+    //             " ::", 
+    //             getLargestDeviationFromRatio(winDeviants[0], true).max,
+    //             getLargestDeviationFromRatio(winDeviants[0], true).min);
 
 
     // let winUSDThreshold = 300;
@@ -339,61 +344,64 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    await filterMonthListForBest();
+    // await filterMonthListForBest();
 
-    // let start = new Date().getTime();
-    // let tempRes = await backtrace({
-    //     token: "BTCUSDT", 
-    //     timeframe: "15m",
+    let start = new Date().getTime();
+    let tempRes = await backtrace({
+        token: "BTCUSDT", 
+        timeframe: "15m",
 
-    //     rulesets: [
-    //         {
-    //             opName:  "generatedasdasdasd",
-    //             options: {
-    //                 swingHighLowLookbackLength: 10,
-    //                 percentageRiskedPerTrade: 12, 
-    //                 profitFactor: 5, 
-    //                 atrLength: 14,
+        rulesets: [
+            {
+                opName:  "generatedasdasdasd",
+                options: {
+                    reverse: true,
 
-    //                 useLimitOrders: false,
-    //                 gmxLimitAdjustment: 1,
-    //             },
+                    swingHighLowLookbackLength: 10,
+                    percentageRiskedPerTrade: 12, 
+                    profitFactor: 1, 
+                    atrLength: 14,
 
-    //             indicators: [
-    //                 {
-    //                     name: "coralTrend",
-    //                     settings: {
-    //                         // smoothingPeriod: 30,
-    //                         // constantD: 0.2
-    //                         smoothingPeriod: 5,
-    //                         constantD: 0.1
-    //                     }
-    //                 },
-    //                 {
-    //                     name: "absoluteStrengthHistogram",
-    //                     settings: {
-    //                         // evalPeriod: 18,
-    //                         // smoothingPeriod: 5,
-    //                         evalPeriod: 18,
-    //                         smoothingPeriod: 5,
+                    useLimitOrders: false,
+                    gmxLimitAdjustment: 1,
+                },
+
+                indicators: [
+                    {
+                        name: "coralTrend",
+                        settings: {
+                            // smoothingPeriod: 30,
+                            // constantD: 0.2
+                            smoothingPeriod: 5,
+                            constantD: 0.5
+                        }
+                    },
+                    {
+                        name: "absoluteStrengthHistogram",
+                        settings: {
+                            // evalPeriod: 18,
+                            // smoothingPeriod: 5,
+                            evalPeriod: 19,
+                            smoothingPeriod: 10,
     
-    //                         method: "RSI" //RSI STOCHASTIC ADX
-    //                     }
-    //                 },
-    //                 {
-    //                     name: "hawkeyeVolumne",
-    //                     settings: {
-    //                         // length: 5,
-    //                         // divisor: 1,
-    //                         length: 5,
-    //                         divisor: 1,
-    //                     }
-    //                 },
-    //             ],
-    //         },
-    //     ]
-    // }, 2);
-    // console.log(new Date().getTime() - start);
+                            method: "RSI" //RSI STOCHASTIC ADX
+                        }
+                    },
+                    {
+                        name: "hawkeyeVolumne",
+                        settings: {
+                            // length: 5,
+                            // divisor: 1,
+                            length: 14,
+                            divisor: 1,
+                        }
+                    },
+                    
+                ],
+            },
+        ]
+    }, 18);
+    console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
     //     let threadCount = 6;

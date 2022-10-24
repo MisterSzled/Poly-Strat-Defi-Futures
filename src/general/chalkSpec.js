@@ -1,7 +1,7 @@
 const chalk = require('chalk');
 // const log = console.log;
 
-const showLogging = true;
+const showLogging = false;
 const log = showLogging ? console.log : () => {};
 
 let long = (text)   => log(chalk.greenBright(text));
