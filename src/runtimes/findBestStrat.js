@@ -187,26 +187,35 @@ async function filterMonthListForBest() {
                 getLargestDeviationFromRatio(deviantsSorted[0], true).max,
                 getLargestDeviationFromRatio(deviantsSorted[0], true).min);
 
-    console.log(deviantsSorted[0].rulesets[0].options)
-    console.log(deviantsSorted[0].rulesets[0].indicators[0])
-    console.log(deviantsSorted[0].rulesets[0].indicators[1])
-    console.log(deviantsSorted[0].rulesets[0].indicators[2])
+    // console.log(deviantsSorted[0].rulesets[0].options)
+    // console.log(deviantsSorted[0].rulesets[0].indicators[0])
+    // console.log(deviantsSorted[0].rulesets[0].indicators[1])
+    // console.log(deviantsSorted[0].rulesets[0].indicators[2])
 
-    // console.log("Wallet: ", deviantsSorted[2].walletResult.curUSD, 
-    //             " winratio: ", 
-    //             deviantsSorted[2].walletResult.winratio, 
-    //             "::", 
-    //             getLargestDeviationFromRatio(deviantsSorted[2], true).max,
-    //             getLargestDeviationFromRatio(deviantsSorted[2], true).min);
+    console.log("Wallet: ", deviantsSorted[2].walletResult.curUSD, 
+                " winratio: ", 
+                deviantsSorted[2].walletResult.winratio, 
+                "::", 
+                getLargestDeviationFromRatio(deviantsSorted[2], true).max,
+                getLargestDeviationFromRatio(deviantsSorted[2], true).min);
+
+    // console.log(deviantsSorted[2].rulesets[0].options)
+    // console.log(deviantsSorted[2].rulesets[0].indicators[0])
+    // console.log(deviantsSorted[2].rulesets[0].indicators[1])
+    // console.log(deviantsSorted[2].rulesets[0].indicators[2])
     
-    // let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
-    // console.log("Wallet: ", winDeviants[0].walletResult.curUSD, 
-    //             " winratio: ", 
-    //             winDeviants[0].walletResult.winratio, 
-    //             " ::", 
-    //             getLargestDeviationFromRatio(winDeviants[0], true).max,
-    //             getLargestDeviationFromRatio(winDeviants[0], true).min);
+    let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
+    console.log("Wallet: ", winDeviants[0].walletResult.curUSD, 
+                " winratio: ", 
+                winDeviants[0].walletResult.winratio, 
+                " ::", 
+                getLargestDeviationFromRatio(winDeviants[0], true).max,
+                getLargestDeviationFromRatio(winDeviants[0], true).min);
 
+    console.log(winDeviants[0].rulesets[0].options)
+    console.log(winDeviants[0].rulesets[0].indicators[0])
+    console.log(winDeviants[0].rulesets[0].indicators[1])
+    console.log(winDeviants[0].rulesets[0].indicators[2])
 
     // let winUSDThreshold = 300;
     // let winDDThreshold  = 0.6;
@@ -353,13 +362,13 @@ async function multiThreadStrats() {
 
         rulesets: [
             {
-                opName:  "generatedasdasdasd",
+                opName:  "rev1",
                 options: {
                     // soft_reverse: true,
                     hard_reverse: true,
 
                     swingHighLowLookbackLength: 10,
-                    percentageRiskedPerTrade: 12, 
+                    percentageRiskedPerTrade: 20, 
                     profitFactor: 1, 
                     atrLength: 14,
 
@@ -371,8 +380,6 @@ async function multiThreadStrats() {
                     {
                         name: "coralTrend",
                         settings: {
-                            // smoothingPeriod: 30,
-                            // constantD: 0.2
                             smoothingPeriod: 5,
                             constantD: 0.5
                         }
@@ -380,8 +387,6 @@ async function multiThreadStrats() {
                     {
                         name: "absoluteStrengthHistogram",
                         settings: {
-                            // evalPeriod: 18,
-                            // smoothingPeriod: 5,
                             evalPeriod: 19,
                             smoothingPeriod: 10,
     
@@ -391,10 +396,89 @@ async function multiThreadStrats() {
                     {
                         name: "hawkeyeVolumne",
                         settings: {
-                            // length: 5,
-                            // divisor: 1,
                             length: 14,
                             divisor: 1,
+                        }
+                    },
+                    
+                ],
+            },
+            {
+                opName:  "rev2",
+                options: {
+                    // soft_reverse: true,
+                    hard_reverse: true,
+
+                    swingHighLowLookbackLength: 10,
+                    percentageRiskedPerTrade: 20, 
+                    profitFactor: 1, 
+                    atrLength: 14,
+
+                    useLimitOrders: false,
+                    gmxLimitAdjustment: 1,
+                },
+
+                indicators: [
+                    {
+                        name: "coralTrend",
+                        settings: {
+                            smoothingPeriod: 5,
+                            constantD: 0.5
+                        }
+                    },
+                    {
+                        name: "absoluteStrengthHistogram",
+                        settings: {
+                            evalPeriod: 19,
+                            smoothingPeriod: 10,
+    
+                            method: "RSI" //RSI STOCHASTIC ADX
+                        }
+                    },
+                    {
+                        name: "hawkeyeVolumne",
+                        settings: {
+                            length: 6,
+                            divisor: 1,
+                        }
+                    },
+                    
+                ],
+            },
+            {
+                opName:  "normal",
+                options: {
+                    swingHighLowLookbackLength: 10,
+                    percentageRiskedPerTrade: 20, 
+                    profitFactor: 1, 
+                    atrLength: 14,
+
+                    useLimitOrders: false,
+                    gmxLimitAdjustment: 1,
+                },
+
+                indicators: [
+                    {
+                        name: "coralTrend",
+                        settings: {
+                            smoothingPeriod: 5,
+                            constantD: 0.8
+                        }
+                    },
+                    {
+                        name: "absoluteStrengthHistogram",
+                        settings: {
+                            evalPeriod: 28,
+                            smoothingPeriod: 5,
+    
+                            method: "RSI" //RSI STOCHASTIC ADX
+                        }
+                    },
+                    {
+                        name: "hawkeyeVolumne",
+                        settings: {
+                            length: 6,
+                            divisor: 1.25,
                         }
                     },
                     
