@@ -248,8 +248,8 @@ async function filterMonthListForBest() {
 
     // bestUSD = bestUSD.map(wallet => {return {...wallet, walletResult: {...wallet.walletResult, positionOpens: [], positionClosed: []}}})
 
-    let letUpperWR = 0.6;
-    let letLowerWR = 0.42;
+    let letUpperWR = 0.58;
+    let letLowerWR = 0.41;
     let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
     let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
 
@@ -259,7 +259,7 @@ async function filterMonthListForBest() {
     let res = uppers.concat(lowers);
     console.log(res.length)
 
-    // await writeToFile("./src/backtest/processed/eth18MExtreams.json", res);
+    // await writeToFile("./src/backtest/processed/avax18MExtreams.json", res);
 }
 
 function filterForConsistent(list) {

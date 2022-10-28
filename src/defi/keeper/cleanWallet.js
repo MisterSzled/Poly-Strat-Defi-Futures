@@ -17,6 +17,8 @@ async function cleanWallet(wallet, strat) {
     let curWallet = await getWalletTokens(wallet.public, true);
     let swapArray = [];
 
+    console.log(parseFloat(curWallet["wavax"]) / 10**18)
+
     // Swap all eth to USDC
     if ((parseFloat(curWallet["weth"]) / 10**18) > 0) {
         cs.fail("ETH");
@@ -37,6 +39,17 @@ async function cleanWallet(wallet, strat) {
         swapArray.push(temp);
     } else {
         cs.win("BTC clean");
+    }
+
+    // Swap all btc to USDC
+    if ((parseFloat(curWallet["wavax"]) / 10**18) > 0) {
+        cs.fail("WAVAX");
+        let temp = {token: "wavax"};
+        temp.amtIn = curWallet["wavax"];
+        temp.amtOut = await getJoePrice("wavax", curWallet["wavax"], "usdc");
+        swapArray.push(temp);
+    } else {
+        cs.win("WAVAX clean");
     }
 
     // Swap all avax > 1 if you have more than avaxUpperLimit
