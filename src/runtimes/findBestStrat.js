@@ -22,10 +22,10 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt, messenger) {
         
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
-            await writeToFile("./src/backtest/processed/BTC4M_Coral_PF1_"+(shunt + i)+".json", results);
+            await writeToFile("./src/backtest/processed/AVAXPartB"+(shunt + i)+".json", results);
             results = [];
         } else if (i === stratcombos.length - 1) {
-            await writeToFile("./src/backtest/processed/BTC4M_Coral_PF1_"+(shunt + i + 1)+".json", results);
+            await writeToFile("./src/backtest/processed/AVAXPartB"+(shunt + i + 1)+".json", results);
             results = [];
         }
     }
@@ -138,10 +138,7 @@ async function filterMonthListForBest() {
     let wallets = [];
 
     fileNames = fileNames.filter(val => val.includes(".json"));
-    fileNames = fileNames.filter(val => !val.includes("btc2MExtreams"));
-    fileNames = fileNames.filter(val => !val.includes("btc4MExtreams"));
-    fileNames = fileNames.filter(val => !val.includes("btc6MExtreams"));
-    fileNames = fileNames.filter(val => !val.includes("btc10MExtreams"));
+    fileNames = fileNames.filter(val => val.includes("AVAX"));
 
     let btcWins = [];
     let ethWins = [];
@@ -164,8 +161,8 @@ async function filterMonthListForBest() {
         wallets = wallets.concat(res);
     }
 
-    console.log("Total run: ", wallets.length);
-    getLargestDeviationFromRatio(wallets[0])
+    // console.log("Total run: ", wallets.length);
+    // getLargestDeviationFromRatio(wallets[0])
 
     let deviants = [];
     for (let i = 0; i < wallets.length; i++) {
@@ -180,42 +177,38 @@ async function filterMonthListForBest() {
         return 0;
     });
 
-    console.log("Wallet: ", deviantsSorted[0].walletResult.curUSD, 
-                " winratio: ", 
-                deviantsSorted[0].walletResult.winratio, 
-                "::", 
-                getLargestDeviationFromRatio(deviantsSorted[0], true).max,
-                getLargestDeviationFromRatio(deviantsSorted[0], true).min);
+    // console.log("Wallet: ", deviantsSorted[0].walletResult.curUSD, 
+    //             " winratio: ", 
+    //             deviantsSorted[0].walletResult.winratio, 
+    //             "::", 
+    //             getLargestDeviationFromRatio(deviantsSorted[0], true).max,
+    //             getLargestDeviationFromRatio(deviantsSorted[0], true).min);
 
-    // console.log(deviantsSorted[0].rulesets[0].options)
-    // console.log(deviantsSorted[0].rulesets[0].indicators[0])
-    // console.log(deviantsSorted[0].rulesets[0].indicators[1])
-    // console.log(deviantsSorted[0].rulesets[0].indicators[2])
-
-    console.log("Wallet: ", deviantsSorted[2].walletResult.curUSD, 
-                " winratio: ", 
-                deviantsSorted[2].walletResult.winratio, 
-                "::", 
-                getLargestDeviationFromRatio(deviantsSorted[2], true).max,
-                getLargestDeviationFromRatio(deviantsSorted[2], true).min);
+    // console.log("Wallet: ", deviantsSorted[2].walletResult.curUSD, 
+    //             " winratio: ", 
+    //             deviantsSorted[2].walletResult.winratio, 
+    //             "::", 
+    //             getLargestDeviationFromRatio(deviantsSorted[2], true).max,
+    //             getLargestDeviationFromRatio(deviantsSorted[2], true).min);
 
     // console.log(deviantsSorted[2].rulesets[0].options)
     // console.log(deviantsSorted[2].rulesets[0].indicators[0])
     // console.log(deviantsSorted[2].rulesets[0].indicators[1])
     // console.log(deviantsSorted[2].rulesets[0].indicators[2])
     
-    let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
-    console.log("Wallet: ", winDeviants[0].walletResult.curUSD, 
-                " winratio: ", 
-                winDeviants[0].walletResult.winratio, 
-                " ::", 
-                getLargestDeviationFromRatio(winDeviants[0], true).max,
-                getLargestDeviationFromRatio(winDeviants[0], true).min);
+    // let deviantIndex = 0;
+    // let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
+    // console.log("Wallet: ", winDeviants[deviantIndex].walletResult.curUSD, 
+    //             " winratio: ", 
+    //             winDeviants[deviantIndex].walletResult.winratio, 
+    //             " ::", 
+    //             getLargestDeviationFromRatio(winDeviants[deviantIndex], true).max,
+    //             getLargestDeviationFromRatio(winDeviants[deviantIndex], true).min);
 
-    console.log(winDeviants[0].rulesets[0].options)
-    console.log(winDeviants[0].rulesets[0].indicators[0])
-    console.log(winDeviants[0].rulesets[0].indicators[1])
-    console.log(winDeviants[0].rulesets[0].indicators[2])
+    // console.log(winDeviants[deviantIndex].rulesets[0].options)
+    // console.log(winDeviants[deviantIndex].rulesets[0].indicators[0])
+    // console.log(winDeviants[deviantIndex].rulesets[0].indicators[1])
+    // console.log(winDeviants[deviantIndex].rulesets[0].indicators[2])
 
     // let winUSDThreshold = 300;
     // let winDDThreshold  = 0.6;
@@ -255,18 +248,18 @@ async function filterMonthListForBest() {
 
     // bestUSD = bestUSD.map(wallet => {return {...wallet, walletResult: {...wallet.walletResult, positionOpens: [], positionClosed: []}}})
 
-    // let letUpperWR = 0.57;
-    // let letLowerWR = 0.4;
-    // let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
-    // let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
+    let letUpperWR = 0.6;
+    let letLowerWR = 0.42;
+    let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
+    let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
 
-    // console.log(uppers.length)
-    // console.log(lowers.length)
+    console.log(uppers.length)
+    console.log(lowers.length)
 
-    // let res = uppers.concat(lowers);
-    // console.log(res.length)
+    let res = uppers.concat(lowers);
+    console.log(res.length)
 
-    // await writeToFile("./src/backtest/processed/btc18MExtreams.json", res);
+    // await writeToFile("./src/backtest/processed/eth18MExtreams.json", res);
 }
 
 function filterForConsistent(list) {
@@ -314,13 +307,13 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT"]);
+    // let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
     // console.log(stratCombos.length);
 
     // let path = './src/backtest/processed/';
     // let fileNames = fs.readdirSync(path);
 
-    // fileNames = fileNames.filter(val => val.includes("btc6MExtreams.json"));
+    // fileNames = fileNames.filter(val => val.includes("eth12MExtreams.json"));
 
     // let stratCombos = []
 
@@ -353,157 +346,159 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    // await filterMonthListForBest();
+    await filterMonthListForBest();
 
-    let start = new Date().getTime();
-    let tempRes = await backtrace({
-        token: "BTCUSDT", 
-        timeframe: "15m",
+    // let start = new Date().getTime();
+    // let tempRes = await backtrace({
+    //     token: "AVAXUSDT", 
+    //     timeframe: "15m",
 
-        rulesets: [
-            {
-                opName:  "rev1",
-                options: {
-                    // soft_reverse: true,
-                    hard_reverse: true,
+    //     rulesets: [
+    //         {
+    //             opName:  "rev1",
+    //             options: {
+    //                 // soft_reverse: true,
+    //                 hard_reverse: true,
 
-                    swingHighLowLookbackLength: 10,
-                    percentageRiskedPerTrade: 20, 
-                    profitFactor: 1, 
-                    atrLength: 14,
+    //                 swingHighLowLookbackLength: 20,
+    //                 percentageRiskedPerTrade: 20, 
+    //                 profitFactor: 1, 
+    //                 atrLength: 14,
 
-                    useLimitOrders: false,
-                    gmxLimitAdjustment: 1,
-                },
+    //                 useLimitOrders: false,
+    //                 gmxLimitAdjustment: 1,
+    //             },
 
-                indicators: [
-                    {
-                        name: "coralTrend",
-                        settings: {
-                            smoothingPeriod: 5,
-                            constantD: 0.5
-                        }
-                    },
-                    {
-                        name: "absoluteStrengthHistogram",
-                        settings: {
-                            evalPeriod: 19,
-                            smoothingPeriod: 10,
+    //             indicators: [
+    //                 {
+    //                     name: "coralTrend",
+    //                     settings: {
+    //                         smoothingPeriod: 5,
+    //                         constantD: 0.5
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "absoluteStrengthHistogram",
+    //                     settings: {
+    //                         evalPeriod: 19,
+    //                         smoothingPeriod: 10,
     
-                            method: "RSI" //RSI STOCHASTIC ADX
-                        }
-                    },
-                    {
-                        name: "hawkeyeVolumne",
-                        settings: {
-                            length: 14,
-                            divisor: 1,
-                        }
-                    },
+    //                         method: "RSI" //RSI STOCHASTIC ADX
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "hawkeyeVolumne",
+    //                     settings: {
+    //                         length: 7,
+    //                         divisor: 1.25,
+    //                     }
+    //                 },
                     
-                ],
-            },
-            {
-                opName:  "rev2",
-                options: {
-                    // soft_reverse: true,
-                    hard_reverse: true,
+    //             ],
+    //         },
+    //         {
+    //             opName:  "rev2",
+    //             options: {
+    //                 // soft_reverse: true,
+    //                 hard_reverse: true,
 
-                    swingHighLowLookbackLength: 10,
-                    percentageRiskedPerTrade: 20, 
-                    profitFactor: 1, 
-                    atrLength: 14,
+    //                 swingHighLowLookbackLength: 20,
+    //                 percentageRiskedPerTrade: 20, 
+    //                 profitFactor: 1, 
+    //                 atrLength: 14,
 
-                    useLimitOrders: false,
-                    gmxLimitAdjustment: 1,
-                },
+    //                 useLimitOrders: false,
+    //                 gmxLimitAdjustment: 1,
+    //             },
 
-                indicators: [
-                    {
-                        name: "coralTrend",
-                        settings: {
-                            smoothingPeriod: 5,
-                            constantD: 0.5
-                        }
-                    },
-                    {
-                        name: "absoluteStrengthHistogram",
-                        settings: {
-                            evalPeriod: 19,
-                            smoothingPeriod: 10,
+    //             indicators: [
+    //                 {
+    //                     name: "coralTrend",
+    //                     settings: {
+    //                         smoothingPeriod: 5,
+    //                         constantD: 0.5
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "absoluteStrengthHistogram",
+    //                     settings: {
+    //                         evalPeriod: 19,
+    //                         smoothingPeriod: 10,
     
-                            method: "RSI" //RSI STOCHASTIC ADX
-                        }
-                    },
-                    {
-                        name: "hawkeyeVolumne",
-                        settings: {
-                            length: 6,
-                            divisor: 1,
-                        }
-                    },
+    //                         method: "RSI" //RSI STOCHASTIC ADX
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "hawkeyeVolumne",
+    //                     settings: {
+    //                         length: 8,
+    //                         divisor: 1.25,
+    //                     }
+    //                 },
                     
-                ],
-            },
-            {
-                opName:  "normal",
-                options: {
-                    swingHighLowLookbackLength: 10,
-                    percentageRiskedPerTrade: 20, 
-                    profitFactor: 1, 
-                    atrLength: 14,
+    //             ],
+    //         },
+    //         {
+    //             opName:  "normal",
+    //             options: {
+    //                 hard_reverse: true,
 
-                    useLimitOrders: false,
-                    gmxLimitAdjustment: 1,
-                },
+    //                 swingHighLowLookbackLength: 20,
+    //                 percentageRiskedPerTrade: 20, 
+    //                 profitFactor: 1, 
+    //                 atrLength: 14,
 
-                indicators: [
-                    {
-                        name: "coralTrend",
-                        settings: {
-                            smoothingPeriod: 5,
-                            constantD: 0.8
-                        }
-                    },
-                    {
-                        name: "absoluteStrengthHistogram",
-                        settings: {
-                            evalPeriod: 28,
-                            smoothingPeriod: 5,
+    //                 useLimitOrders: false,
+    //                 gmxLimitAdjustment: 1,
+    //             },
+
+    //             indicators: [
+    //                 {
+    //                     name: "coralTrend",
+    //                     settings: {
+    //                         smoothingPeriod: 5,
+    //                         constantD: 0.5
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "absoluteStrengthHistogram",
+    //                     settings: {
+    //                         evalPeriod: 19,
+    //                         smoothingPeriod: 10,
     
-                            method: "RSI" //RSI STOCHASTIC ADX
-                        }
-                    },
-                    {
-                        name: "hawkeyeVolumne",
-                        settings: {
-                            length: 6,
-                            divisor: 1.25,
-                        }
-                    },
+    //                         method: "RSI" //RSI STOCHASTIC ADX
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "hawkeyeVolumne",
+    //                     settings: {
+    //                         length: 14,
+    //                         divisor: 1.25,
+    //                     }
+    //                 },
                     
-                ],
-            },
-        ]
-    }, 18);
-    console.log(new Date().getTime() - start);
+    //             ],
+    //         },
+    //     ]
+    // }, 18);
+    // console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
     //     let threadCount = 6;
-    //     // let stratCombos = generateStratCombos(variationScheme, ["BTCUSDT"]);
-    //     // console.log(stratCombos.length);
+    //     let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
+    //     console.log(stratCombos.length);
 
-    //     let path = './src/backtest/processed/';
-    //     let fileNames = fs.readdirSync(path);
-    //     fileNames = fileNames.filter(val => val.includes("btc10MExtreams.json"));
-    //     let stratCombos = []
-    //     for (let i = 0; i < fileNames.length; i++) {
-    //         let res = fs.readFileSync(path + fileNames[i]);
-    //         res = JSON.parse(res);
+    //     // let path = './src/backtest/processed/';
+    //     // let fileNames = fs.readdirSync(path);
+    //     // fileNames = fileNames.filter(val => val.includes("btc10MExtreams.json"));
+    //     // let stratCombos = []
+    //     // for (let i = 0; i < fileNames.length; i++) {
+    //     //     let res = fs.readFileSync(path + fileNames[i]);
+    //     //     res = JSON.parse(res);
 
-    //         stratCombos = stratCombos.concat(res);
-    //     }
-    //     stratCombos = stratCombos.map(val => ({...val, walletResult: {}}));
+    //     //     stratCombos = stratCombos.concat(res);
+    //     // }
+    //     // stratCombos = stratCombos.map(val => ({...val, walletResult: {}}));
 
 
     //     console.log("Running with ", threadCount, " threads")
