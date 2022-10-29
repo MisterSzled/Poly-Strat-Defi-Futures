@@ -6,6 +6,7 @@ const coralTrend = require("./library/coralTrend");
 const adx = require("./library/adx");
 const absoluteStrengthHistogram = require("./library/absoluteStrengthHistogram");
 const hawkeyeVolumne = require("./library/hawkeyeVolumne");
+const parabolicSAR = require("./library/parabolicSAR");
 
 let indicators = {
     boomHunter: boomHunter,
@@ -16,6 +17,7 @@ let indicators = {
     adx: adx,
     absoluteStrengthHistogram: absoluteStrengthHistogram,
     hawkeyeVolumne: hawkeyeVolumne,
+    parabolicSAR: parabolicSAR,
 }
 
 module.exports = indicators

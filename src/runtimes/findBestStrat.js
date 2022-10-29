@@ -138,7 +138,7 @@ async function filterMonthListForBest() {
     let wallets = [];
 
     fileNames = fileNames.filter(val => val.includes(".json"));
-    fileNames = fileNames.filter(val => val.includes("AVAX"));
+    fileNames = fileNames.filter(val => val.includes("avax18MExtreams"));
 
     let btcWins = [];
     let ethWins = [];
@@ -177,12 +177,19 @@ async function filterMonthListForBest() {
         return 0;
     });
 
-    // console.log("Wallet: ", deviantsSorted[0].walletResult.curUSD, 
+    console.log("Wallet: ", deviantsSorted[0].walletResult.curUSD, 
+                " winratio: ", 
+                deviantsSorted[0].walletResult.winratio, 
+                "::", 
+                getLargestDeviationFromRatio(deviantsSorted[0], true).max,
+                getLargestDeviationFromRatio(deviantsSorted[0], true).min);
+
+    // console.log("Wallet: ", deviantsSorted[1].walletResult.curUSD, 
     //             " winratio: ", 
-    //             deviantsSorted[0].walletResult.winratio, 
+    //             deviantsSorted[1].walletResult.winratio, 
     //             "::", 
-    //             getLargestDeviationFromRatio(deviantsSorted[0], true).max,
-    //             getLargestDeviationFromRatio(deviantsSorted[0], true).min);
+    //             getLargestDeviationFromRatio(deviantsSorted[1], true).max,
+    //             getLargestDeviationFromRatio(deviantsSorted[1], true).min);
 
     // console.log("Wallet: ", deviantsSorted[2].walletResult.curUSD, 
     //             " winratio: ", 
@@ -191,10 +198,10 @@ async function filterMonthListForBest() {
     //             getLargestDeviationFromRatio(deviantsSorted[2], true).max,
     //             getLargestDeviationFromRatio(deviantsSorted[2], true).min);
 
-    // console.log(deviantsSorted[2].rulesets[0].options)
-    // console.log(deviantsSorted[2].rulesets[0].indicators[0])
-    // console.log(deviantsSorted[2].rulesets[0].indicators[1])
-    // console.log(deviantsSorted[2].rulesets[0].indicators[2])
+    console.log(deviantsSorted[1].rulesets[0].options)
+    console.log(deviantsSorted[1].rulesets[0].indicators[0])
+    console.log(deviantsSorted[1].rulesets[0].indicators[1])
+    console.log(deviantsSorted[1].rulesets[0].indicators[2])
     
     // let deviantIndex = 0;
     // let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
@@ -248,16 +255,16 @@ async function filterMonthListForBest() {
 
     // bestUSD = bestUSD.map(wallet => {return {...wallet, walletResult: {...wallet.walletResult, positionOpens: [], positionClosed: []}}})
 
-    let letUpperWR = 0.58;
-    let letLowerWR = 0.41;
-    let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
-    let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
+    // let letUpperWR = 0.58;
+    // let letLowerWR = 0.41;
+    // let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
+    // let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
 
-    console.log(uppers.length)
-    console.log(lowers.length)
+    // console.log(uppers.length)
+    // console.log(lowers.length)
 
-    let res = uppers.concat(lowers);
-    console.log(res.length)
+    // let res = uppers.concat(lowers);
+    // console.log(res.length)
 
     // await writeToFile("./src/backtest/processed/avax18MExtreams.json", res);
 }
@@ -346,142 +353,142 @@ async function multiThreadStrats() {
     // let start = new Date().getTime();
     // await findBestStratOver1MAndWrite(stratCombos, 0);
     // console.log(new Date().getTime() - start);
-    await filterMonthListForBest();
+    // await filterMonthListForBest();
 
-    // let start = new Date().getTime();
-    // let tempRes = await backtrace({
-    //     token: "AVAXUSDT", 
-    //     timeframe: "15m",
+    let start = new Date().getTime();
+    let tempRes = await backtrace({
+        token: "AVAXUSDT", 
+        timeframe: "15m",
 
-    //     rulesets: [
-    //         {
-    //             opName:  "rev1",
-    //             options: {
-    //                 // soft_reverse: true,
-    //                 hard_reverse: true,
+        rulesets: [
+            {
+                opName:  "rev1",
+                options: {
+                    // soft_reverse: true,
+                    hard_reverse: true,
 
-    //                 swingHighLowLookbackLength: 20,
-    //                 percentageRiskedPerTrade: 20, 
-    //                 profitFactor: 1, 
-    //                 atrLength: 14,
+                    swingHighLowLookbackLength: 60,
+                    percentageRiskedPerTrade: 12, 
+                    profitFactor: 1, 
+                    atrLength: 14,
 
-    //                 useLimitOrders: false,
-    //                 gmxLimitAdjustment: 1,
-    //             },
+                    useLimitOrders: false,
+                    gmxLimitAdjustment: 1,
+                },
 
-    //             indicators: [
-    //                 {
-    //                     name: "coralTrend",
-    //                     settings: {
-    //                         smoothingPeriod: 5,
-    //                         constantD: 0.5
-    //                     }
-    //                 },
-    //                 {
-    //                     name: "absoluteStrengthHistogram",
-    //                     settings: {
-    //                         evalPeriod: 19,
-    //                         smoothingPeriod: 10,
+                indicators: [
+                    {
+                        name: "coralTrend",
+                        settings: {
+                            smoothingPeriod: 5,
+                            constantD: 0.8
+                        }
+                    },
+                    {
+                        name: "absoluteStrengthHistogram",
+                        settings: {
+                            evalPeriod: 28,
+                            smoothingPeriod: 5,
     
-    //                         method: "RSI" //RSI STOCHASTIC ADX
-    //                     }
-    //                 },
-    //                 {
-    //                     name: "hawkeyeVolumne",
-    //                     settings: {
-    //                         length: 7,
-    //                         divisor: 1.25,
-    //                     }
-    //                 },
+                            method: "RSI" //RSI STOCHASTIC ADX
+                        }
+                    },
+                    {
+                        name: "hawkeyeVolumne",
+                        settings: {
+                            length: 5,
+                            divisor: 1.75,
+                        }
+                    },
                     
-    //             ],
-    //         },
-    //         {
-    //             opName:  "rev2",
-    //             options: {
-    //                 // soft_reverse: true,
-    //                 hard_reverse: true,
+                ],
+            },
+            // {
+            //     opName:  "rev2",
+            //     options: {
+            //         // soft_reverse: true,
+            //         hard_reverse: true,
 
-    //                 swingHighLowLookbackLength: 20,
-    //                 percentageRiskedPerTrade: 20, 
-    //                 profitFactor: 1, 
-    //                 atrLength: 14,
+            //         swingHighLowLookbackLength: 20,
+            //         percentageRiskedPerTrade: 20, 
+            //         profitFactor: 1, 
+            //         atrLength: 14,
 
-    //                 useLimitOrders: false,
-    //                 gmxLimitAdjustment: 1,
-    //             },
+            //         useLimitOrders: false,
+            //         gmxLimitAdjustment: 1,
+            //     },
 
-    //             indicators: [
-    //                 {
-    //                     name: "coralTrend",
-    //                     settings: {
-    //                         smoothingPeriod: 5,
-    //                         constantD: 0.5
-    //                     }
-    //                 },
-    //                 {
-    //                     name: "absoluteStrengthHistogram",
-    //                     settings: {
-    //                         evalPeriod: 19,
-    //                         smoothingPeriod: 10,
+            //     indicators: [
+            //         {
+            //             name: "coralTrend",
+            //             settings: {
+            //                 smoothingPeriod: 5,
+            //                 constantD: 0.5
+            //             }
+            //         },
+            //         {
+            //             name: "absoluteStrengthHistogram",
+            //             settings: {
+            //                 evalPeriod: 19,
+            //                 smoothingPeriod: 10,
     
-    //                         method: "RSI" //RSI STOCHASTIC ADX
-    //                     }
-    //                 },
-    //                 {
-    //                     name: "hawkeyeVolumne",
-    //                     settings: {
-    //                         length: 8,
-    //                         divisor: 1.25,
-    //                     }
-    //                 },
+            //                 method: "RSI" //RSI STOCHASTIC ADX
+            //             }
+            //         },
+            //         {
+            //             name: "hawkeyeVolumne",
+            //             settings: {
+            //                 length: 8,
+            //                 divisor: 1.25,
+            //             }
+            //         },
                     
-    //             ],
-    //         },
-    //         {
-    //             opName:  "normal",
-    //             options: {
-    //                 hard_reverse: true,
+            //     ],
+            // },
+            // {
+            //     opName:  "normal",
+            //     options: {
+            //         hard_reverse: true,
 
-    //                 swingHighLowLookbackLength: 20,
-    //                 percentageRiskedPerTrade: 20, 
-    //                 profitFactor: 1, 
-    //                 atrLength: 14,
+            //         swingHighLowLookbackLength: 20,
+            //         percentageRiskedPerTrade: 20, 
+            //         profitFactor: 1, 
+            //         atrLength: 14,
 
-    //                 useLimitOrders: false,
-    //                 gmxLimitAdjustment: 1,
-    //             },
+            //         useLimitOrders: false,
+            //         gmxLimitAdjustment: 1,
+            //     },
 
-    //             indicators: [
-    //                 {
-    //                     name: "coralTrend",
-    //                     settings: {
-    //                         smoothingPeriod: 5,
-    //                         constantD: 0.5
-    //                     }
-    //                 },
-    //                 {
-    //                     name: "absoluteStrengthHistogram",
-    //                     settings: {
-    //                         evalPeriod: 19,
-    //                         smoothingPeriod: 10,
+            //     indicators: [
+            //         {
+            //             name: "coralTrend",
+            //             settings: {
+            //                 smoothingPeriod: 5,
+            //                 constantD: 0.5
+            //             }
+            //         },
+            //         {
+            //             name: "absoluteStrengthHistogram",
+            //             settings: {
+            //                 evalPeriod: 19,
+            //                 smoothingPeriod: 10,
     
-    //                         method: "RSI" //RSI STOCHASTIC ADX
-    //                     }
-    //                 },
-    //                 {
-    //                     name: "hawkeyeVolumne",
-    //                     settings: {
-    //                         length: 14,
-    //                         divisor: 1.25,
-    //                     }
-    //                 },
+            //                 method: "RSI" //RSI STOCHASTIC ADX
+            //             }
+            //         },
+            //         {
+            //             name: "hawkeyeVolumne",
+            //             settings: {
+            //                 length: 14,
+            //                 divisor: 1.25,
+            //             }
+            //         },
                     
-    //             ],
-    //         },
-    //     ]
-    // }, 18);
-    // console.log(new Date().getTime() - start);
+            //     ],
+            // },
+        ]
+    }, 18);
+    console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
     //     let threadCount = 6;
