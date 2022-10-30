@@ -11,7 +11,7 @@ let timemap = {
   "1h": 60000 * 60,
   "2h": 120000 * 60,
   "4h": 240000 * 60,
-  "1d": 144000 * 60,
+  "1d": 144000 * 60, 
 }
 
 async function livebot (strat) {
