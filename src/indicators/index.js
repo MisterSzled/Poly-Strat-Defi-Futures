@@ -7,6 +7,7 @@ const adx = require("./library/adx");
 const absoluteStrengthHistogram = require("./library/absoluteStrengthHistogram");
 const hawkeyeVolumne = require("./library/hawkeyeVolumne");
 const parabolicSAR = require("./library/parabolicSAR");
+const squeezeMomentum = require("./library/squeezeMomentum");
 
 let indicators = {
     boomHunter: boomHunter,
@@ -18,6 +19,7 @@ let indicators = {
     absoluteStrengthHistogram: absoluteStrengthHistogram,
     hawkeyeVolumne: hawkeyeVolumne,
     parabolicSAR: parabolicSAR,
+    squeezeMomentum: squeezeMomentum,
 }
 
 module.exports = indicators

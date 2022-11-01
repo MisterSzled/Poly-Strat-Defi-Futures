@@ -3,10 +3,10 @@ const stdev = require("./stdev");
 const sma = require("./sma");
 
 function bolingerbands(candleData, volLength, multi) {
-    let stdDev = stdev(candleData, volLength);
+    let stdDev = stdev([...candleData], volLength);
     stdDev = stdDev.map(val => val * multi);
 
-    let avg = sma(candleData, volLength);
+    let avg = sma([...candleData], volLength);
 
     let result = [];
     for (let i = 0 ; i < stdDev.length; i++) {
