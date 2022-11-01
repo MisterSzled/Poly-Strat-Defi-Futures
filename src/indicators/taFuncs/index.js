@@ -9,6 +9,7 @@ const cci = require("./cci");
 const cmo = require("./cmo");
 const change = require("./change");
 const sar = require("./sar");
+const ema = require("./ema");
 
 let taFuncs = {
     swingHiLo: swingHiLo,
@@ -23,6 +24,7 @@ let taFuncs = {
     cmo: cmo,
     change: change,
     sar: sar,
+    ema: ema,
 }
 
 module.exports = taFuncs
