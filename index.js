@@ -33,6 +33,6 @@ const { argsToArgsConfig } = require('graphql/type/definition.js');
 //   }
 // });
 
-livebot(strats[5]);
+livebot(strats[4]);
 
 // multiThreadStrats();
