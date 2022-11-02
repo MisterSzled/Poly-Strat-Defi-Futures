@@ -368,8 +368,8 @@ async function multiThreadStrats() {
                     hard_reverse: true,
 
                     swingHighLowLookbackLength: 60,
-                    percentageRiskedPerTrade: 12, 
-                    profitFactor: 1, 
+                    percentageRiskedPerTrade: 25, 
+                    profitFactor: 4, 
                     atrLength: 14,
 
                     useLimitOrders: false,
@@ -378,116 +378,43 @@ async function multiThreadStrats() {
 
                 indicators: [
                     {
-                        name: "coralTrend",
+                        name: "parabolicSAR",
                         settings: {
-                            smoothingPeriod: 5,
-                            constantD: 0.8
+                            trendCode: 3, // 5m:1, 15m:3, 60m:7 180m:9 
                         }
                     },
                     {
-                        name: "absoluteStrengthHistogram",
+                        name: "squeezeMomentum",
                         settings: {
-                            evalPeriod: 28,
-                            smoothingPeriod: 5,
-    
-                            method: "RSI" //RSI STOCHASTIC ADX
+                            bbLength:     20,  
+                            bbMultiplier: 1.5,
+                            kcLength:     20,
+                            kcMultiplier: 1.5,
+
+                            reportChangeInMomentum: false
+                        }
+                    },
+                    {
+                        name: "duoMA",
+                        settings: {
+                            ma1_type: "EMA",
+                            ma1_length: 200,
+                            ma2_type: "SMA",
+                            ma2_length: 50,
                         }
                     },
                     {
                         name: "hawkeyeVolumne",
                         settings: {
-                            length: 5,
-                            divisor: 1.75,
+                            length: 200,
+                            divisor: 1,
                         }
-                    },
+                    }
                     
                 ],
             },
-            // {
-            //     opName:  "rev2",
-            //     options: {
-            //         // soft_reverse: true,
-            //         hard_reverse: true,
-
-            //         swingHighLowLookbackLength: 20,
-            //         percentageRiskedPerTrade: 20, 
-            //         profitFactor: 1, 
-            //         atrLength: 14,
-
-            //         useLimitOrders: false,
-            //         gmxLimitAdjustment: 1,
-            //     },
-
-            //     indicators: [
-            //         {
-            //             name: "coralTrend",
-            //             settings: {
-            //                 smoothingPeriod: 5,
-            //                 constantD: 0.5
-            //             }
-            //         },
-            //         {
-            //             name: "absoluteStrengthHistogram",
-            //             settings: {
-            //                 evalPeriod: 19,
-            //                 smoothingPeriod: 10,
-    
-            //                 method: "RSI" //RSI STOCHASTIC ADX
-            //             }
-            //         },
-            //         {
-            //             name: "hawkeyeVolumne",
-            //             settings: {
-            //                 length: 8,
-            //                 divisor: 1.25,
-            //             }
-            //         },
-                    
-            //     ],
-            // },
-            // {
-            //     opName:  "normal",
-            //     options: {
-            //         hard_reverse: true,
-
-            //         swingHighLowLookbackLength: 20,
-            //         percentageRiskedPerTrade: 20, 
-            //         profitFactor: 1, 
-            //         atrLength: 14,
-
-            //         useLimitOrders: false,
-            //         gmxLimitAdjustment: 1,
-            //     },
-
-            //     indicators: [
-            //         {
-            //             name: "coralTrend",
-            //             settings: {
-            //                 smoothingPeriod: 5,
-            //                 constantD: 0.5
-            //             }
-            //         },
-            //         {
-            //             name: "absoluteStrengthHistogram",
-            //             settings: {
-            //                 evalPeriod: 19,
-            //                 smoothingPeriod: 10,
-    
-            //                 method: "RSI" //RSI STOCHASTIC ADX
-            //             }
-            //         },
-            //         {
-            //             name: "hawkeyeVolumne",
-            //             settings: {
-            //                 length: 14,
-            //                 divisor: 1.25,
-            //             }
-            //         },
-                    
-            //     ],
-            // },
         ]
-    }, 18);
+    }, 2);
     console.log(new Date().getTime() - start);
     
     // if (isMainThread) {

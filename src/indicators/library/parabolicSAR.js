@@ -11,7 +11,7 @@ function parabolicSAR(strat, candleData) {
     // let psar = sar([...candleData.slice(0, candleData.length - 1)], 0.02, 0.02, 0.2);
 
     let dir0 = psar[psar.length - 1] < candleData[candleData.length - 2][4] ? 1 : -1;
-    let dir1 = psar[psar.length - 1] < candleData[candleData.length - 3][4] ? 1 : -1;
+    let dir1 = psar[psar.length - 2] < candleData[candleData.length - 3][4] ? 1 : -1;
 
     cs.process("Direction 0: " + dir0);
     cs.process("Direction 1: " + dir1);
