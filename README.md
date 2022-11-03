@@ -103,6 +103,26 @@ The other member of the config file should contain all strats to be run with the
 - indicators
     - This houses the indicators which will be used in the strat, it is an array of obj which represent the settings to be passed to the indicators
 
+### Options
+
+Universal options to be included regardless of risk profile type 
+<br />
+- percentageRiskedPerTrade
+    - Defines the percentage of your *wallet*, not position, that will be lost in the ideal hit of the calcuated stop loss point
+
+- profitFactor
+    - Factor to be used to scale up the Take Profit point after base calculation
+
+- gmxLimitAdjustment
+    - fraction of final TP/SL points to be used by keeper for the purposes of closing the positions. Can affect strat restuls dramatically.
+
+#### Swing and ATR 
+DEFAULT pricer. Uses the average true range (ATR) and local swing extreams to price TP/SL
+- atrLength
+    - Value used by pricer to calculate average true range. Default 14.
+- swingHighLowLookbackLength
+    - Number of bars to lookback on for swing limits detection
+
 ### Indicators
 
 #### Config
