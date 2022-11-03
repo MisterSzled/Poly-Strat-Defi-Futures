@@ -9,7 +9,6 @@ function getNewPositionProfile(options, wallet, pairData, isLong, currentPrice) 
     let curClose = parseFloat(pairData[pairData.length - 2][4]);
 
     let gmxAdjustmentUpper = options.gmxLimitAdjustment;
-    let gmxAdjustmentLower = 1 + (1 - options.gmxLimitAdjustment);
 
     if (options.hard_reverse) isLong = !isLong;
 
@@ -24,8 +23,8 @@ function getNewPositionProfile(options, wallet, pairData, isLong, currentPrice) 
         let longQty = riskCalc.amt;
         let lev = riskCalc.lev;
 
-        longSL = longSL * gmxAdjustmentLower;
-        longTp = longTp * gmxAdjustmentUpper;
+        longSL = curClose - ((curClose - longSL)*gmxAdjustmentUpper)
+        longTp = curClose + ((longTp - curClose)*gmxAdjustmentUpper)
 
         cs.long("Long amt: " + longQty + " => " + truncateNum(longQty, 4));
         cs.long("Long lev: " + lev + " => " + truncateNum(lev, 4));
@@ -60,9 +59,8 @@ function getNewPositionProfile(options, wallet, pairData, isLong, currentPrice) 
         let shortQty = riskCalc.amt;
         let lev = riskCalc.lev;
 
-        // Tighten limits for GMX's shit limits
-        shortSL = shortSL * gmxAdjustmentUpper;
-        shortTp = shortTp * gmxAdjustmentLower;
+        shortSL = curClose + ((shortSL - curClose)*gmxAdjustmentUpper)
+        shortTp = curClose - ((curClose - shortTp)*gmxAdjustmentUpper)
 
         cs.short("Short amt: " + shortQty + " => " + truncateNum(shortQty, 4));
         cs.short("Short lev: " + lev + " => " + truncateNum(lev, 4));

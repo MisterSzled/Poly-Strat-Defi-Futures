@@ -16,16 +16,16 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt, messenger) {
             messenger(i)
         }
 
-        let newEntry = await backtrace(stratcombos[i], 18);
+        let newEntry = await backtrace(stratcombos[i], 2);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
-            await writeToFile("./src/backtest/processed/AVAXPartB"+(shunt + i)+".json", results);
+            await writeToFile("./src/backtest/processed/ethSAR_"+(shunt + i)+".json", results);
             results = [];
         } else if (i === stratcombos.length - 1) {
-            await writeToFile("./src/backtest/processed/AVAXPartB"+(shunt + i + 1)+".json", results);
+            await writeToFile("./src/backtest/processed/ethSAR_"+(shunt + i + 1)+".json", results);
             results = [];
         }
     }
@@ -138,7 +138,6 @@ async function filterMonthListForBest() {
     let wallets = [];
 
     fileNames = fileNames.filter(val => val.includes(".json"));
-    fileNames = fileNames.filter(val => val.includes("avax18MExtreams"));
 
     let btcWins = [];
     let ethWins = [];
@@ -198,10 +197,10 @@ async function filterMonthListForBest() {
     //             getLargestDeviationFromRatio(deviantsSorted[2], true).max,
     //             getLargestDeviationFromRatio(deviantsSorted[2], true).min);
 
-    console.log(deviantsSorted[1].rulesets[0].options)
-    console.log(deviantsSorted[1].rulesets[0].indicators[0])
-    console.log(deviantsSorted[1].rulesets[0].indicators[1])
-    console.log(deviantsSorted[1].rulesets[0].indicators[2])
+    // console.log(deviantsSorted[1].rulesets[0].options)
+    // console.log(deviantsSorted[1].rulesets[0].indicators[0])
+    // console.log(deviantsSorted[1].rulesets[0].indicators[1])
+    // console.log(deviantsSorted[1].rulesets[0].indicators[2])
     
     // let deviantIndex = 0;
     // let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
@@ -223,9 +222,6 @@ async function filterMonthListForBest() {
     // wallets = wallets.filter(val => val.walletResult.drawdown < winDDThreshold);
 
     // console.log("Total wins: ", wallets.length)
-
-    // wallets = filterForConsistent(wallets);
-    // console.log("Total conssitent: ", wallets.length)
 
     // let bestUSD = [...wallets].sort((a,b) => {
     //     if (a.walletResult.curUSD > b.walletResult.curUSD) return -1
@@ -255,13 +251,13 @@ async function filterMonthListForBest() {
 
     // bestUSD = bestUSD.map(wallet => {return {...wallet, walletResult: {...wallet.walletResult, positionOpens: [], positionClosed: []}}})
 
-    // let letUpperWR = 0.58;
-    // let letLowerWR = 0.41;
-    // let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
-    // let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
+    let letUpperWR = 0.6;
+    let letLowerWR = 0.4;
+    let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
+    let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
 
-    // console.log(uppers.length)
-    // console.log(lowers.length)
+    console.log(uppers.length)
+    console.log(lowers.length)
 
     // let res = uppers.concat(lowers);
     // console.log(res.length)
@@ -314,8 +310,9 @@ function filterForConsistent(list) {
 }
 
 async function multiThreadStrats() {
-    // let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
-    // console.log(stratCombos.length);
+    let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
+    console.log(stratCombos.length);
+
 
     // let path = './src/backtest/processed/';
     // let fileNames = fs.readdirSync(path);
@@ -357,7 +354,7 @@ async function multiThreadStrats() {
 
     let start = new Date().getTime();
     let tempRes = await backtrace({
-        token: "AVAXUSDT", 
+        token: "ETHUSDT", 
         timeframe: "15m",
 
         rulesets: [
@@ -365,7 +362,7 @@ async function multiThreadStrats() {
                 opName:  "rev1",
                 options: {
                     // soft_reverse: true,
-                    hard_reverse: true,
+                    // hard_reverse: true,
 
                     swingHighLowLookbackLength: 60,
                     percentageRiskedPerTrade: 25, 
@@ -373,7 +370,7 @@ async function multiThreadStrats() {
                     atrLength: 14,
 
                     useLimitOrders: false,
-                    gmxLimitAdjustment: 1,
+                    gmxLimitAdjustment: 0.9,
                 },
 
                 indicators: [
@@ -414,7 +411,7 @@ async function multiThreadStrats() {
                 ],
             },
         ]
-    }, 2);
+    }, 1);
     console.log(new Date().getTime() - start);
     
     // if (isMainThread) {

@@ -310,6 +310,70 @@ function generateRulesetMap (variationScheme, targetToken) {
             }
         }
     }
+
+    let parabolicSAR_map = [];
+    let parabolicSARScheme = variationScheme.indicators.find(val => val.name === "parabolicSAR");
+    if (!!parabolicSARScheme) {
+        let parabolicSARSeries = getIndicatorSeries(variationScheme, "parabolicSAR");
+        for (let a = 0; a < parabolicSARSeries.trendCode.length; a++) {
+            parabolicSAR_map.push({
+                name: "parabolicSAR",
+
+                settings: {
+                    trendCode:  parabolicSARSeries.trendCode[a],
+                }
+            });
+        }
+    }
+
+    let squeezeMomentum_map = [];
+    let squeezeMomentumScheme = variationScheme.indicators.find(val => val.name === "squeezeMomentum");
+    if (!!squeezeMomentumScheme) {
+        let squeezeMomentumSeries = getIndicatorSeries(variationScheme, "squeezeMomentum");
+        for (let a = 0; a < squeezeMomentumSeries.bbLength.length; a++) {
+        for (let b = 0; b < squeezeMomentumSeries.bbMultiplier.length; b++) {
+        for (let c = 0; c < squeezeMomentumSeries.kcLength.length; c++) {
+        for (let d = 0; d < squeezeMomentumSeries.kcMultiplier.length; d++) {
+        for (let e = 0; e < squeezeMomentumSeries.reportChangeInMomentum.length; e++) {
+            squeezeMomentum_map.push({
+                name: "squeezeMomentum",
+
+                settings: {
+                    bbLength:  squeezeMomentumSeries.bbLength[a],
+                    bbMultiplier:  squeezeMomentumSeries.bbMultiplier[b],
+                    kcLength:  squeezeMomentumSeries.kcLength[c],
+                    kcMultiplier:  squeezeMomentumSeries.kcMultiplier[d],
+
+                    // reportChangeInMomentum: squeezeMomentumSeries.reportChangeInMomentum[e]
+                    reportChangeInMomentum: false
+                }
+            });
+        }
+        }
+        }
+        }
+        }
+    }
+
+    let duoMA_map = [];
+    let duoMAScheme = variationScheme.indicators.find(val => val.name === "duoMA");
+    if (!!duoMAScheme) {
+        let duoMASeries = getIndicatorSeries(variationScheme, "duoMA");
+        for (let a = 0; a < duoMASeries.ma1_length.length; a++) {
+        for (let b = 0; b < duoMASeries.ma2_length.length; b++) {
+            duoMA_map.push({
+                name: "duoMA",
+
+                settings: {
+                    ma1_type: "EMA",
+                    ma2_type: "SMA",
+                    ma1_length:  duoMASeries.ma1_length[a],
+                    ma2_length:  duoMASeries.ma2_length[b],
+                }
+            });
+        }
+        }
+    }
     
     // let result = [];
     // for (let i = 0; i < mhull_map.length; i++) {
@@ -396,25 +460,52 @@ function generateRulesetMap (variationScheme, targetToken) {
     // }
 
     // CORAL ABS HAWKEYE
+    // let result = [];
+    // for (let i = 0; i < absoluteStrengthHistogram_map.length; i++) {
+    //     for (let j = 0; j < coralTrend_map.length; j++) {
+    //         for (let k = 0; k < options_map.length; k++) {
+    //         for (let l = 0; l < hawkeyeVolumne_map.length; l++) {
+    //             result.push({               
+    //                 opName: "Generated_" + i+"_"+j+"_"+k, 
+            
+    //                 token: targetToken, 
+            
+    //                 options: options_map[k],
+            
+    //                 indicators: [
+    //                     coralTrend_map[j],
+    //                     absoluteStrengthHistogram_map[i],
+    //                     hawkeyeVolumne_map[l],
+    //                 ],
+    //             });
+    //         }
+    //         }
+    //     }
+    // }
+
+    // Parabolic + duaMA + hawkeye + 
     let result = [];
-    for (let i = 0; i < absoluteStrengthHistogram_map.length; i++) {
-        for (let j = 0; j < coralTrend_map.length; j++) {
-            for (let k = 0; k < options_map.length; k++) {
-            for (let l = 0; l < hawkeyeVolumne_map.length; l++) {
-                result.push({               
-                    opName: "Generated_" + i+"_"+j+"_"+k, 
-            
-                    token: targetToken, 
-            
-                    options: options_map[k],
-            
-                    indicators: [
-                        coralTrend_map[j],
-                        absoluteStrengthHistogram_map[i],
-                        hawkeyeVolumne_map[l],
-                    ],
-                });
-            }
+    for (let i = 0; i < parabolicSAR_map.length; i++) {
+        for (let l = 0; l < squeezeMomentum_map.length; l++) {
+            for (let j = 0; j < hawkeyeVolumne_map.length; j++) {
+                for (let k = 0; k < options_map.length; k++) {
+                    for (let m = 0; m < duoMA_map.length; m++) {
+                        result.push({               
+                            opName: "Generated_" + i+"_"+j+"_"+k, 
+                    
+                            token: targetToken, 
+                    
+                            options: options_map[k],
+                    
+                            indicators: [
+                                parabolicSAR_map[i],
+                                squeezeMomentum_map[l],
+                                duoMA_map[m],
+                                hawkeyeVolumne_map[j],
+                            ],
+                        });
+                    }
+                }
             }
         }
     }

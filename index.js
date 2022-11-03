@@ -35,4 +35,4 @@ const { argsToArgsConfig } = require('graphql/type/definition.js');
 
 // livebot(strats[4]);
 
-// multiThreadStrats();
+multiThreadStrats();
