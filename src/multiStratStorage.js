@@ -12,8 +12,6 @@ let multiTTT = {
                 profitFactor: 2,
 
                 atrLength: 14,
-                useLimitOrders: false,
-                gmxLimitAdjustment: 1,
             },
             indicators: [
                 {

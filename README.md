@@ -61,7 +61,6 @@ The other member of the config file should contain all strats to be run with the
 
         // GMX settings
         useLimitOrders: false,          // Set GMX limit orders when position is opened
-        gmxLimitAdjustment: 0.999,      // 1 is no adjustment - tightens strat defined SL/TP because GMX is a cunt
     },
 
     // Indicator to be checked for this strat
@@ -94,9 +93,6 @@ The other member of the config file should contain all strats to be run with the
 - useLimitOrders
     - If checked the account will set and manage limit orders at position inception
 
-- gmxLimitAdjustment
-    - If useLimitOrders is true this factor will tighten the calculated targets to account for delay in order filling. E.g.: 0.99
-
 - swingHighLowLookbackLength
     - This determines the number of candles back to be checked when calculating current highs and lows for TP/SL target calculation
 
@@ -113,8 +109,8 @@ Universal options to be included regardless of risk profile type
 - profitFactor
     - Factor to be used to scale up the Take Profit point after base calculation
 
-- gmxLimitAdjustment
-    - fraction of final TP/SL points to be used by keeper for the purposes of closing the positions. Can affect strat restuls dramatically.
+- riskFactor
+    - Factor used to multiply up the calculated stop loss point, increase value to increase SL margins.
 
 #### Swing and ATR 
 DEFAULT pricer. Uses the average true range (ATR) and local swing extreams to price TP/SL
@@ -201,8 +197,6 @@ let strats = [
             profitFactor: 3,
             atrLength: 14,
 
-            useLimitOrders: false,     
-            gmxLimitAdjustment: 0.999, 
         },
 
         indicators: [

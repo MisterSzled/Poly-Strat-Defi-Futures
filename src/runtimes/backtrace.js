@@ -210,19 +210,19 @@ async function backtrace(strat, monthsback) {
                 let newPosProfile = getNewPositionProfile(strat.rulesets[finalIndex].options, wallet.curUSD, mockSlice, true, curPrice);
                 wallet = {
                     ...wallet,
-                    curUSD: wallet.curUSD - newPosProfile.longQty,
+                    curUSD: wallet.curUSD - newPosProfile.dollarAmt,
                     longs: wallet.longs + 1,
                     
                     curPositionOpen:   curPrice,
-                    curPositionAmtIn:  newPosProfile.longQty,
+                    curPositionAmtIn:  newPosProfile.dollarAmt,
                     curPositionLev:    newPosProfile.lev,
-                    curPositionSL:     newPosProfile.longSL,
-                    curPositionTP:     newPosProfile.longTp,
+                    curPositionSL:     newPosProfile.SL,
+                    curPositionTP:     newPosProfile.TP,
                     curPositionIsLong: "true",
 
-                    positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.longSL, TP: newPosProfile.longTp, type: "long"}]
+                    positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.SL, TP: newPosProfile.TP, type: "long"}]
                 };
-                openString("Long ", curDate, newPosProfile.longQty, newPosProfile.lev, newPosProfile.longSL, newPosProfile.longTp, curPrice)
+                openString("Long ", curDate, newPosProfile.dollarAmt, newPosProfile.lev, newPosProfile.SL, newPosProfile.TP, curPrice)
             }
             if (finalResult === -1) {
                 //Short indicated
@@ -241,19 +241,19 @@ async function backtrace(strat, monthsback) {
                 let newPosProfile = getNewPositionProfile(strat.rulesets[finalIndex].options, wallet.curUSD, mockSlice, false, curPrice);
                 wallet = {
                     ...wallet,
-                    curUSD: wallet.curUSD - newPosProfile.shortQty,
+                    curUSD: wallet.curUSD - newPosProfile.dollarAmt,
                     shorts: wallet.shorts + 1,
                     
                     curPositionOpen:   curPrice,
-                    curPositionAmtIn:  newPosProfile.shortQty,
+                    curPositionAmtIn:  newPosProfile.dollarAmt,
                     curPositionLev:    newPosProfile.lev,
-                    curPositionSL:     newPosProfile.shortSL,
-                    curPositionTP:     newPosProfile.shortTp,
+                    curPositionSL:     newPosProfile.SL,
+                    curPositionTP:     newPosProfile.TP,
                     curPositionIsLong: "false",
 
-                    positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.shortSL, TP: newPosProfile.shortTp, type: "short"}]
+                    positionOpens: [...wallet.positionOpens, {date: curDate, SL: newPosProfile.SL, TP: newPosProfile.TP, type: "short"}]
                 };
-                openString("Short", curDate, newPosProfile.shortQty, newPosProfile.lev, newPosProfile.shortSL, newPosProfile.shortTp, curPrice);
+                openString("Short", curDate, newPosProfile.dollarAmt, newPosProfile.lev, newPosProfile.SL, newPosProfile.TP, curPrice);
             }
         }
     }

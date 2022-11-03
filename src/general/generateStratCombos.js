@@ -92,8 +92,6 @@ function generateRulesetMap (variationScheme, targetToken) {
                         profitFactor: optionsSeries.profitFactor[k], 
                         atrLength: 14,
             
-                        useLimitOrders: false,     
-                        gmxLimitAdjustment: 1, 
                 });
             }
         }

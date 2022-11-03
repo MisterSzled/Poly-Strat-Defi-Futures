@@ -28,11 +28,6 @@ function processIndicators (strat, pairData) {
             resultSum += temp;
         }
 
-        if (strat.rulesets[j].options.soft_reverse || strat.rulesets[j].options.hard_reverse)  {
-            resultSum = resultSum * -1
-        }
-
-
         let setResult = 0;
         if (resultSum === configIndicators.length)        setResult = 1;
         if (resultSum === (-1 * configIndicators.length)) setResult = -1;
@@ -84,9 +79,9 @@ async function main(strat) {
                 "long", 
                 strat,
                 finalIndex,
-                profile.longQty, 
-                profile.longSL, 
-                profile.longTp,
+                profile.dollarAmt, 
+                profile.SL, 
+                profile.TP,
                 profile.curClose,
                 profile.lev
                 );
@@ -99,9 +94,9 @@ async function main(strat) {
                 "short", 
                 strat, 
                 finalIndex,
-                profile.shortQty, 
-                profile.shortSL, 
-                profile.shortTp,
+                profile.dollarAmt, 
+                profile.SL, 
+                profile.TP,
                 profile.curClose,
                 profile.lev
                 );
