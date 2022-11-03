@@ -361,16 +361,13 @@ async function multiThreadStrats() {
             {
                 opName:  "rev1",
                 options: {
-                    // soft_reverse: true,
-                    // hard_reverse: true,
-
-                    swingHighLowLookbackLength: 60,
-                    percentageRiskedPerTrade: 25, 
-                    profitFactor: 4, 
+                    swingHighLowLookbackLength: 5,
+                    percentageRiskedPerTrade: 7, 
+                    profitFactor: 1.8, 
                     atrLength: 14,
 
                     useLimitOrders: false,
-                    gmxLimitAdjustment: 0.9,
+                    gmxLimitAdjustment: 1,
                 },
 
                 indicators: [
@@ -407,7 +404,35 @@ async function multiThreadStrats() {
                             divisor: 1,
                         }
                     }
-                    
+                    // {
+                    //     name: "boomHunter",
+                    //     settings: {
+                    //         triggerLength: 1, 
+            
+                    //         LPPeriod1: 25,    
+                    //         k1: 0,
+            
+                    //         LPPeriod2: 34,    
+                    //         k12: 0.3, 
+                    //     }
+                    // },
+                    // {
+                    //     name: "mhull",
+                    //         settings: {
+                    //             source: "close",       //Only uses close atm
+                    //             hullVariation: "HMA",  //Only uses HMA atm
+                    //             length: 3,           //Max value is 2x < 1000 === 499
+                    //             lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
+                    //             useHtf: false,         //NOT IMPLEMENTS
+                    //             higherTimeframe: "4h", //PART OF useHtf NOT IMPLEMENTD
+                    //         }
+                    // },
+                    // {
+                    //     name: "volatilityOscillator",
+                    //     settings: {
+                    //         volLength: 1
+                    //     }
+                    // },
                 ],
             },
         ]

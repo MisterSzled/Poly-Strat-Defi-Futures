@@ -8,6 +8,9 @@ function getNewPositionProfile(options, wallet, pairData, isLong, currentPrice) 
     let averageTrueRange = taFuncs.atr(options, [...pairData]);
     let curClose = parseFloat(pairData[pairData.length - 2][4]);
 
+    if (!options.gmxLimitAdjustment) {
+        options.gmxLimitAdjustment = 1
+    }
     let gmxAdjustmentUpper = options.gmxLimitAdjustment;
 
     if (options.hard_reverse) isLong = !isLong;
