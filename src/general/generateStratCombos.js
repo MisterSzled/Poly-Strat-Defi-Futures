@@ -85,14 +85,16 @@ function generateRulesetMap (variationScheme, targetToken) {
     for (let i = 0; i < optionsSeries.swingHighLowLookbackLength.length; i ++) {
         for (let j = 0; j < optionsSeries.percentageRiskedPerTrade.length; j ++) {
             for (let k = 0; k < optionsSeries.profitFactor.length; k ++) {
+            for (let l = 0; l < optionsSeries.profitFactor.length; l ++) {
                 options_map.push({
-
-                        swingHighLowLookbackLength: optionsSeries.swingHighLowLookbackLength[i],
                         percentageRiskedPerTrade: optionsSeries.percentageRiskedPerTrade[j], 
                         profitFactor: optionsSeries.profitFactor[k], 
-                        atrLength: 14,
-            
+                        riskFactor: optionsSeries.riskFactor[l], 
+
+                        swingHighLowLookbackLength: optionsSeries.swingHighLowLookbackLength[i],
+                        atrLength: 14,            
                 });
+            }
             }
         }
     }

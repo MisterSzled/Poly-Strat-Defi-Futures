@@ -28,6 +28,8 @@ function processIndicators (strat, pairData) {
             resultSum += temp;
         }
 
+        if (strat.rulesets[j].options.reverse) resultSum *= -1;
+
         let setResult = 0;
         if (resultSum === configIndicators.length)        setResult = 1;
         if (resultSum === (-1 * configIndicators.length)) setResult = -1;

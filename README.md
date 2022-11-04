@@ -106,6 +106,9 @@ Universal options to be included regardless of risk profile type
 - percentageRiskedPerTrade
     - Defines the percentage of your *wallet*, not position, that will be lost in the ideal hit of the calcuated stop loss point
 
+- reverse
+    - Flips the indicated signals from the strat 
+
 - profitFactor
     - Factor to be used to scale up the Take Profit point after base calculation
 

@@ -313,7 +313,6 @@ async function multiThreadStrats() {
     let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
     console.log(stratCombos.length);
 
-
     // let path = './src/backtest/processed/';
     // let fileNames = fs.readdirSync(path);
 
@@ -352,58 +351,59 @@ async function multiThreadStrats() {
     // console.log(new Date().getTime() - start);
     // await filterMonthListForBest();
 
-    let start = new Date().getTime();
-    let tempRes = await backtrace({
-        token: "ETHUSDT", 
-        timeframe: "15m",
+    // let start = new Date().getTime();
+    // let tempRes = await backtrace({
+    //     token: "ETHUSDT", 
+    //     timeframe: "15m",
 
-        rulesets: [
-            {
-                opName:  "rev1",
-                options: {
-                    percentageRiskedPerTrade: 5, // min 1 max 98
-                    profitFactor: 30, // This predominantly effects how long term your positions are
-                    riskFactor:   0.1,
+    //     rulesets: [
+    //         {
+    //             opName:  "rev1",
+    //             options: {
+    //                 reverse: true,
+    //                 percentageRiskedPerTrade: 5, // min 1 max 98
+    //                 profitFactor: 1, // This predominantly effects how long term your positions are
+    //                 riskFactor:   1,
 
-                    pricer: "swingAndATR",
-                    swingHighLowLookbackLength: 88,
-                    atrLength: 14,
-                },
+    //                 pricer: "swingAndATR",
+    //                 swingHighLowLookbackLength: 88,
+    //                 atrLength: 14,
+    //             },
 
-                indicators: [
-                    {
-                        name: "parabolicSAR",
-                        settings: {
-                            trendCode: 3, // 5m:1, 15m:3, 60m:7 180m:9 
-                        }
-                    },
-                    {
-                        name: "squeezeMomentum",
-                        settings: {
-                            bbLength:     20,  
-                            bbMultiplier: 2,
-                            kcLength:     20,
-                            kcMultiplier: 1.5,
+    //             indicators: [
+    //                 {
+    //                     name: "parabolicSAR",
+    //                     settings: {
+    //                         trendCode: 3, // 5m:1, 15m:3, 60m:7 180m:9 
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "squeezeMomentum",
+    //                     settings: {
+    //                         bbLength:     20,  
+    //                         bbMultiplier: 2,
+    //                         kcLength:     20,
+    //                         kcMultiplier: 1.5,
 
-                            reportChangeInMomentum: false
-                        }
-                    },
-                    {
-                        name: "duoMA",
-                        settings: {
-                            ma1_type: "EMA",
-                            ma1_length: 200,
-                            ma2_type: "SMA",
-                            ma2_length: 50,
-                        }
-                    },
-                    {
-                        name: "hawkeyeVolumne",
-                        settings: {
-                            length: 200,
-                            divisor: 1,
-                        }
-                    }
+    //                         reportChangeInMomentum: false
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "duoMA",
+    //                     settings: {
+    //                         ma1_type: "EMA",
+    //                         ma1_length: 200,
+    //                         ma2_type: "SMA",
+    //                         ma2_length: 50,
+    //                     }
+    //                 },
+    //                 {
+    //                     name: "hawkeyeVolumne",
+    //                     settings: {
+    //                         length: 200,
+    //                         divisor: 1,
+    //                     }
+    //                 }
                     // {
                     //     name: "boomHunter",
                     //     settings: {
@@ -433,11 +433,11 @@ async function multiThreadStrats() {
                     //         volLength: 1
                     //     }
                     // },
-                ],
-            },
-        ]
-    }, 3);
-    console.log(new Date().getTime() - start);
+    //             ],
+    //         },
+    //     ]
+    // }, 3);
+    // console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
     //     let threadCount = 6;
