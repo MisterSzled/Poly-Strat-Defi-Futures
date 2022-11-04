@@ -14,6 +14,8 @@ function swingAndATR (options, wallet, pairData, isLong, currentPrice) {
         let longTpPercent = longStopPercent * options.profitFactor;
         let longTp = curClose + (curClose * (longTpPercent / 100));
 
+        longSL = curClose - ((curClose - longSL) * options.riskFactor);
+
         let riskCalc = getAdjustedLeverageAndAmount(wallet, options.percentageRiskedPerTrade, currentPrice, longSL, true);
 
         let longQty = riskCalc.amt;
@@ -37,6 +39,8 @@ function swingAndATR (options, wallet, pairData, isLong, currentPrice) {
         let shortStopPercent = Math.abs((1 - (shortSL / curClose)) * 100);
         let shortTpPercent = shortStopPercent * options.profitFactor;
         let shortTp = curClose - (curClose * (shortTpPercent / 100));
+
+        shortSL = curClose + ((shortSL - curClose) * options.riskFactor);
 
         let riskCalc = getAdjustedLeverageAndAmount(wallet, options.percentageRiskedPerTrade, currentPrice, shortSL, false)
         let shortQty = riskCalc.amt;

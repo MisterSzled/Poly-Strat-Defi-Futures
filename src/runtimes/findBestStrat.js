@@ -361,8 +361,9 @@ async function multiThreadStrats() {
             {
                 opName:  "rev1",
                 options: {
-                    percentageRiskedPerTrade: 25, // min 1 max 98
-                    profitFactor: 1, // This predominantly effects how long term your positions are
+                    percentageRiskedPerTrade: 5, // min 1 max 98
+                    profitFactor: 30, // This predominantly effects how long term your positions are
+                    riskFactor:   0.1,
 
                     pricer: "swingAndATR",
                     swingHighLowLookbackLength: 88,
@@ -370,72 +371,72 @@ async function multiThreadStrats() {
                 },
 
                 indicators: [
-                    // {
-                    //     name: "parabolicSAR",
-                    //     settings: {
-                    //         trendCode: 3, // 5m:1, 15m:3, 60m:7 180m:9 
-                    //     }
-                    // },
-                    // {
-                    //     name: "squeezeMomentum",
-                    //     settings: {
-                    //         bbLength:     20,  
-                    //         bbMultiplier: 1.5,
-                    //         kcLength:     20,
-                    //         kcMultiplier: 1.5,
+                    {
+                        name: "parabolicSAR",
+                        settings: {
+                            trendCode: 3, // 5m:1, 15m:3, 60m:7 180m:9 
+                        }
+                    },
+                    {
+                        name: "squeezeMomentum",
+                        settings: {
+                            bbLength:     20,  
+                            bbMultiplier: 2,
+                            kcLength:     20,
+                            kcMultiplier: 1.5,
 
-                    //         reportChangeInMomentum: false
-                    //     }
-                    // },
-                    // {
-                    //     name: "duoMA",
-                    //     settings: {
-                    //         ma1_type: "EMA",
-                    //         ma1_length: 200,
-                    //         ma2_type: "SMA",
-                    //         ma2_length: 50,
-                    //     }
-                    // },
-                    // {
-                    //     name: "hawkeyeVolumne",
-                    //     settings: {
-                    //         length: 200,
-                    //         divisor: 1,
-                    //     }
-                    // }
-                    {
-                        name: "boomHunter",
-                        settings: {
-                            triggerLength: 1, 
-            
-                            LPPeriod1: 25,    
-                            k1: 0,
-            
-                            LPPeriod2: 34,    
-                            k12: 0.3, 
+                            reportChangeInMomentum: false
                         }
                     },
                     {
-                        name: "mhull",
-                            settings: {
-                                source: "close",       //Only uses close atm
-                                hullVariation: "HMA",  //Only uses HMA atm
-                                length: 3,           //Max value is 2x < 1000 === 499
-                                lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
-                                useHtf: false,         //NOT IMPLEMENTS
-                                higherTimeframe: "4h", //PART OF useHtf NOT IMPLEMENTD
-                            }
-                    },
-                    {
-                        name: "volatilityOscillator",
+                        name: "duoMA",
                         settings: {
-                            volLength: 1
+                            ma1_type: "EMA",
+                            ma1_length: 200,
+                            ma2_type: "SMA",
+                            ma2_length: 50,
                         }
                     },
+                    {
+                        name: "hawkeyeVolumne",
+                        settings: {
+                            length: 200,
+                            divisor: 1,
+                        }
+                    }
+                    // {
+                    //     name: "boomHunter",
+                    //     settings: {
+                    //         triggerLength: 1, 
+            
+                    //         LPPeriod1: 25,    
+                    //         k1: 0,
+            
+                    //         LPPeriod2: 34,    
+                    //         k12: 0.3, 
+                    //     }
+                    // },
+                    // {
+                    //     name: "mhull",
+                    //         settings: {
+                    //             source: "close",       //Only uses close atm
+                    //             hullVariation: "HMA",  //Only uses HMA atm
+                    //             length: 3,           //Max value is 2x < 1000 === 499
+                    //             lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
+                    //             useHtf: false,         //NOT IMPLEMENTS
+                    //             higherTimeframe: "4h", //PART OF useHtf NOT IMPLEMENTD
+                    //         }
+                    // },
+                    // {
+                    //     name: "volatilityOscillator",
+                    //     settings: {
+                    //         volLength: 1
+                    //     }
+                    // },
                 ],
             },
         ]
-    }, 1);
+    }, 3);
     console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
