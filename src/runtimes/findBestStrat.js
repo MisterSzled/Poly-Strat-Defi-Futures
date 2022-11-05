@@ -311,7 +311,7 @@ function filterForConsistent(list) {
 
 async function multiThreadStrats() {
     let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
-    console.log(stratCombos.length);
+    // console.log(stratCombos.length);
 
     // let path = './src/backtest/processed/';
     // let fileNames = fs.readdirSync(path);
@@ -346,9 +346,9 @@ async function multiThreadStrats() {
     // console.log(mappedWallets[2].rulesets[0].indicators[0]);
     // console.log(mappedWallets[150].rulesets[0].indicators[0]);
 
-    // let start = new Date().getTime();
-    // await findBestStratOver1MAndWrite(stratCombos, 0);
-    // console.log(new Date().getTime() - start);
+    let start = new Date().getTime();
+    await findBestStratOver1MAndWrite(stratCombos, 0);
+    console.log(new Date().getTime() - start);
     // await filterMonthListForBest();
 
     // let start = new Date().getTime();
@@ -439,7 +439,7 @@ async function multiThreadStrats() {
     // console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
-    //     let threadCount = 8;
+    //     let threadCount = 6;
     //     let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
     //     console.log(stratCombos.length);
 

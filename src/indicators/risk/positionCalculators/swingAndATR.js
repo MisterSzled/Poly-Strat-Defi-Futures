@@ -42,7 +42,7 @@ function swingAndATR (options, wallet, pairData, isLong, currentPrice) {
 
         shortSL = curClose + ((shortSL - curClose) * options.riskFactor);
 
-        let riskCalc = getAdjustedLeverageAndAmount(wallet, options.percentageRiskedPerTrade, currentPrice, shortSL, false)
+        let riskCalc = getAdjustedLeverageAndAmount(wallet, options.percentageRiskedPerTrade, currentPrice, shortSL, false);
         let shortQty = riskCalc.amt;
         let lev = riskCalc.lev;
 

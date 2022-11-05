@@ -85,7 +85,7 @@ function generateRulesetMap (variationScheme, targetToken) {
     for (let i = 0; i < optionsSeries.swingHighLowLookbackLength.length; i ++) {
         for (let j = 0; j < optionsSeries.percentageRiskedPerTrade.length; j ++) {
             for (let k = 0; k < optionsSeries.profitFactor.length; k ++) {
-            for (let l = 0; l < optionsSeries.profitFactor.length; l ++) {
+            for (let l = 0; l < optionsSeries.riskFactor.length; l ++) {
                 options_map.push({
                         percentageRiskedPerTrade: optionsSeries.percentageRiskedPerTrade[j], 
                         profitFactor: optionsSeries.profitFactor[k], 
