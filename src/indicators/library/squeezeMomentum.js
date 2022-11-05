@@ -77,8 +77,21 @@ function getKC(strat, priceSlice) {
     return linReq[1];
 }
 
+let prevAns = {}
 function squeezeMomentum(strat, candleData) {
     cs.header("Squeeze Momentum");
+
+    let prevKey = strat.settings.bbLength * strat.settings.bbMultiplier * strat.settings.kcLength * strat.settings.kcMultiplier;
+    if (!prevAns[prevKey]) {
+        prevAns[prevKey] = {}
+    }
+
+    let prevAnsNow = prevAns[prevKey][candleData[candleData.length - 1][0]];
+    if (typeof(prevAnsNow) === "number") {
+        cs.process("Squeeze Momentum prev: " + prevAnsNow);
+        return prevAnsNow
+    }
+
     let priceSlice = [...candleData.slice(0, candleData.length - 1)];
 
     // let bb = bolingerbands(priceSlice.map(val => parseFloat(val[4])), strat.settings.bbLength, strat.settings.bbMultiplier);
@@ -111,6 +124,8 @@ function squeezeMomentum(strat, candleData) {
         cs[result0 === 1 ? "win" : "fail"]("Squeeze Direction: " + linReqKC[linReqKC.length - 1]);
         result0
     }
+
+    prevAns[prevKey][candleData[candleData.length - 1][0]] = result0;
 
     return result0;
 }

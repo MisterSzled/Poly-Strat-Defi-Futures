@@ -27,8 +27,22 @@ function getHevSMA(strat, candleData) {
     }
 } 
 
+let prevAns = {}
 function hawkeyeVolumne(strat, candleData) {
     cs.header("Hawkeye Volumne");
+
+    let prevKey = strat.settings.length +""+ strat.settings.divisor;
+    if (!prevAns[prevKey]) {
+        prevAns[prevKey] = {}
+    }
+
+    let prevAnsNow = prevAns[prevKey][candleData[candleData.length - 1][0]];
+    if (typeof(prevAnsNow) === "number") {
+        cs.process("Hawkeye Volumne prev: " + prevAnsNow);
+        return prevAnsNow
+    }
+
+    let finalPrice = candleData[candleData.length - 1]
     candleData = candleData.slice(0, candleData.length - 1);
 
     let hevSMA = getHevSMA(strat, [...candleData]);
@@ -72,8 +86,10 @@ function hawkeyeVolumne(strat, candleData) {
         result = -1;
     }
 
-    cs[result === 1 ? "win"  : "process"]("NOT Gr AND G: " + (!grEnabled && gEnabled));
-    cs[result === 1 ? "fail" : "process"]("NOT Gr AND R: " + (!grEnabled && rEnabled));
+    cs[result ===  1 ? "win"  : "process"]("NOT Gr AND G: " + (!grEnabled && gEnabled));
+    cs[result === -1 ? "fail" : "process"]("NOT Gr AND R: " + (!grEnabled && rEnabled));
+
+    prevAns[prevKey][finalPrice[0]] = result;
 
     return result;
 }

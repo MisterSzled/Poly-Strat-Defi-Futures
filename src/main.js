@@ -28,6 +28,8 @@ function processIndicators (strat, pairData) {
             resultSum += temp;
         }
 
+        // console.log(resultSum)
+
         if (strat.rulesets[j].options.reverse) resultSum *= -1;
 
         let setResult = 0;
@@ -50,7 +52,7 @@ async function main(strat) {
     let finalIndex = 0;
     for (let i = 0; i < resArray.length; i++) {
         if (resArray[i].result !== 0) {
-            finalIndex = resArray[i].index;
+            finalIndex  = resArray[i].index;
             finalResult = resArray[i].result;
         }
     }

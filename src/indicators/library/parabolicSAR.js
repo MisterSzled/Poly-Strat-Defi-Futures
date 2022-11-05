@@ -1,8 +1,20 @@
 const cs = require("../../general/chalkSpec");
 const sar = require("../taFuncs/index").sar
 
+let prevAns = {}
 function parabolicSAR(strat, candleData) {
     cs.header("Parabolic SAR");
+
+    let prevKey = strat.settings.trendCode;
+    if (!prevAns[prevKey]) {
+        prevAns[prevKey] = {}
+    }
+
+    let prevAnsNow = prevAns[prevKey][candleData[candleData.length - 1][0]];
+    if (typeof(prevAnsNow) === "number") {
+        cs.process("Parabolic SAR prev: " + prevAnsNow);
+        return prevAnsNow
+    }
 
     let startPSAR = 0.02;
     let increment = 0.02;
@@ -19,11 +31,18 @@ function parabolicSAR(strat, candleData) {
     cs.process("Direction 1: " + dir1);
 
     let long  = (dir0 ===  1) && (dir1 === -1);
-    let short = (dir0 === -1) && (dir1 === 1);
+    let short = (dir0 === -1) && (dir1 ===  1);
 
-    if (long)  return 1;
-    if (short) return -1;
+    if (long)  {
+        prevAns[prevKey][candleData[candleData.length - 1][0]] = 1;
+        return 1;
+    }
+    if (short)  {
+        prevAns[prevKey][candleData[candleData.length - 1][0]] = -1;
+        return -1;
+    }
     
+    prevAns[prevKey][candleData[candleData.length - 1][0]] = 0;
     return 0;
 }
 

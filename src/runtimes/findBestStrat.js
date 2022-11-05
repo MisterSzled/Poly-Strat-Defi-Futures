@@ -360,9 +360,8 @@ async function multiThreadStrats() {
     //         {
     //             opName:  "rev1",
     //             options: {
-    //                 reverse: true,
     //                 percentageRiskedPerTrade: 5, // min 1 max 98
-    //                 profitFactor: 1, // This predominantly effects how long term your positions are
+    //                 profitFactor: 2, // This predominantly effects how long term your positions are
     //                 riskFactor:   1,
 
     //                 pricer: "swingAndATR",
@@ -404,44 +403,44 @@ async function multiThreadStrats() {
     //                         divisor: 1,
     //                     }
     //                 }
-                    // {
-                    //     name: "boomHunter",
-                    //     settings: {
-                    //         triggerLength: 1, 
+    //                 // {
+    //                 //     name: "boomHunter",
+    //                 //     settings: {
+    //                 //         triggerLength: 1, 
             
-                    //         LPPeriod1: 25,    
-                    //         k1: 0,
+    //                 //         LPPeriod1: 25,    
+    //                 //         k1: 0,
             
-                    //         LPPeriod2: 34,    
-                    //         k12: 0.3, 
-                    //     }
-                    // },
-                    // {
-                    //     name: "mhull",
-                    //         settings: {
-                    //             source: "close",       //Only uses close atm
-                    //             hullVariation: "HMA",  //Only uses HMA atm
-                    //             length: 3,           //Max value is 2x < 1000 === 499
-                    //             lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
-                    //             useHtf: false,         //NOT IMPLEMENTS
-                    //             higherTimeframe: "4h", //PART OF useHtf NOT IMPLEMENTD
-                    //         }
-                    // },
-                    // {
-                    //     name: "volatilityOscillator",
-                    //     settings: {
-                    //         volLength: 1
-                    //     }
-                    // },
+    //                 //         LPPeriod2: 34,    
+    //                 //         k12: 0.3, 
+    //                 //     }
+    //                 // },
+    //                 // {
+    //                 //     name: "mhull",
+    //                 //         settings: {
+    //                 //             source: "close",       //Only uses close atm
+    //                 //             hullVariation: "HMA",  //Only uses HMA atm
+    //                 //             length: 3,           //Max value is 2x < 1000 === 499
+    //                 //             lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
+    //                 //             useHtf: false,         //NOT IMPLEMENTS
+    //                 //             higherTimeframe: "4h", //PART OF useHtf NOT IMPLEMENTD
+    //                 //         }
+    //                 // },
+    //                 // {
+    //                 //     name: "volatilityOscillator",
+    //                 //     settings: {
+    //                 //         volLength: 1
+    //                 //     }
+    //                 // },
     //             ],
     //         },
     //     ]
-    // }, 3);
+    // }, 1);
     // console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
-    //     let threadCount = 6;
-    //     let stratCombos = generateStratCombos(variationScheme, ["AVAXUSDT"]);
+    //     let threadCount = 8;
+    //     let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
     //     console.log(stratCombos.length);
 
     //     // let path = './src/backtest/processed/';
