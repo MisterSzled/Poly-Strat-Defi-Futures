@@ -16,16 +16,16 @@ async function findBestStratOver1MAndWrite (stratcombos, shunt, messenger) {
             messenger(i)
         }
 
-        let newEntry = await backtrace(stratcombos[i], 2);
+        let newEntry = await backtrace(stratcombos[i], 18);
         results.push({...stratcombos[i], walletResult: newEntry});
 
         
 
         if ((i > 0) && (((i-1) % rolloverLimit) === 0)) {
-            await writeToFile("./src/backtest/processed/ethSAR_"+(shunt + i)+".json", results);
+            await writeToFile("./src/backtest/processed/ethSAR_Fixed_18M_Rev_"+(shunt + i)+".json", results);
             results = [];
         } else if (i === stratcombos.length - 1) {
-            await writeToFile("./src/backtest/processed/ethSAR_"+(shunt + i + 1)+".json", results);
+            await writeToFile("./src/backtest/processed/ethSAR_Fixed_18M_Rev_"+(shunt + i + 1)+".json", results);
             results = [];
         }
     }
@@ -138,6 +138,7 @@ async function filterMonthListForBest() {
     let wallets = [];
 
     fileNames = fileNames.filter(val => val.includes(".json"));
+    fileNames = fileNames.filter(val => !val.includes("ethSAR_18M_Deviants"));
 
     let btcWins = [];
     let ethWins = [];
@@ -160,7 +161,7 @@ async function filterMonthListForBest() {
         wallets = wallets.concat(res);
     }
 
-    // console.log("Total run: ", wallets.length);
+    console.log("Total run: ", wallets.length);
     // getLargestDeviationFromRatio(wallets[0])
 
     let deviants = [];
@@ -176,19 +177,21 @@ async function filterMonthListForBest() {
         return 0;
     });
 
-    console.log("Wallet: ", deviantsSorted[0].walletResult.curUSD, 
-                " winratio: ", 
-                deviantsSorted[0].walletResult.winratio, 
-                "::", 
-                getLargestDeviationFromRatio(deviantsSorted[0], true).max,
-                getLargestDeviationFromRatio(deviantsSorted[0], true).min);
+    // await writeToFile("./src/backtest/processed/ethSAR_18M_Deviants.json", deviantsSorted);
 
-    // console.log("Wallet: ", deviantsSorted[1].walletResult.curUSD, 
+    // console.log("Wallet: ", deviantsSorted[0].walletResult.curUSD, 
     //             " winratio: ", 
-    //             deviantsSorted[1].walletResult.winratio, 
+    //             deviantsSorted[0].walletResult.winratio, 
     //             "::", 
-    //             getLargestDeviationFromRatio(deviantsSorted[1], true).max,
-    //             getLargestDeviationFromRatio(deviantsSorted[1], true).min);
+    //             getLargestDeviationFromRatio(deviantsSorted[0], true).max,
+    //             getLargestDeviationFromRatio(deviantsSorted[0], true).min);
+
+    // console.log("Wallet: ", deviantsSorted[1000].walletResult.curUSD, 
+    //             " winratio: ", 
+    //             deviantsSorted[1000].walletResult.winratio, 
+    //             "::", 
+    //             getLargestDeviationFromRatio(deviantsSorted[1000], true).max,
+    //             getLargestDeviationFromRatio(deviantsSorted[1000], true).min);
 
     // console.log("Wallet: ", deviantsSorted[2].walletResult.curUSD, 
     //             " winratio: ", 
@@ -197,21 +200,22 @@ async function filterMonthListForBest() {
     //             getLargestDeviationFromRatio(deviantsSorted[2], true).max,
     //             getLargestDeviationFromRatio(deviantsSorted[2], true).min);
 
-    // console.log(deviantsSorted[1].rulesets[0].options)
-    // console.log(deviantsSorted[1].rulesets[0].indicators[0])
-    // console.log(deviantsSorted[1].rulesets[0].indicators[1])
-    // console.log(deviantsSorted[1].rulesets[0].indicators[2])
+    // console.log(deviantsSorted[0].rulesets[0].options)
+    // console.log(deviantsSorted[0].rulesets[0].indicators[0])
+    // console.log(deviantsSorted[0].rulesets[0].indicators[1])
+    // console.log(deviantsSorted[0].rulesets[0].indicators[2])
     
-    // let deviantIndex = 0;
-    // let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
-    // console.log("Wallet: ", winDeviants[deviantIndex].walletResult.curUSD, 
-    //             " winratio: ", 
-    //             winDeviants[deviantIndex].walletResult.winratio, 
-    //             " ::", 
-    //             getLargestDeviationFromRatio(winDeviants[deviantIndex], true).max,
-    //             getLargestDeviationFromRatio(winDeviants[deviantIndex], true).min);
+    let deviantIndex = 0;
+    let winDeviants = deviantsSorted.filter(val => val.walletResult.curUSD > 250);
+    winDeviants = winDeviants.filter(val => val.walletResult.winratio < 0.4);
+    console.log("Wallet: ", winDeviants[deviantIndex].walletResult.curUSD, 
+                " winratio: ", 
+                winDeviants[deviantIndex].walletResult.winratio, 
+                " ::", 
+                getLargestDeviationFromRatio(winDeviants[deviantIndex], true).max,
+                getLargestDeviationFromRatio(winDeviants[deviantIndex], true).min);
 
-    // console.log(winDeviants[deviantIndex].rulesets[0].options)
+    console.log(winDeviants[deviantIndex].rulesets[0].options)
     // console.log(winDeviants[deviantIndex].rulesets[0].indicators[0])
     // console.log(winDeviants[deviantIndex].rulesets[0].indicators[1])
     // console.log(winDeviants[deviantIndex].rulesets[0].indicators[2])
@@ -251,18 +255,18 @@ async function filterMonthListForBest() {
 
     // bestUSD = bestUSD.map(wallet => {return {...wallet, walletResult: {...wallet.walletResult, positionOpens: [], positionClosed: []}}})
 
-    let letUpperWR = 0.6;
-    let letLowerWR = 0.4;
-    let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
-    let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
+    // let letUpperWR = 0.6;
+    // let letLowerWR = 0.4;
+    // let uppers = wallets.filter(val => val.walletResult.winratio >= letUpperWR);
+    // let lowers = wallets.filter(val => val.walletResult.winratio <= letLowerWR);
 
-    console.log(uppers.length)
-    console.log(lowers.length)
+    // console.log(uppers.length)
+    // console.log(lowers.length)
 
     // let res = uppers.concat(lowers);
     // console.log(res.length)
 
-    // await writeToFile("./src/backtest/processed/avax18MExtreams.json", res);
+    // await writeToFile("./src/backtest/processed/ethSAR_18MExt.json", res);
 }
 
 function filterForConsistent(list) {
@@ -311,12 +315,16 @@ function filterForConsistent(list) {
 
 async function multiThreadStrats() {
     let stratCombos = generateStratCombos(variationScheme, ["ETHUSDT"]);
-    // console.log(stratCombos.length);
+    console.log(stratCombos.length);
+
+    // for (let i = 0; i < stratCombos.length; i++) {
+    //     stratCombos[i].rulesets[0].options.reverse = true;
+    // }
 
     // let path = './src/backtest/processed/';
     // let fileNames = fs.readdirSync(path);
 
-    // fileNames = fileNames.filter(val => val.includes("eth12MExtreams.json"));
+    // fileNames = fileNames.filter(val => val.includes("ethSAR_18M_Deviants.json"));
 
     // let stratCombos = []
 
@@ -327,8 +335,11 @@ async function multiThreadStrats() {
     //     stratCombos = stratCombos.concat(res);
     // }
 
-    // stratCombos = stratCombos.map(val => ({...val, token: "AVAXUSDT", walletResult: {}}));
-    // console.log("Total run: ", stratCombos.length);
+
+    // stratCombos = stratCombos.map(val => ({...val, token: "ETHUSDT", walletResult: {}}));
+    // for (let i = 0; i < stratCombos.length; i++) {
+    //     stratCombos[i].rulesets[0].options.reverse = true
+    // }
 
     // let mappedWallets = [];
     // for (let i = 0; i < wallets.length; i++) {
@@ -346,9 +357,9 @@ async function multiThreadStrats() {
     // console.log(mappedWallets[2].rulesets[0].indicators[0]);
     // console.log(mappedWallets[150].rulesets[0].indicators[0]);
 
-    let start = new Date().getTime();
-    await findBestStratOver1MAndWrite(stratCombos, 0);
-    console.log(new Date().getTime() - start);
+    // let start = new Date().getTime();
+    // await findBestStratOver1MAndWrite(stratCombos, 0);
+    // console.log(new Date().getTime() - start);
     // await filterMonthListForBest();
 
     // let start = new Date().getTime();
@@ -360,29 +371,30 @@ async function multiThreadStrats() {
     //         {
     //             opName:  "rev1",
     //             options: {
-    //                 percentageRiskedPerTrade: 5, // min 1 max 98
-    //                 profitFactor: 2, // This predominantly effects how long term your positions are
+    //                 percentageRiskedPerTrade: 10, // min 1 max 98
+    //                 profitFactor: 1, // This predominantly effects how long term your positions are
     //                 riskFactor:   1,
 
     //                 pricer: "swingAndATR",
-    //                 swingHighLowLookbackLength: 88,
+    //                 swingHighLowLookbackLength: 30,
     //                 atrLength: 14,
+    //                 // reverse: true
     //             },
 
     //             indicators: [
     //                 {
     //                     name: "parabolicSAR",
     //                     settings: {
-    //                         trendCode: 3, // 5m:1, 15m:3, 60m:7 180m:9 
+    //                         trendCode: 10, // 5m:1, 15m:3, 60m:7 180m:9 
     //                     }
     //                 },
     //                 {
     //                     name: "squeezeMomentum",
     //                     settings: {
     //                         bbLength:     20,  
-    //                         bbMultiplier: 2,
+    //                         bbMultiplier: 1,
     //                         kcLength:     20,
-    //                         kcMultiplier: 1.5,
+    //                         kcMultiplier: 1,
 
     //                         reportChangeInMomentum: false
     //                     }
@@ -399,43 +411,14 @@ async function multiThreadStrats() {
     //                 {
     //                     name: "hawkeyeVolumne",
     //                     settings: {
-    //                         length: 200,
-    //                         divisor: 1,
+    //                         length: 50,
+    //                         divisor: 1.5,
     //                     }
     //                 }
-    //                 // {
-    //                 //     name: "boomHunter",
-    //                 //     settings: {
-    //                 //         triggerLength: 1, 
-            
-    //                 //         LPPeriod1: 25,    
-    //                 //         k1: 0,
-            
-    //                 //         LPPeriod2: 34,    
-    //                 //         k12: 0.3, 
-    //                 //     }
-    //                 // },
-    //                 // {
-    //                 //     name: "mhull",
-    //                 //         settings: {
-    //                 //             source: "close",       //Only uses close atm
-    //                 //             hullVariation: "HMA",  //Only uses HMA atm
-    //                 //             length: 3,           //Max value is 2x < 1000 === 499
-    //                 //             lengthMultiplier: 1,    //This can be used but is literally the same as simply increaseing length
-    //                 //             useHtf: false,         //NOT IMPLEMENTS
-    //                 //             higherTimeframe: "4h", //PART OF useHtf NOT IMPLEMENTD
-    //                 //         }
-    //                 // },
-    //                 // {
-    //                 //     name: "volatilityOscillator",
-    //                 //     settings: {
-    //                 //         volLength: 1
-    //                 //     }
-    //                 // },
     //             ],
     //         },
     //     ]
-    // }, 1);
+    // }, 18);
     // console.log(new Date().getTime() - start);
     
     // if (isMainThread) {
@@ -445,7 +428,7 @@ async function multiThreadStrats() {
 
     //     // let path = './src/backtest/processed/';
     //     // let fileNames = fs.readdirSync(path);
-    //     // fileNames = fileNames.filter(val => val.includes("btc10MExtreams.json"));
+    //     // fileNames = fileNames.filter(val => val.includes("ethSAR_18M_Deviants.json"));
     //     // let stratCombos = []
     //     // for (let i = 0; i < fileNames.length; i++) {
     //     //     let res = fs.readFileSync(path + fileNames[i]);
@@ -453,7 +436,11 @@ async function multiThreadStrats() {
 
     //     //     stratCombos = stratCombos.concat(res);
     //     // }
-    //     // stratCombos = stratCombos.map(val => ({...val, walletResult: {}}));
+
+    //     stratCombos = stratCombos.map(val => ({...val, token: "ETHUSDT", walletResult: {}}));
+    //     for (let i = 0; i < stratCombos.length; i++) {
+    //         stratCombos[i].rulesets[0].options.reverse = true
+    //     }
 
 
     //     console.log("Running with ", threadCount, " threads")
