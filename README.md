@@ -1,11 +1,28 @@
-# Poly-Strat-Defi-Futures
+# Poly-Strat-Defi-Futures  
 
-Modular and configurable trader and backtester within Defi.
-Currently built to support GMX on Avalanche.
+**A modular and configurable trading and backtesting tool for decentralized finance (DeFi).**  
 
-Running and backtracring both work but backtracing is not clean nor accessible without apriori knowledge of this project.
+---
 
-This project is currently broken from using outdated packages and will require some work to be resuscitated.
+## **Abstract**  
+Poly-Strat-Defi-Futures is a versatile DeFi trading framework designed to serve as a general-purpose tool for traders and developers.  
+
+The platform enables users to execute strategies driven by customizable indicators, running in real-time via associated wallets with adjustable risk profiles. Additionally, the tool includes a multi-threaded backtester that generates performance reports for specific strategies over defined time periods. The backtester supports configurable noise levels and transaction cost simulations to provide realistic results.  
+
+To ensure optimal performance, the system requires the accompanying "Keeper" service for live trading. This architecture was chosen to maximize throughput and minimize the risk of blocking transactions on the primary wallet threads.  
+
+### **Key Features**  
+- **Customizable Indicators**: The platform currently supports a variety of technical indicators. Adding new types of indicators — from sentiment analysis to a coin-flip — is as straightforward as adding a function call.  
+- **DeFi Protocol Support**: Built-in support for GMX on Avalanche and Arbitrum. Adding support for additional protocols only requires creating a new configuration file with the appropriate token addresses.  
+- **Backtesting Capabilities**: The multi-threaded backtester simulates strategy performance under realistic conditions, with options to adjust variables like entry noise and transaction costs.  
+
+---
+
+## **Disclaimer**  
+**Important Note**: This project is currently non-functional due to outdated dependencies and will require updates to restore full functionality.  
+
+While live trading and backtesting both operate, the backtesting interface is not user-friendly and requires apriori knowledge of the project for effective use. Resolving this issue however is not a large task.  
+---  
 
 ## Keeper
 
