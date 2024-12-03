@@ -1,6 +1,6 @@
 # Poly-Strat-Defi-Futures  
 
-**A modular and configurable trading and backtesting tool for decentralized finance (DeFi).**  
+**A modular and configurable trading and backtesting tool for DeFi.**  
 
 *Warning: This is a trading tool. It uses your real wallets with real tokens and may contain bugs that will result in loss of funds. 
 Use entirely at your own risk*
