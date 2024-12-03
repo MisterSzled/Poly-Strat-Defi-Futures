@@ -1,13 +1,10 @@
 # Poly-Strat-Defi-Futures  
 
-**A modular and configurable trading and backtesting tool for DeFi.**  
+**A modular and configurable trading and backtesting tool for DeFi.**
 
-*Warning: This is a trading tool. It uses your real wallets with real tokens and may contain bugs that will result in loss of funds. 
-Use entirely at your own risk*
 
 ---
 
-## **Abstract**  
 Poly-Strat-Defi-Futures is a versatile DeFi trading framework designed to serve as a general-purpose tool for traders and developers.  
 
 The platform enables users to execute strategies driven by customizable indicators, running in real-time via associated wallets with adjustable risk profiles. Additionally, the tool includes a multi-threaded backtester that generates performance reports for specific strategies over defined time periods. The backtester supports configurable noise levels and transaction cost simulations to provide realistic results.  
@@ -24,8 +21,17 @@ To ensure optimal performance, the system requires the accompanying "Keeper" ser
 ## **Disclaimer**  
 **Important Note**: This project is currently non-functional due to outdated dependencies and will require updates to restore full functionality.  
 
-While live trading and backtesting both operate, the backtesting interface is not user-friendly and requires apriori knowledge of the project for effective use. Resolving this issue however is not a large task.  
+While live trading and backtesting both operate, the backtesting interface is not user-friendly and requires apriori knowledge of the project for effective use. Resolving this issue however is not a large task.
+
 ---  
+
+### **Warning.** This is a trading tool. 
+- __It uses your real wallets with your real tokens and runs your strategies__.
+- __It may contain bugs that will result in loss of funds or unexpected behavior__.
+- __You are responsible for any and all results of using this project__.
+- __Use entirely at your own risk__
+
+---
 
 ## Keeper
 
