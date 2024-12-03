@@ -3,6 +3,10 @@
 Modular and configurable trader and backtester within Defi.
 Currently built to support GMX on Avalanche.
 
+Running and backtracring both work but backtracing is not clean nor accessible without apriori knowledge of this project.
+
+This project is currently broken from using outdated packages and will require some work to be resuscitated.
+
 ## Keeper
 
 Keeper scans all existing strats in your config file, extracts the wallets, and takes the following steps every 15mins on the 15m/2 to the hour basis. E.g. 15:07:30, then 15:22:30...
