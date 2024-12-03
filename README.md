@@ -1,6 +1,7 @@
 # Poly-Strat-Defi-Futures
 
-Module and configurable runner and backtester within Defi
+Modular and configurable trader and backtester within Defi.
+Currently built to support GMX on Avalanche.
 
 ## Keeper
 
